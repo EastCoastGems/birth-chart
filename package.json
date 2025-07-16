@@ -1,164 +1,310 @@
-{
-  "name": "astro-backend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "abbrev": "^1.1.1",
-    "accepts": "^2.0.0",
-    "agent-base": "^6.0.2",
-    "agentkeepalive": "^4.6.0",
-    "aggregate-error": "^3.1.0",
-    "ansi-regex": "^5.0.1",
-    "aproba": "^2.1.0",
-    "are-we-there-yet": "^3.0.1",
-    "balanced-match": "^1.0.2",
-    "body-parser": "^2.2.0",
-    "brace-expansion": "^1.1.12",
-    "bytes": "^3.1.2",
-    "cacache": "^15.3.0",
-    "call-bind-apply-helpers": "^1.0.2",
-    "call-bound": "^1.0.4",
-    "chownr": "^2.0.0",
-    "clean-stack": "^2.2.0",
-    "color-support": "^1.1.3",
-    "concat-map": "^0.0.1",
-    "console-control-strings": "^1.1.0",
-    "content-disposition": "^1.0.0",
-    "content-type": "^1.0.5",
-    "cookie": "^0.7.2",
-    "cookie-signature": "^1.2.2",
-    "cors": "^2.8.5",
-    "debug": "^4.4.1",
-    "delegates": "^1.0.0",
-    "depd": "^2.0.0",
-    "dunder-proto": "^1.0.1",
-    "ee-first": "^1.1.1",
-    "emoji-regex": "^8.0.0",
-    "encodeurl": "^2.0.0",
-    "encoding": "^0.1.13",
-    "env-paths": "^2.2.1",
-    "err-code": "^2.0.3",
-    "es-define-property": "^1.0.1",
-    "es-errors": "^1.3.0",
-    "es-object-atoms": "^1.1.1",
-    "escape-html": "^1.0.3",
-    "etag": "^1.8.1",
-    "express": "^5.1.0",
-    "finalhandler": "^2.1.0",
-    "forwarded": "^0.2.0",
-    "fresh": "^2.0.0",
-    "fs-minipass": "^2.1.0",
-    "fs.realpath": "^1.0.0",
-    "function-bind": "^1.1.2",
-    "gauge": "^4.0.4",
-    "get-intrinsic": "^1.3.0",
-    "get-proto": "^1.0.1",
-    "glob": "^7.2.3",
-    "gopd": "^1.2.0",
-    "graceful-fs": "^4.2.11",
-    "has-symbols": "^1.1.0",
-    "has-unicode": "^2.0.1",
-    "hasown": "^2.0.2",
-    "http-cache-semantics": "^4.2.0",
-    "http-errors": "^2.0.0",
-    "http-proxy-agent": "^4.0.1",
-    "https-proxy-agent": "^5.0.1",
-    "humanize-ms": "^1.2.1",
-    "iconv-lite": "^0.6.3",
-    "imurmurhash": "^0.1.4",
-    "indent-string": "^4.0.0",
-    "infer-owner": "^1.0.4",
-    "inflight": "^1.0.6",
-    "inherits": "^2.0.4",
-    "ip-address": "^9.0.5",
-    "ipaddr.js": "^1.9.1",
-    "is-fullwidth-code-point": "^3.0.0",
-    "is-lambda": "^1.0.1",
-    "is-promise": "^4.0.0",
-    "isexe": "^2.0.0",
-    "jsbn": "^1.1.0",
-    "lru-cache": "^6.0.0",
-    "make-fetch-happen": "^9.1.0",
-    "math-intrinsics": "^1.1.0",
-    "media-typer": "^1.1.0",
-    "merge": "^2.1.1",
-    "merge-descriptors": "^2.0.0",
-    "mime-db": "^1.54.0",
-    "mime-types": "^3.0.1",
-    "minimatch": "^3.1.2",
-    "minipass": "^3.3.6",
-    "minipass-collect": "^1.0.2",
-    "minipass-fetch": "^1.4.1",
-    "minipass-flush": "^1.0.5",
-    "minipass-pipeline": "^1.2.4",
-    "minipass-sized": "^1.0.3",
-    "minizlib": "^2.1.2",
-    "mkdirp": "^1.0.4",
-    "ms": "^2.1.3",
-    "nan": "^2.23.0",
-    "negotiator": "^1.0.0",
-    "node-gyp": "^8.4.1",
-    "nopt": "^5.0.0",
-    "npmlog": "^6.0.2",
-    "object-assign": "^4.1.1",
-    "object-inspect": "^1.13.4",
-    "on-finished": "^2.4.1",
-    "once": "^1.4.0",
-    "p-map": "^4.0.0",
-    "parseurl": "^1.3.3",
-    "path-is-absolute": "^1.0.1",
-    "path-to-regexp": "^8.2.0",
-    "promise-inflight": "^1.0.1",
-    "promise-retry": "^2.0.1",
-    "proxy-addr": "^2.0.7",
-    "qs": "^6.14.0",
-    "range-parser": "^1.2.1",
-    "raw-body": "^3.0.0",
-    "readable-stream": "^3.6.2",
-    "retry": "^0.12.0",
-    "rimraf": "^3.0.2",
-    "router": "^2.2.0",
-    "safe-buffer": "^5.2.1",
-    "safer-buffer": "^2.1.2",
-    "semver": "^7.7.2",
-    "send": "^1.2.0",
-    "serve-static": "^2.2.0",
-    "set-blocking": "^2.0.0",
-    "setprototypeof": "^1.2.0",
-    "side-channel": "^1.1.0",
-    "side-channel-list": "^1.0.0",
-    "side-channel-map": "^1.0.1",
-    "side-channel-weakmap": "^1.0.2",
-    "signal-exit": "^3.0.7",
-    "smart-buffer": "^4.2.0",
-    "socks": "^2.8.6",
-    "socks-proxy-agent": "^6.2.1",
-    "sprintf-js": "^1.1.3",
-    "ssri": "^8.0.1",
-    "statuses": "^2.0.2",
-    "string_decoder": "^1.3.0",
-    "string-width": "^4.2.3",
-    "strip-ansi": "^6.0.1",
-    "swisseph": "^0.5.17",
-    "tar": "^6.2.1",
-    "toidentifier": "^1.0.1",
-    "type-is": "^2.0.1",
-    "unique-filename": "^1.1.1",
-    "unique-slug": "^2.0.2",
-    "unpipe": "^1.0.0",
-    "util-deprecate": "^1.0.2",
-    "vary": "^1.1.2",
-    "which": "^2.0.2",
-    "wide-align": "^1.1.5",
-    "wrappy": "^1.0.2",
-    "yallist": "^4.0.0"
-  },
-  "description": ""
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discover Your Astrology Blueprint</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 2rem;
+      text-align: center;
+    }
+    header img {
+      max-width: 180px;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      color: #b23cf0;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    form, #results {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: 1rem auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 1.5rem;
+      background: #b23cf0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #962dcc;
+    }
+    .radio-group label {
+      display: inline-block;
+      margin-right: 1rem;
+    }
+    .chart-container {
+      display: none;
+      margin: 2rem auto;
+      border-radius: 50%;
+      background: linear-gradient(90deg,
+        rgba(255,0,0,0.12),
+        rgba(255,127,0,0.12),
+        rgba(255,255,0,0.12),
+        rgba(0,255,0,0.12),
+        rgba(0,0,255,0.12),
+        rgba(75,0,130,0.12),
+        rgba(148,0,211,0.12));
+      width: 350px;
+      height: 350px;
+      justify-content: center;
+      align-items: center;
+    }
+    #birth-chart {
+      background: transparent;
+    }
+    .sky-container {
+      display: none;
+      margin: 2rem auto;
+      max-width: 400px;
+    }
+    #skyCanvas {
+      width: 100%;
+      height: 200px;
+      background: radial-gradient(ellipse at bottom, #00162b, #000);
+      border-radius: 8px;
+    }
+    #downloadBtn {
+      margin-top: 0.5rem;
+      background: #444;
+      color: white;
+      width: auto;
+      padding: 0.5rem 1rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .loading {
+      font-style: italic;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="Site Logo">
+  </header>
+
+  <h1>Discover Your Astrology Blueprint</h1>
+
+  <form id="birth-form" autocomplete="off">
+    <label>Date of Birth:
+      <input type="date" id="birthdate" required />
+    </label>
+    <label>Time of Birth:
+      <input type="time" id="birthtime" required />
+    </label>
+    <label>Birthplace (City, State):
+      <input type="text" id="location" placeholder="e.g. Brooklyn, NY" required />
+    </label>
+    <div class="radio-group">
+      <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label>
+      <label><input type="radio" name="readingType" value="fullChart"> Full Chart</label>
+    </div>
+    <button type="submit">Generate Chart</button>
+  </form>
+
+  <div class="chart-container">
+    <canvas id="birth-chart" width="350" height="350"></canvas>
+  </div>
+
+  <div class="sky-container">
+    <canvas id="skyCanvas" width="350" height="200"></canvas>
+    <button id="downloadBtn">Download Your Sky Map</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    (function() {
+      const apiKey = 'f4828f886eb04102855182883c0428a2';
+      const form = document.getElementById('birth-form');
+      const resultsDiv = document.getElementById('results');
+      const chartContainer = document.querySelector('.chart-container');
+      const canvas = document.getElementById('birth-chart');
+      const skyContainer = document.querySelector('.sky-container');
+      const skyCanvas = document.getElementById('skyCanvas');
+      const skyCtx = skyCanvas.getContext('2d');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+        "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+
+      function degToSign(deg) {
+        deg = ((deg % 360) + 360) % 360;
+        const index = Math.floor(deg / 30);
+        return { sign: signs[index], degree: (deg % 30).toFixed(2), raw: deg };
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        resultsDiv.innerHTML = '<p class="loading">Calculating birth chart...</p>';
+        chartContainer.style.display = 'none';
+        skyContainer.style.display = 'none';
+
+        const date = document.getElementById('birthdate').value;
+        const time = document.getElementById('birthtime').value;
+        const location = document.getElementById('location').value;
+        const readingType = document.querySelector('input[name="readingType"]:checked').value;
+
+        if (!date || !time || !location) {
+          resultsDiv.innerHTML = '<p style="color:red;">Please fill out all fields.</p>';
+          return;
+        }
+
+        try {
+          // Geocode the birthplace
+          const geoRes = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(location)}&key=${apiKey}`);
+          const geoData = await geoRes.json();
+          if (!geoData.results.length) throw new Error('Location not found');
+          const { lat, lng } = geoData.results[0].geometry;
+
+          // Parse date and time
+          const [year, month, day] = date.split('-').map(Number);
+          const [hour, minute] = time.split(':').map(Number);
+
+          // Call your Node.js backend for Swiss Ephemeris calculations
+          const backendRes = await fetch('https://birth-chart-5kyi.onrender.com/chart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
+          });
+          if (!backendRes.ok) throw new Error('Backend error');
+          const backendData = await backendRes.json();
+
+          const ascendant = backendData.ascendant;
+          const housesRaw = { houses: backendData.houses, ascendant: backendData.ascendant };
+          const planetsRaw = {};
+          const planetNames = {
+            0: 'Sun', 1: 'Moon', 2: 'Mercury', 3: 'Venus', 4: 'Mars',
+            5: 'Jupiter', 6: 'Saturn', 7: 'Uranus', 8: 'Neptune', 9: 'Pluto'
+          };
+          for (const pid in backendData.planets) {
+            planetsRaw[planetNames[pid]] = { lon: backendData.planets[pid] };
+          }
+
+          const planets = {};
+          for (const key in planetsRaw) {
+            const lon = planetsRaw[key].lon;
+            planets[key] = degToSign(lon);
+          }
+
+          const houses = {};
+          const hsrc = housesRaw.houses;
+          for (let i = 1; i <= 12; i++) {
+            let houseDeg;
+            if (Array.isArray(hsrc)) {
+              houseDeg = hsrc[i-1];
+            } else {
+              houseDeg = hsrc[i] ?? hsrc[String(i)];
+            }
+            houses[i] = degToSign(houseDeg);
+          }
+
+          let outputHTML = `<h2>Your Birth Chart Details</h2>`;
+          outputHTML += `<p><strong>Coordinates:</strong> ${lat.toFixed(2)}, ${lng.toFixed(2)}</p>`;
+          outputHTML += `<p><strong>Ascendant (Rising):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
+          if (readingType === 'bigThree') {
+            outputHTML += `<ul>
+              <li><strong>Sun:</strong> ${degToSign(planetsRaw.Sun.lon).sign} ${degToSign(planetsRaw.Sun.lon).degree}°</li>
+              <li><strong>Moon:</strong> ${degToSign(planetsRaw.Moon.lon).sign} ${degToSign(planetsRaw.Moon.lon).degree}°</li>
+              <li><strong>Ascendant:</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</li>
+            </ul>`;
+          } else {
+            outputHTML += `<h3>Planets</h3><ul>`;
+            for (const key in planets) {
+              outputHTML += `<li><strong>${key}:</strong> ${planets[key].sign} ${planets[key].degree}°</li>`;
+            }
+            outputHTML += `</ul><h3>Houses</h3><ul>`;
+            for (let i = 1; i <= 12; i++) {
+              outputHTML += `<li>House ${i}: ${houses[i].sign} ${houses[i].degree}°</li>`;
+            }
+            outputHTML += `</ul>`;
+          }
+          resultsDiv.innerHTML = outputHTML;
+
+          // Draw the birth chart wheel using your image and overlay planets
+          chartContainer.style.display = 'flex';
+          const ctx = canvas.getContext('2d');
+          const wheelImg = new Image();
+          wheelImg.src = 'https://i.ibb.co/4n68qcsP/Untitled-design.png';
+
+          wheelImg.onload = function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(wheelImg, 0, 0, canvas.width, canvas.height);
+
+            // Overlay planets
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2 - 30;
+
+            for (const key in planetsRaw) {
+              const deg = planetsRaw[key].lon;
+              const angle = (deg - 90) * Math.PI / 180;
+              const x = centerX + radius * Math.cos(angle);
+              const y = centerY + radius * Math.sin(angle);
+
+              ctx.beginPath();
+              ctx.arc(x, y, 8, 0, 2 * Math.PI);
+              ctx.fillStyle = '#b23cf0';
+              ctx.fill();
+
+              ctx.font = '12px Arial';
+              ctx.fillStyle = '#222';
+              ctx.fillText(key, x + 10, y);
+            }
+          };
+
+          // Draw a dummy moon sky map (for demo purposes)
+          skyContainer.style.display = 'block';
+          skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
+          const skyX = 200;
+          const skyY = 80;
+          skyCtx.fillStyle = 'white';
+          skyCtx.beginPath();
+          skyCtx.arc(skyX, skyY, 8, 0, 2 * Math.PI);
+          skyCtx.fill();
+          skyCtx.font = '14px sans-serif';
+          skyCtx.fillStyle = '#ccc';
+          skyCtx.fillText('Moon', skyX + 15, skyY + 5);
+
+          downloadBtn.onclick = () => {
+            const link = document.createElement('a');
+            link.download = 'sky-map.png';
+            link.href = skyCanvas.toDataURL();
+            link.click();
+          };
+
+        } catch (err) {
+          resultsDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+          chartContainer.style.display = 'none';
+          skyContainer.style.display = 'none';
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>
