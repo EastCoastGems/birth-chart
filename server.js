@@ -1,51 +1,171 @@
-const express = require('express');
-const cors = require('cors');
-const swisseph = require('swisseph');
+(function() {
+  // OpenCage API key
+  const apiKey = 'f4828f886eb04102855182883c0428a2';
 
-const app = express();
+  const form = document.getElementById('birth-form');
+  const resultsDiv = document.getElementById('results');
+  const chartContainer = document.querySelector('.chart-container');
+  const canvas = document.getElementById('birth-chart');
+  const skyContainer = document.querySelector('.sky-container');
+  const skyCanvas = document.getElementById('skyCanvas');
+  const skyCtx = skyCanvas.getContext('2d');
+  const downloadBtn = document.getElementById('downloadBtn');
 
-// Allow CORS for local dev and GitHub Pages
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:8080',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:8080',
-    'https://eastcoastgems.github.io'
-  ]
-}));
-app.use(express.json());
+  // Zodiac signs array
+  const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+                "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
 
-app.post('/chart', (req, res) => {
-  const { year, month, day, hour, minute, lat, lng } = req.body;
-  const utcHour = hour + minute / 60;
+  // Helper: Convert degrees to sign and degree within that sign
+  function degToSign(deg) {
+    deg = ((deg % 360) + 360) % 360;
+    const index = Math.floor(deg / 30);
+    return { sign: signs[index], degree: (deg % 30).toFixed(2), raw: deg };
+  }
 
-  swisseph.swe_set_ephe_path('.');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    resultsDiv.innerHTML = '<p class="loading">Calculating birth chart...</p>';
+    chartContainer.style.display = 'none';
+    skyContainer.style.display = 'none';
 
-  const jd = swisseph.swe_julday(year, month, day, utcHour, swisseph.SE_GREG_CAL);
+    const date = document.getElementById('birthdate').value;
+    const time = document.getElementById('birthtime').value;
+    const location = document.getElementById('location').value;
+    const readingType = document.querySelector('input[name="readingType"]:checked').value;
 
-  swisseph.swe_houses(jd, lat, lng, 'P', (houses) => {
-    const planets = {};
-    const planetIds = [
-      swisseph.SE_SUN, swisseph.SE_MOON, swisseph.SE_MERCURY, swisseph.SE_VENUS,
-      swisseph.SE_MARS, swisseph.SE_JUPITER, swisseph.SE_SATURN,
-      swisseph.SE_URANUS, swisseph.SE_NEPTUNE, swisseph.SE_PLUTO
-    ];
-    let completed = 0;
-    planetIds.forEach((pid) => {
-      swisseph.swe_calc_ut(jd, pid, swisseph.SEFLG_SWIEPH, (planet) => {
-        planets[pid] = planet.longitude;
-        completed++;
-        if (completed === planetIds.length) {
-          res.json({
-            ascendant: houses.ascendant,
-            houses: houses.houses || houses,
-            planets
-          });
-        }
+    if (!date || !time || !location) {
+      resultsDiv.innerHTML = '<p style="color:red;">Please fill out all fields.</p>';
+      return;
+    }
+
+    try {
+      // Geocode the birthplace
+      const geoRes = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(location)}&key=${apiKey}`);
+      const geoData = await geoRes.json();
+      if (!geoData.results.length) throw new Error('Location not found');
+      const { lat, lng } = geoData.results[0].geometry;
+
+      // Parse date and time
+      const [year, month, day] = date.split('-').map(Number);
+      const [hour, minute] = time.split(':').map(Number);
+
+      // Call your Node.js backend for Swiss Ephemeris calculations
+      const backendRes = await fetch('https://birth-chart-5kyi.onrender.com/chart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
       });
-    });
-  });
-});
+      if (!backendRes.ok) throw new Error('Backend error');
+      const backendData = await backendRes.json();
+      console.log(backendData); // For debugging
 
-app.listen(3001, () => console.log('Swiss Ephemeris backend running on port 3001'));
+      const ascendant = backendData.ascendant;
+      const housesRaw = { houses: backendData.houses, ascendant: backendData.ascendant };
+      const planetsRaw = {};
+      const planetNames = {
+        0: 'Sun', 1: 'Moon', 2: 'Mercury', 3: 'Venus', 4: 'Mars',
+        5: 'Jupiter', 6: 'Saturn', 7: 'Uranus', 8: 'Neptune', 9: 'Pluto'
+      };
+      for (const pid in backendData.planets) {
+        planetsRaw[planetNames[pid]] = { lon: backendData.planets[pid] };
+      }
+
+      // Process planet data
+      const planets = {};
+      for (const key in planetsRaw) {
+        const lon = planetsRaw[key].lon;
+        planets[key] = degToSign(lon);
+      }
+
+      // Process house data (works for both array and object)
+      const houses = {};
+      const hsrc = housesRaw.houses;
+      for (let i = 1; i <= 12; i++) {
+        let houseDeg;
+        if (Array.isArray(hsrc)) {
+          houseDeg = hsrc[i-1];
+        } else {
+          houseDeg = hsrc[i] ?? hsrc[String(i)];
+        }
+        houses[i] = degToSign(houseDeg);
+      }
+
+      // Build result HTML
+      let outputHTML = `<h2>Your Birth Chart Details</h2>`;
+      outputHTML += `<p><strong>Coordinates:</strong> ${lat.toFixed(2)}, ${lng.toFixed(2)}</p>`;
+      outputHTML += `<p><strong>Ascendant (Rising):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
+      if (readingType === 'bigThree') {
+        outputHTML += `<ul>
+          <li><strong>Sun:</strong> ${degToSign(planetsRaw.Sun.lon).sign} ${degToSign(planetsRaw.Sun.lon).degree}°</li>
+          <li><strong>Moon:</strong> ${degToSign(planetsRaw.Moon.lon).sign} ${degToSign(planetsRaw.Moon.lon).degree}°</li>
+          <li><strong>Ascendant:</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</li>
+        </ul>`;
+      } else {
+        outputHTML += `<h3>Planets</h3><ul>`;
+        for (const key in planets) {
+          outputHTML += `<li><strong>${key}:</strong> ${planets[key].sign} ${planets[key].degree}°</li>`;
+        }
+        outputHTML += `</ul><h3>Houses</h3><ul>`;
+        for (let i = 1; i <= 12; i++) {
+          outputHTML += `<li>House ${i}: ${houses[i].sign} ${houses[i].degree}°</li>`;
+        }
+        outputHTML += `</ul>`;
+      }
+      resultsDiv.innerHTML = outputHTML;
+
+      // Draw the birth chart wheel using your image and overlay planets
+      chartContainer.style.display = 'flex';
+      const ctx = canvas.getContext('2d');
+      const wheelImg = new Image();
+      wheelImg.src = 'https://i.ibb.co/4n68qcsP/Untitled-design.png';
+
+      wheelImg.onload = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(wheelImg, 0, 0, canvas.width, canvas.height);
+
+        // Overlay planets
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = canvas.width / 2 - 30; // adjust as needed
+
+        for (const key in planetsRaw) {
+          const deg = planetsRaw[key].lon;
+          const angle = (deg - 90) * Math.PI / 180; // 0° Aries at top
+          const x = centerX + radius * Math.cos(angle);
+          const y = centerY + radius * Math.sin(angle);
+
+          ctx.beginPath();
+          ctx.arc(x, y, 8, 0, 2 * Math.PI);
+          ctx.fillStyle = '#b23cf0';
+          ctx.fill();
+
+          ctx.font = '12px Arial';
+          ctx.fillStyle = '#222';
+          ctx.fillText(key, x + 10, y);
+        }
+      };
+
+      // Draw a dummy moon sky map (for demo purposes)
+      skyContainer.style.display = 'block';
+      skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
+      const skyX = 200; // fixed X coordinate
+      const skyY = 80;  // fixed Y coordinate
+      skyCtx.fillStyle = 'white';
+      skyCtx.beginPath();
+      skyCtx.arc(skyX, skyY, 8, 0, 2 * Math.PI);
+      skyCtx.fill();
+      skyCtx.font = '14px sans-serif';
+      skyCtx.fillStyle = '#ccc';
+      skyCtx.fillText('Moon', skyX + 15, skyY + 5);
+
+      // Setup download button for sky map
+      downloadBtn.onclick = () => {
+        const link = document.createElement('a');
+        link.download = 'sky-map.png';
+        link.href = skyCanvas.toDataURL();
+        link.click();
+      };
+
+    } catch (err) {
+      resultsDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+      chartContainer.style.display =
