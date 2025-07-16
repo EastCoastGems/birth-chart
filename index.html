@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discover Your Astrology Blueprint</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 2rem;
+      text-align: center;
+    }
+    header img {
+      max-width: 180px;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      color: #b23cf0;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    form, #results {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: 1rem auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 1.5rem;
+      background: #b23cf0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #962dcc;
+    }
+    .radio-group label {
+      display: inline-block;
+      margin-right: 1rem;
+    }
+    .chart-container {
+      display: none;
+      margin: 2rem auto;
+      border-radius: 50%;
+      background: linear-gradient(90deg,
+        rgba(255,0,0,0.12),
+        rgba(255,127,0,0.12),
+        rgba(255,255,0,0.12),
+        rgba(0,255,0,0.12),
+        rgba(0,0,255,0.12),
+        rgba(75,0,130,0.12),
+        rgba(148,0,211,0.12));
+      width: 350px;
+      height: 350px;
+      justify-content: center;
+      align-items: center;
+    }
+    #birth-chart {
+      background: transparent;
+    }
+    .sky-container {
+      display: none;
+      margin: 2rem auto;
+      max-width: 400px;
+    }
+    #skyCanvas {
+      width: 100%;
+      height: 200px;
+      background: radial-gradient(ellipse at bottom, #00162b, #000);
+      border-radius: 8px;
+    }
+    #downloadBtn {
+      margin-top: 0.5rem;
+      background: #444;
+      color: white;
+      width: auto;
+      padding: 0.5rem 1rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .loading {
+      font-style: italic;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="Site Logo">
+  </header>
+
+  <h1>Discover Your Astrology Blueprint</h1>
+
+  <form id="birth-form" autocomplete="off">
+    <label>Date of Birth:
+      <input type="date" id="birthdate" required />
+    </label>
+    <label>Time of Birth:
+      <input type="time" id="birthtime" required />
+    </label>
+    <label>Birthplace (City, State):
+      <input type="text" id="location" placeholder="e.g. Brooklyn, NY" required />
+    </label>
+
+    <div class="radio-group">
+      <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label>
+      <label><input type="radio" name="readingType" value="fullChart"> Full Chart</label>
+    </div>
+
+    <button type="submit">Generate Chart</button>
+  </form>
+
+  <div class="chart-container">
+    <canvas id="birth-chart" width="350" height="350"></canvas>
+  </div>
+
+  <div class="sky-container">
+    <canvas id="skyCanvas" width="350" height="200"></canvas>
+    <button id="downloadBtn">Download Your Sky Map</button>
+  </div>
+
+  <div id="results"></div>
+
+  <!-- AstroChart.js (using version 1.0.5 which exposes global AstroChart) -->
+  <script src="https://cdn.jsdelivr.net/npm/astrochart@1.0.5/dist/astrochart.min.js"></script>
+
+  <script>
+    (function() {
+      // OpenCage API key
+      const apiKey = 'f4828f886eb04102855182883c0428a2';
+
+      const form = document.getElementById('birth-form');
+      const resultsDiv = document.getElementById('results');
+      const chartContainer = document.querySelector('.chart-container');
+      const canvas = document.getElementById('birth-chart');
+      const skyContainer = document.querySelector('.sky-container');
+      const skyCanvas = document.getElementById('skyCanvas');
+      const skyCtx = skyCanvas.getContext('2d');
+      const downloadBtn = document.getElementById('downloadBtn');
+
+      // Zodiac signs array
+      const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+                    "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+
+      // Helper: Convert degrees to sign and degree within that sign
+      function degToSign(deg) {
+        deg = ((deg % 360) + 360) % 360;
+        const index = Math.floor(deg / 30);
+        return { sign: signs[index], degree: (deg % 30).toFixed(2), raw: deg };
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        resultsDiv.innerHTML = '<p class="loading">Calculating birth chart...</p>';
+        chartContainer.style.display = 'none';
+        skyContainer.style.display = 'none';
+
+        const date = document.getElementById('birthdate').value;
+        const time = document.getElementById('birthtime').value;
+        const location = document.getElementById('location').value;
+        const readingType = document.querySelector('input[name="readingType"]:checked').value;
+
+        if (!date || !time || !location) {
+          resultsDiv.innerHTML = '<p style="color:red;">Please fill out all fields.</p>';
+          return;
+        }
+
+        try {
+          // Geocode the birthplace
+          const geoRes = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(location)}&key=${apiKey}`);
+          const geoData = await geoRes.json();
+          if (!geoData.results.length) throw new Error('Location not found');
+          const { lat, lng } = geoData.results[0].geometry;
+
+          // Parse date and time
+          const [year, month, day] = date.split('-').map(Number);
+          const [hour, minute] = time.split(':').map(Number);
+
+          // Call your Node.js backend for Swiss Ephemeris calculations
+          const backendRes = await fetch('http://localhost:3001/chart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
+          });
+          if (!backendRes.ok) throw new Error('Backend error');
+          const backendData = await backendRes.json();
+          console.log(backendData); // For debugging
+
+          const ascendant = backendData.ascendant;
+          const housesRaw = { houses: backendData.houses, ascendant: backendData.ascendant };
+          const planetsRaw = {};
+          const planetNames = {
+            0: 'Sun', 1: 'Moon', 2: 'Mercury', 3: 'Venus', 4: 'Mars',
+            5: 'Jupiter', 6: 'Saturn', 7: 'Uranus', 8: 'Neptune', 9: 'Pluto'
+          };
+          for (const pid in backendData.planets) {
+            planetsRaw[planetNames[pid]] = { lon: backendData.planets[pid] };
+          }
+
+          // Process planet data
+          const planets = {};
+          for (const key in planetsRaw) {
+            const lon = planetsRaw[key].lon;
+            planets[key] = degToSign(lon);
+          }
+
+          // Process house data (works for both array and object)
+          const houses = {};
+          const hsrc = housesRaw.houses;
+          for (let i = 1; i <= 12; i++) {
+            let houseDeg;
+            if (Array.isArray(hsrc)) {
+              houseDeg = hsrc[i-1];
+            } else {
+              houseDeg = hsrc[i] ?? hsrc[String(i)];
+            }
+            houses[i] = degToSign(houseDeg);
+          }
+
+          // Build result HTML
+          let outputHTML = `<h2>Your Birth Chart Details</h2>`;
+          outputHTML += `<p><strong>Coordinates:</strong> ${lat.toFixed(2)}, ${lng.toFixed(2)}</p>`;
+          outputHTML += `<p><strong>Ascendant (Rising):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
+          if (readingType === 'bigThree') {
+            outputHTML += `<ul>
+              <li><strong>Sun:</strong> ${degToSign(planetsRaw.Sun.lon).sign} ${degToSign(planetsRaw.Sun.lon).degree}°</li>
+              <li><strong>Moon:</strong> ${degToSign(planetsRaw.Moon.lon).sign} ${degToSign(planetsRaw.Moon.lon).degree}°</li>
+              <li><strong>Ascendant:</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</li>
+            </ul>`;
+          } else {
+            outputHTML += `<h3>Planets</h3><ul>`;
+            for (const key in planets) {
+              outputHTML += `<li><strong>${key}:</strong> ${planets[key].sign} ${planets[key].degree}°</li>`;
+            }
+            outputHTML += `</ul><h3>Houses</h3><ul>`;
+            for (let i = 1; i <= 12; i++) {
+              outputHTML += `<li>House ${i}: ${houses[i].sign} ${houses[i].degree}°</li>`;
+            }
+            outputHTML += `</ul>`;
+          }
+          resultsDiv.innerHTML = outputHTML;
+
+          // Draw the birth chart wheel using AstroChart.js
+          chartContainer.style.display = 'flex';
+          const chartObj = new AstroChart.Chart("birth-chart", {
+            width: 350,
+            height: 350,
+            options: {
+              showAscendantLine: true,
+              showHouseLines: true,
+              colors: {
+                zodiacWheel: '#ddd',
+                houses: '#aaa',
+                planetDots: '#b23cf0',
+                ascendantLine: '#962dcc'
+              }
+            }
+          });
+          const planetPositions = {};
+          if (readingType === 'bigThree') {
+            planetPositions['Sun'] = planetsRaw.Sun.lon;
+            planetPositions['Moon'] = planetsRaw.Moon.lon;
+            planetPositions['Ascendant'] = ascendant;
+          } else {
+            for (const key in planetsRaw) {
+              planetPositions[key] = planetsRaw[key].lon;
+            }
+          }
+          chartObj.setPlanets(planetPositions);
+          const housePositions = {};
+          for (let i = 1; i <= 12; i++) {
+            if (Array.isArray(hsrc)) {
+              housePositions['house' + i] = hsrc[i-1];
+            } else {
+              housePositions['house' + i] = hsrc[i] ?? hsrc[String(i)];
+            }
+          }
+          chartObj.setHouses(housePositions);
+          chartObj.draw();
+
+          // Draw a dummy moon sky map (for demo purposes)
+          skyContainer.style.display = 'block';
+          skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
+          const skyX = 200; // fixed X coordinate
+          const skyY = 80;  // fixed Y coordinate
+          skyCtx.fillStyle = 'white';
+          skyCtx.beginPath();
+          skyCtx.arc(skyX, skyY, 8, 0, 2 * Math.PI);
+          skyCtx.fill();
+          skyCtx.font = '14px sans-serif';
+          skyCtx.fillStyle = '#ccc';
+          skyCtx.fillText('Moon', skyX + 15, skyY + 5);
+
+          // Setup download button for sky map
+          downloadBtn.onclick = () => {
+            const link = document.createElement('a');
+            link.download = 'sky-map.png';
+            link.href = skyCanvas.toDataURL();
+            link.click();
+          };
+
+        } catch (err) {
+          resultsDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+          chartContainer.style.display = 'none';
+          skyContainer.style.display = 'none';
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>
