@@ -140,9 +140,6 @@
 
   <div id="results"></div>
 
-  <!-- AstroChart.js (must be loaded before your script) -->
-<script src="https://cdn.jsdelivr.net/npm/astrochart@1.0.5/dist/astrochart.min.js"></script>
-  
   <script>
     (function() {
       // OpenCage API key
@@ -259,43 +256,37 @@
           }
           resultsDiv.innerHTML = outputHTML;
 
-          // Draw the birth chart wheel using AstroChart.js
+          // Draw the birth chart wheel using your image and overlay planets
           chartContainer.style.display = 'flex';
-          const chartObj = new AstroChart.Chart("birth-chart", {
-            width: 350,
-            height: 350,
-            options: {
-              showAscendantLine: true,
-              showHouseLines: true,
-              colors: {
-                zodiacWheel: '#ddd',
-                houses: '#aaa',
-                planetDots: '#b23cf0',
-                ascendantLine: '#962dcc'
-              }
-            }
-          });
-          const planetPositions = {};
-          if (readingType === 'bigThree') {
-            planetPositions['Sun'] = planetsRaw.Sun.lon;
-            planetPositions['Moon'] = planetsRaw.Moon.lon;
-            planetPositions['Ascendant'] = ascendant;
-          } else {
+          const ctx = canvas.getContext('2d');
+          const wheelImg = new Image();
+          wheelImg.src = 'https://i.ibb.co/4n68qcsP/Untitled-design.png';
+
+          wheelImg.onload = function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(wheelImg, 0, 0, canvas.width, canvas.height);
+
+            // Overlay planets
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2 - 30; // adjust as needed
+
             for (const key in planetsRaw) {
-              planetPositions[key] = planetsRaw[key].lon;
+              const deg = planetsRaw[key].lon;
+              const angle = (deg - 90) * Math.PI / 180; // 0° Aries at top
+              const x = centerX + radius * Math.cos(angle);
+              const y = centerY + radius * Math.sin(angle);
+
+              ctx.beginPath();
+              ctx.arc(x, y, 8, 0, 2 * Math.PI);
+              ctx.fillStyle = '#b23cf0';
+              ctx.fill();
+
+              ctx.font = '12px Arial';
+              ctx.fillStyle = '#222';
+              ctx.fillText(key, x + 10, y);
             }
-          }
-          chartObj.setPlanets(planetPositions);
-          const housePositions = {};
-          for (let i = 1; i <= 12; i++) {
-            if (Array.isArray(hsrc)) {
-              housePositions['house' + i] = hsrc[i-1];
-            } else {
-              housePositions['house' + i] = hsrc[i] ?? hsrc[String(i)];
-            }
-          }
-          chartObj.setHouses(housePositions);
-          chartObj.draw();
+          };
 
           // Draw a dummy moon sky map (for demo purposes)
           skyContainer.style.display = 'block';
