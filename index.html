@@ -168,6 +168,10 @@
         Mars: "#ff6961", Jupiter: "#b2d8b2", Saturn: "#e6e6b2",
         Uranus: "#b2e6e6", Neptune: "#b2b2e6", Pluto: "#d1b2e6"
       };
+      const planetSymbols = {
+        Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
+        Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆", Pluto: "♇"
+      };
 
       function degToSign(deg) {
         deg = ((deg % 360) + 360) % 360;
@@ -177,14 +181,58 @@
 
       // Helper: Convert ecliptic longitude to azimuth (simplified for sky map)
       function eclipticToAzimuth(deg) {
-        // For demo: map 0-360° ecliptic to 0-350px width
         return (deg / 360) * skyCanvas.width;
       }
 
-      // Helper: Map planet "height" in sky (for demo, randomize a bit)
-      function planetAltitude(idx) {
-        // Spread planets vertically for visibility
-        return 60 + 60 * Math.sin(idx * 0.6);
+      // Helper: Map planet "height" in sky (simulate altitude for demo)
+      function planetAltitude(deg) {
+        // Simulate: planets near 0/360° are higher, 180° are lower
+        return 100 - 60 * Math.cos(deg * Math.PI / 180);
+      }
+
+      // Calculate aspects between planets (simple: only major aspects)
+      function calculateAspects(planetsRaw) {
+        const aspects = [];
+        const aspectAngles = [
+          { name: "Conjunction", symbol: "☌", angle: 0, orb: 8 },
+          { name: "Opposition", symbol: "☍", angle: 180, orb: 8 },
+          { name: "Trine", symbol: "△", angle: 120, orb: 7 },
+          { name: "Square", symbol: "□", angle: 90, orb: 6 },
+          { name: "Sextile", symbol: "✶", angle: 60, orb: 5 }
+        ];
+        const keys = Object.keys(planetsRaw);
+        for (let i = 0; i < keys.length; i++) {
+          for (let j = i + 1; j < keys.length; j++) {
+            const p1 = keys[i], p2 = keys[j];
+            const lon1 = planetsRaw[p1].lon, lon2 = planetsRaw[p2].lon;
+            let diff = Math.abs(lon1 - lon2);
+            if (diff > 180) diff = 360 - diff;
+            for (const asp of aspectAngles) {
+              if (Math.abs(diff - asp.angle) <= asp.orb) {
+                aspects.push({
+                  p1, p2, type: asp.name, symbol: asp.symbol, orb: Math.abs(diff - asp.angle).toFixed(2)
+                });
+              }
+            }
+          }
+        }
+        return aspects;
+      }
+
+      // Simple chart pattern detector (bundle, bowl, splash, etc.)
+      function detectChartPattern(planetsRaw) {
+        const longitudes = Object.values(planetsRaw).map(p => p.lon).sort((a, b) => a - b);
+        let maxGap = 0;
+        for (let i = 0; i < longitudes.length; i++) {
+          const next = longitudes[(i + 1) % longitudes.length];
+          let gap = (next - longitudes[i] + 360) % 360;
+          if (gap > maxGap) maxGap = gap;
+        }
+        if (maxGap > 180) return "Splash (planets scattered around the chart)";
+        if (maxGap > 120) return "Bowl (planets occupy half the chart)";
+        if (maxGap > 90) return "Bucket (planets occupy less than half, one planet isolated)";
+        if (maxGap > 60) return "Locomotive (planets occupy two-thirds of the chart)";
+        return "Bundle (planets tightly grouped)";
       }
 
       form.addEventListener('submit', async (e) => {
@@ -250,22 +298,27 @@
             } else {
               houseDeg = hsrc[i] ?? hsrc[String(i)];
             }
+            if (typeof houseDeg !== "number" || isNaN(houseDeg)) houseDeg = 0;
             houses[i] = degToSign(houseDeg);
           }
+
+          // Calculate aspects and chart pattern
+          const aspects = calculateAspects(planetsRaw);
+          const chartPattern = detectChartPattern(planetsRaw);
 
           let outputHTML = `<h2>Your Birth Chart Details</h2>`;
           outputHTML += `<p><strong>Coordinates:</strong> ${lat.toFixed(2)}, ${lng.toFixed(2)}</p>`;
           outputHTML += `<p><strong>Ascendant (Rising):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
           if (readingType === 'bigThree') {
             outputHTML += `<ul>
-              <li><strong>Sun:</strong> ${degToSign(planetsRaw.Sun.lon).sign} ${degToSign(planetsRaw.Sun.lon).degree}°</li>
-              <li><strong>Moon:</strong> ${degToSign(planetsRaw.Moon.lon).sign} ${degToSign(planetsRaw.Moon.lon).degree}°</li>
+              <li><strong>${planetSymbols.Sun} Sun:</strong> ${degToSign(planetsRaw.Sun.lon).sign} ${degToSign(planetsRaw.Sun.lon).degree}°</li>
+              <li><strong>${planetSymbols.Moon} Moon:</strong> ${degToSign(planetsRaw.Moon.lon).sign} ${degToSign(planetsRaw.Moon.lon).degree}°</li>
               <li><strong>Ascendant:</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</li>
             </ul>`;
           } else {
             outputHTML += `<h3>Planets</h3><ul>`;
             for (const key in planets) {
-              outputHTML += `<li><strong>${key}:</strong> ${planets[key].sign} ${planets[key].degree}°</li>`;
+              outputHTML += `<li><strong>${planetSymbols[key] || key} ${key}:</strong> ${planets[key].sign} ${planets[key].degree}°</li>`;
             }
             outputHTML += `</ul><h3>Houses</h3><ul>`;
             for (let i = 1; i <= 12; i++) {
@@ -273,6 +326,22 @@
             }
             outputHTML += `</ul>`;
           }
+
+          // Chart pattern section
+          outputHTML += `<h3>Chart Pattern</h3><p>${chartPattern}</p>`;
+
+          // Aspects section
+          outputHTML += `<h3>Major Aspects</h3>`;
+          if (aspects.length === 0) {
+            outputHTML += `<p>No major aspects found.</p>`;
+          } else {
+            outputHTML += `<ul>`;
+            for (const asp of aspects) {
+              outputHTML += `<li>${planetSymbols[asp.p1] || asp.p1} ${asp.p1} ${asp.symbol} ${planetSymbols[asp.p2] || asp.p2} ${asp.p2} (orb: ${asp.orb}°)</li>`;
+            }
+            outputHTML += `</ul>`;
+          }
+
           resultsDiv.innerHTML = outputHTML;
 
           // Draw the birth chart wheel using your image and overlay planets and houses
@@ -322,34 +391,52 @@
               ctx.fillStyle = planetColors[key] || '#b23cf0';
               ctx.fill();
 
-              ctx.font = '11px Arial';
+              ctx.font = '15px Arial';
               ctx.fillStyle = '#222';
-              ctx.fillText(key, x + 8, y);
+              ctx.fillText(planetSymbols[key] || key, x + 8, y + 5);
               idx++;
             }
           };
-          wheelImg.src = 'https://i.ibb.co/4ZJbbsnC/Untitled-design.png';
+          wheelImg.src = 'https://i.ibb.co/4n68qcsP/Untitled-design.png';
           if (wheelImg.complete) wheelImg.onload();
 
-          // Draw a real sky map: planets as dots along the horizon
+          // Draw a realistic sky map
           skyContainer.style.display = 'block';
           skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
 
-          let planetIdx = 0;
+          // Sky gradient
+          let grad = skyCtx.createLinearGradient(0, 0, 0, skyCanvas.height);
+          grad.addColorStop(0, "#00162b");
+          grad.addColorStop(1, "#000");
+          skyCtx.fillStyle = grad;
+          skyCtx.fillRect(0, 0, skyCanvas.width, skyCanvas.height);
+
+                  // Random stars
+          for (let i = 0; i < 80; i++) {
+            skyCtx.beginPath();
+            skyCtx.arc(Math.random() * skyCanvas.width, Math.random() * skyCanvas.height, Math.random() * 1.2, 0, 2 * Math.PI);
+            skyCtx.fillStyle = "#fff";
+            skyCtx.globalAlpha = Math.random() * 0.7 + 0.3;
+            skyCtx.fill();
+          }
+          skyCtx.globalAlpha = 1;
+
+          // Planets as colored dots with symbols
           for (const key in planetsRaw) {
             const deg = planetsRaw[key].lon;
             const x = eclipticToAzimuth(deg);
-            const y = planetAltitude(planetIdx);
+            const y = planetAltitude(deg);
 
             skyCtx.beginPath();
             skyCtx.arc(x, y, 8, 0, 2 * Math.PI);
             skyCtx.fillStyle = planetColors[key] || '#b23cf0';
+            skyCtx.shadowColor = skyCtx.fillStyle;
+            skyCtx.shadowBlur = 10;
             skyCtx.fill();
-
-            skyCtx.font = '13px Arial';
+            skyCtx.shadowBlur = 0;
+            skyCtx.font = '18px Arial';
             skyCtx.fillStyle = '#fff';
-            skyCtx.fillText(key, x + 12, y + 4);
-            planetIdx++;
+            skyCtx.fillText(planetSymbols[key] || key, x - 7, y + 7);
           }
 
           downloadBtn.onclick = () => {
