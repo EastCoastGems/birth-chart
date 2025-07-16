@@ -3,7 +3,17 @@ const cors = require('cors');
 const swisseph = require('swisseph');
 
 const app = express();
-app.use(cors());
+
+// Allow CORS for local dev and GitHub Pages
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:8080',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:8080',
+    'https://eastcoastgems.github.io'
+  ]
+}));
 app.use(express.json());
 
 app.post('/chart', (req, res) => {
@@ -27,10 +37,9 @@ app.post('/chart', (req, res) => {
         planets[pid] = planet.longitude;
         completed++;
         if (completed === planetIds.length) {
-          // Always return a 'houses' property (array or object)
           res.json({
             ascendant: houses.ascendant,
-            houses: houses.houses || houses, // fallback to houses if houses.houses is undefined
+            houses: houses.houses || houses,
             planets
           });
         }
