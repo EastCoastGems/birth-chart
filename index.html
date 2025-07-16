@@ -100,6 +100,13 @@
       font-style: italic;
       color: #666;
     }
+    #chart-description {
+      margin: 1rem auto;
+      max-width: 400px;
+      color: #444;
+      font-size: 1.1em;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -120,21 +127,23 @@
     <label>Birthplace (City, State):
       <input type="text" id="location" placeholder="e.g. Brooklyn, NY" required />
     </label>
-
     <div class="radio-group">
       <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label>
       <label><input type="radio" name="readingType" value="fullChart"> Full Chart</label>
     </div>
-
     <button type="submit">Generate Chart</button>
   </form>
 
+  <div id="chart-description">
+    Your personalized astrology wheel with planetary positions and house cusps.
+  </div>
+
   <div class="chart-container">
-    <canvas id="birth-chart" width="350" height="350"></canvas>
+    <canvas id="birth-chart" width="350" height="350" aria-label="Astrology chart wheel"></canvas>
   </div>
 
   <div class="sky-container">
-    <canvas id="skyCanvas" width="350" height="200"></canvas>
+    <canvas id="skyCanvas" width="350" height="200" aria-label="Sky map"></canvas>
     <button id="downloadBtn">Download Your Sky Map</button>
   </div>
 
@@ -142,9 +151,7 @@
 
   <script>
     (function() {
-      // OpenCage API key
       const apiKey = 'f4828f886eb04102855182883c0428a2';
-
       const form = document.getElementById('birth-form');
       const resultsDiv = document.getElementById('results');
       const chartContainer = document.querySelector('.chart-container');
@@ -153,16 +160,31 @@
       const skyCanvas = document.getElementById('skyCanvas');
       const skyCtx = skyCanvas.getContext('2d');
       const downloadBtn = document.getElementById('downloadBtn');
-
-      // Zodiac signs array
+      const chartDesc = document.getElementById('chart-description');
       const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
-                    "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+        "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+      const planetColors = {
+        Sun: "#FFD700", Moon: "#B0C4DE", Mercury: "#aaa", Venus: "#e699b2",
+        Mars: "#ff6961", Jupiter: "#b2d8b2", Saturn: "#e6e6b2",
+        Uranus: "#b2e6e6", Neptune: "#b2b2e6", Pluto: "#d1b2e6"
+      };
 
-      // Helper: Convert degrees to sign and degree within that sign
       function degToSign(deg) {
         deg = ((deg % 360) + 360) % 360;
         const index = Math.floor(deg / 30);
         return { sign: signs[index], degree: (deg % 30).toFixed(2), raw: deg };
+      }
+
+      // Helper: Convert ecliptic longitude to azimuth (simplified for sky map)
+      function eclipticToAzimuth(deg) {
+        // For demo: map 0-360° ecliptic to 0-350px width
+        return (deg / 360) * skyCanvas.width;
+      }
+
+      // Helper: Map planet "height" in sky (for demo, randomize a bit)
+      function planetAltitude(idx) {
+        // Spread planets vertically for visibility
+        return 60 + 60 * Math.sin(idx * 0.6);
       }
 
       form.addEventListener('submit', async (e) => {
@@ -170,6 +192,7 @@
         resultsDiv.innerHTML = '<p class="loading">Calculating birth chart...</p>';
         chartContainer.style.display = 'none';
         skyContainer.style.display = 'none';
+        chartDesc.style.display = 'none';
 
         const date = document.getElementById('birthdate').value;
         const time = document.getElementById('birthtime').value;
@@ -200,7 +223,6 @@
           });
           if (!backendRes.ok) throw new Error('Backend error');
           const backendData = await backendRes.json();
-          console.log(backendData); // For debugging
 
           const ascendant = backendData.ascendant;
           const housesRaw = { houses: backendData.houses, ascendant: backendData.ascendant };
@@ -213,14 +235,12 @@
             planetsRaw[planetNames[pid]] = { lon: backendData.planets[pid] };
           }
 
-          // Process planet data
           const planets = {};
           for (const key in planetsRaw) {
             const lon = planetsRaw[key].lon;
             planets[key] = degToSign(lon);
           }
 
-          // Process house data (works for both array and object)
           const houses = {};
           const hsrc = housesRaw.houses;
           for (let i = 1; i <= 12; i++) {
@@ -233,7 +253,6 @@
             houses[i] = degToSign(houseDeg);
           }
 
-          // Build result HTML
           let outputHTML = `<h2>Your Birth Chart Details</h2>`;
           outputHTML += `<p><strong>Coordinates:</strong> ${lat.toFixed(2)}, ${lng.toFixed(2)}</p>`;
           outputHTML += `<p><strong>Ascendant (Rising):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
@@ -256,52 +275,83 @@
           }
           resultsDiv.innerHTML = outputHTML;
 
-          // Draw the birth chart wheel using your image and overlay planets
+          // Draw the birth chart wheel using your image and overlay planets and houses
           chartContainer.style.display = 'flex';
+          chartDesc.style.display = 'block';
           const ctx = canvas.getContext('2d');
           const wheelImg = new Image();
-          wheelImg.src = 'https://i.ibb.co/4n68qcsP/Untitled-design.png';
-
           wheelImg.onload = function() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(wheelImg, 0, 0, canvas.width, canvas.height);
 
-            // Overlay planets
+            // Overlay house cusps as lines and numbers
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-            const radius = canvas.width / 2 - 30; // adjust as needed
+            const radius = canvas.width / 2 - 30;
 
+            ctx.save();
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 2;
+            ctx.font = '10px Arial';
+            ctx.fillStyle = '#222';
+            for (let i = 1; i <= 12; i++) {
+              const deg = houses[i].raw;
+              const angle = (deg - 90) * Math.PI / 180;
+              const x = centerX + (radius + 10) * Math.cos(angle);
+              const y = centerY + (radius + 10) * Math.sin(angle);
+
+              ctx.beginPath();
+              ctx.moveTo(centerX, centerY);
+              ctx.lineTo(x, y);
+              ctx.stroke();
+
+              ctx.fillText(i, x + 5, y + 5);
+            }
+            ctx.restore();
+
+            // Overlay planets (smaller markers)
+            let idx = 0;
             for (const key in planetsRaw) {
               const deg = planetsRaw[key].lon;
-              const angle = (deg - 90) * Math.PI / 180; // 0° Aries at top
+              const angle = (deg - 90) * Math.PI / 180;
               const x = centerX + radius * Math.cos(angle);
               const y = centerY + radius * Math.sin(angle);
 
               ctx.beginPath();
-              ctx.arc(x, y, 8, 0, 2 * Math.PI);
-              ctx.fillStyle = '#b23cf0';
+              ctx.arc(x, y, 5, 0, 2 * Math.PI);
+              ctx.fillStyle = planetColors[key] || '#b23cf0';
               ctx.fill();
 
-              ctx.font = '12px Arial';
+              ctx.font = '11px Arial';
               ctx.fillStyle = '#222';
-              ctx.fillText(key, x + 10, y);
+              ctx.fillText(key, x + 8, y);
+              idx++;
             }
           };
+          wheelImg.src = 'https://i.ibb.co/4n68qcsP/Untitled-design.png';
+          if (wheelImg.complete) wheelImg.onload();
 
-          // Draw a dummy moon sky map (for demo purposes)
+          // Draw a real sky map: planets as dots along the horizon
           skyContainer.style.display = 'block';
           skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
-          const skyX = 200; // fixed X coordinate
-          const skyY = 80;  // fixed Y coordinate
-          skyCtx.fillStyle = 'white';
-          skyCtx.beginPath();
-          skyCtx.arc(skyX, skyY, 8, 0, 2 * Math.PI);
-          skyCtx.fill();
-          skyCtx.font = '14px sans-serif';
-          skyCtx.fillStyle = '#ccc';
-          skyCtx.fillText('Moon', skyX + 15, skyY + 5);
 
-          // Setup download button for sky map
+          let planetIdx = 0;
+          for (const key in planetsRaw) {
+            const deg = planetsRaw[key].lon;
+            const x = eclipticToAzimuth(deg);
+            const y = planetAltitude(planetIdx);
+
+            skyCtx.beginPath();
+            skyCtx.arc(x, y, 8, 0, 2 * Math.PI);
+            skyCtx.fillStyle = planetColors[key] || '#b23cf0';
+            skyCtx.fill();
+
+            skyCtx.font = '13px Arial';
+            skyCtx.fillStyle = '#fff';
+            skyCtx.fillText(key, x + 12, y + 4);
+            planetIdx++;
+          }
+
           downloadBtn.onclick = () => {
             const link = document.createElement('a');
             link.download = 'sky-map.png';
@@ -313,6 +363,7 @@
           resultsDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
           chartContainer.style.display = 'none';
           skyContainer.style.display = 'none';
+          chartDesc.style.display = 'none';
         }
       });
     })();
