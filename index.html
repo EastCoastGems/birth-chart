@@ -140,7 +140,7 @@
 
   <div id="results"></div>
 
-  <!-- AstroChart.js (using version 1.0.5 which exposes global AstroChart) -->
+  <!-- AstroChart.js (must be loaded before your script) -->
   <script src="https://cdn.jsdelivr.net/npm/astrochart@1.0.5/dist/astrochart.min.js"></script>
 
   <script>
@@ -196,7 +196,7 @@
           const [hour, minute] = time.split(':').map(Number);
 
           // Call your Node.js backend for Swiss Ephemeris calculations
-          const backendRes = await fetch('http://localhost:3001/chart', {
+          const backendRes = await fetch('https://birth-chart-5kyi.onrender.com/chart', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
