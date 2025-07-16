@@ -224,6 +224,137 @@
       background: rgba(248, 249, 250, 0.8);
     }
     
+    /* Crystal Shopping section styles */
+    .shopping-section {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: rgba(178, 60, 240, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(178, 60, 240, 0.2);
+      backdrop-filter: blur(15px);
+      text-align: center;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .shop-header {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #b23cf0;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .shop-description {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+
+    .crystal-recommendations {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .crystal-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .crystal-card:hover {
+      transform: translateY(-5px);
+      background: rgba(178, 60, 240, 0.15);
+      border-color: rgba(178, 60, 240, 0.4);
+      box-shadow: 0 10px 30px rgba(178, 60, 240, 0.3);
+    }
+
+    .crystal-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .crystal-category {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+
+    .crystal-properties {
+      font-size: 0.95rem;
+      color: #ffffff;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    .crystal-best-for {
+      font-size: 0.9rem;
+      color: #ffffff;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background: rgba(178, 60, 240, 0.2);
+      border-radius: 8px;
+      border-left: 3px solid #ffffff;
+    }
+
+    .crystal-best-for strong {
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .shop-cta {
+      background: linear-gradient(135deg, #b23cf0, #8a2be2);
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(178, 60, 240, 0.4);
+      margin-top: 1rem;
+    }
+
+    .shop-cta a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .shop-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(178, 60, 240, 0.6);
+      filter: brightness(1.1);
+    }
+
+    .why-crystals {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: #c0c0c0;
+      font-style: italic;
+    }
+    
     @media (max-width: 768px) {
       body {
         padding: 1rem;
@@ -246,6 +377,10 @@
       .radio-group label {
         display: block;
         margin-bottom: 0.5rem;
+      }
+
+      .crystal-recommendations {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -292,6 +427,133 @@
   </div>
 
   <script>
+    const crystals = [
+      // Love & Relationships
+      { name: "Rose Quartz", category: "Love & Relationships", properties: "Unconditional love, emotional healing", bestFor: "opening your heart to deeper connections" },
+      { name: "Green Aventurine", category: "Love & Relationships", properties: "Heart chakra healing, compassion", bestFor: "healing past relationship wounds" },
+      { name: "Moonstone", category: "Love & Relationships", properties: "Divine feminine energy, intuition", bestFor: "balancing emotions in relationships" },
+      
+      // Clarity & Intuition
+      { name: "Amethyst", category: "Clarity & Intuition", properties: "Third eye activation, spiritual awareness", bestFor: "deepening your spiritual practice" },
+      { name: "Clear Quartz", category: "Clarity & Intuition", properties: "Amplification, clarity", bestFor: "clearing mental fog and confusion" },
+      { name: "Fluorite", category: "Clarity & Intuition", properties: "Mental clarity, focus", bestFor: "making important decisions" },
+      
+      // Abundance & Success  
+      { name: "Citrine", category: "Abundance & Success", properties: "Manifestation, prosperity", bestFor: "attracting financial abundance" },
+      { name: "Pyrite", category: "Abundance & Success", properties: "Confidence, willpower", bestFor: "pursuing your goals with determination" },
+      { name: "Green Jade", category: "Abundance & Success", properties: "Good fortune, harmony", bestFor: "creating lasting prosperity" },
+      
+      // Protection & Grounding
+      { name: "Black Tourmaline", category: "Protection & Grounding", properties: "Psychic protection, grounding", bestFor: "shielding yourself from negative energy" },
+      { name: "Hematite", category: "Protection & Grounding", properties: "Grounding, strength", bestFor: "staying centered during challenging times" },
+      { name: "Smoky Quartz", category: "Protection & Grounding", properties: "Transmutation, cleansing", bestFor: "releasing what no longer serves you" },
+      
+      // Transformation & Growth
+      { name: "Labradorite", category: "Transformation & Growth", properties: "Transformation, magic", bestFor: "embracing major life changes" },
+      { name: "Garnet", category: "Transformation & Growth", properties: "Passion, regeneration", bestFor: "igniting your inner fire" },
+      { name: "Carnelian", category: "Transformation & Growth", properties: "Courage, creativity", bestFor: "taking bold action toward your dreams" }
+    ];
+
+    function analyzeBirthChartThemes(results) {
+      const themes = [];
+      
+      // Check for strong fire signs (passion, action)
+      const fireCount = (results.sun.element === 'Fire' ? 1 : 0) +
+                       (results.moon.element === 'Fire' ? 1 : 0) +
+                       (results.rising.element === 'Fire' ? 1 : 0);
+      if (fireCount >= 2) themes.push('Transformation & Growth');
+      
+      // Check for strong earth signs (grounding, abundance)  
+      const earthCount = (results.sun.element === 'Earth' ? 1 : 0) +
+                        (results.moon.element === 'Earth' ? 1 : 0) +
+                        (results.rising.element === 'Earth' ? 1 : 0);
+      if (earthCount >= 2) themes.push('Abundance & Success', 'Protection & Grounding');
+      
+      // Check for strong air signs (clarity, communication)
+      const airCount = (results.sun.element === 'Air' ? 1 : 0) +
+                      (results.moon.element === 'Air' ? 1 : 0) +
+                      (results.rising.element === 'Air' ? 1 : 0);
+      if (airCount >= 2) themes.push('Clarity & Intuition');
+      
+      // Check for strong water signs (emotion, intuition)
+      const waterCount = (results.sun.element === 'Water' ? 1 : 0) +
+                        (results.moon.element === 'Water' ? 1 : 0) +
+                        (results.rising.element === 'Water' ? 1 : 0);
+      if (waterCount >= 2) themes.push('Love & Relationships', 'Clarity & Intuition');
+      
+      // Always include at least one theme
+      if (themes.length === 0) {
+        themes.push('Clarity & Intuition');
+      }
+      
+      return themes;
+    }
+
+    function generateCrystalRecommendations(results) {
+      const themes = analyzeBirthChartThemes(results);
+      const recommendations = [];
+      
+      themes.forEach(theme => {
+        const themeArr = crystals.filter(crystal => crystal.category === theme);
+        if (themeArr.length > 0) {
+          const randomCrystal = themeArr[Math.floor(Math.random() * themeArr.length)];
+          if (!recommendations.some(r => r.name === randomCrystal.name)) {
+            recommendations.push(randomCrystal);
+          }
+        }
+      });
+      
+      // Ensure we have at least 2 recommendations
+      while (recommendations.length < 2) {
+        const randomCrystal = crystals[Math.floor(Math.random() * crystals.length)];
+        if (!recommendations.some(r => r.name === randomCrystal.name)) {
+          recommendations.push(randomCrystal);
+        }
+      }
+      
+      return recommendations.slice(0, 3); // Max 3 recommendations
+    }
+
+    function displayCrystalRecommendations(results) {
+      const recommendations = generateCrystalRecommendations(results);
+      
+      const crystalHTML = `
+        <div class="shopping-section">
+          <h3>✨ Recommended Crystals for Your Chart ✨</h3>
+          <p>Based on your astrological energies, these crystals can support your spiritual journey:</p>
+          
+          <div class="crystal-recommendations">
+            ${recommendations.map(crystal => `
+              <div class="crystal-card">
+                <div class="crystal-name">${crystal.name}</div>
+                <div class="crystal-properties">${crystal.properties}</div>
+                <div class="crystal-best-for">Perfect for ${crystal.bestFor}</div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div style="text-align: center; margin-top: 2rem;">
+            <p style="color: #e0e0e0; margin-bottom: 1rem;">Find these beautiful crystals and more in my shop!</p>
+            <a href="https://eastcoastgemsbycara.myshopify.com" target="_blank" class="shop-cta">Visit My Crystal Shop</a>
+          </div>
+        </div>
+      `;
+      
+      return crystalHTML;
+    }
+    function getElementForSign(sign) {
+      const fireSignes = ['Aries', 'Leo', 'Sagittarius'];
+      const earthSigns = ['Taurus', 'Virgo', 'Capricorn'];
+      const airSigns = ['Gemini', 'Libra', 'Aquarius'];
+      const waterSigns = ['Cancer', 'Scorpio', 'Pisces'];
+      
+      if (fireSignes.includes(sign)) return 'Fire';
+      if (earthSigns.includes(sign)) return 'Earth';
+      if (airSigns.includes(sign)) return 'Air';
+      if (waterSigns.includes(sign)) return 'Water';
+      return 'Air'; // default
+    }
+
     (function() {
       // Configuration
       const CONFIG = {
@@ -1404,10 +1666,22 @@
 
           // For full chart, show details after the chart
           if (readingType !== 'bigThree' && window.fullChartDetails) {
-            elements.resultsDiv.innerHTML = window.fullChartDetails;
+            // Add crystal recommendations to full chart results
+            const fullResultsWithCrystals = window.fullChartDetails + displayCrystalRecommendations({
+              sun: { element: getElementForSign(degToSign(planetsRaw.Sun.lon).sign) },
+              moon: { element: getElementForSign(degToSign(planetsRaw.Moon.lon).sign) },
+              rising: { element: getElementForSign(degToSign(ascendant).sign) }
+            });
+            elements.resultsDiv.innerHTML = fullResultsWithCrystals;
             elements.resultsDiv.style.display = 'block';
           } else if (readingType === 'bigThree') {
-            elements.resultsDiv.innerHTML = outputHTML;
+            // Add crystal recommendations to Big Three results
+            const bigThreeWithCrystals = outputHTML + displayCrystalRecommendations({
+              sun: { element: getElementForSign(degToSign(planetsRaw.Sun.lon).sign) },
+              moon: { element: getElementForSign(degToSign(planetsRaw.Moon.lon).sign) },
+              rising: { element: getElementForSign(degToSign(ascendant).sign) }
+            });
+            elements.resultsDiv.innerHTML = bigThreeWithCrystals;
             elements.resultsDiv.style.display = 'block';
           }
 
