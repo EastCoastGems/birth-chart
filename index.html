@@ -296,7 +296,7 @@
             ctx.fillStyle = '#222';
             for (let i = 1; i <= 12; i++) {
               const deg = houses[i].raw;
-              const angle = (deg - 90) * Math.PI / 180;
+              const angle = (deg - 60) * Math.PI / 180; // Aries at top right
               const x = centerX + (radius + 10) * Math.cos(angle);
               const y = centerY + (radius + 10) * Math.sin(angle);
 
@@ -313,7 +313,7 @@
             let idx = 0;
             for (const key in planetsRaw) {
               const deg = planetsRaw[key].lon;
-              const angle = (deg - 90) * Math.PI / 180;
+              const angle = (deg - 60) * Math.PI / 180; // Aries at top right
               const x = centerX + radius * Math.cos(angle);
               const y = centerY + radius * Math.sin(angle);
 
