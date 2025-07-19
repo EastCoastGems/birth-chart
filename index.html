@@ -404,138 +404,35 @@
       { name: "Rose Quartz", category: "Love & Relationships", properties: "Unconditional love, emotional healing", bestFor: "opening your heart to deeper connections" },
       { name: "Green Aventurine", category: "Love & Relationships", properties: "Heart chakra healing, compassion", bestFor: "healing past relationship wounds" },
       { name: "Moonstone", category: "Love & Relationships", properties: "Divine feminine energy, intuition", bestFor: "balancing emotions in relationships" },
-      
       // Clarity & Intuition
       { name: "Amethyst", category: "Clarity & Intuition", properties: "Third eye activation, spiritual awareness", bestFor: "deepening your spiritual practice" },
       { name: "Clear Quartz", category: "Clarity & Intuition", properties: "Amplification, clarity", bestFor: "clearing mental fog and confusion" },
-      { name: "Fluorite", category: "Clarity & Intuition", properties: "Mental clarity, focus", bestFor: "making important decisions" },
-      
-      // Abundance & Success  
-      { name: "Citrine", category: "Abundance & Success", properties: "Manifestation, prosperity", bestFor: "attracting financial abundance" },
-      { name: "Pyrite", category: "Abundance & Success", properties: "Confidence, willpower", bestFor: "pursuing your goals with determination" },
-      { name: "Green Jade", category: "Abundance & Success", properties: "Good fortune, harmony", bestFor: "creating lasting prosperity" },
-      
-      // Protection & Grounding
-      { name: "Black Tourmaline", category: "Protection & Grounding", properties: "Psychic protection, grounding", bestFor: "shielding yourself from negative energy" },
-      { name: "Hematite", category: "Protection & Grounding", properties: "Grounding, strength", bestFor: "staying centered during challenging times" },
-      { name: "Smoky Quartz", category: "Protection & Grounding", properties: "Transmutation, cleansing", bestFor: "releasing what no longer serves you" },
-      
-      // Transformation & Growth
-      { name: "Labradorite", category: "Transformation & Growth", properties: "Transformation, magic", bestFor: "embracing major life changes" },
-      { name: "Garnet", category: "Transformation & Growth", properties: "Passion, regeneration", bestFor: "igniting your inner fire" },
-      { name: "Carnelian", category: "Transformation & Growth", properties: "Courage, creativity", bestFor: "taking bold action toward your dreams" }
+      { name: "Fluorite", category: "Clarity & Intuition", properties: "Mental clarity, focus", bestFor: "making important decisions" }
     ];
 
-    function analyzeBirthChartThemes(results) {
-      const themes = [];
-      
-      // Check for strong fire signs (passion, action)
-      const fireCount = (results.sun.element === 'Fire' ? 1 : 0) +
-                       (results.moon.element === 'Fire' ? 1 : 0) +
-                       (results.rising.element === 'Fire' ? 1 : 0);
-      if (fireCount >= 2) themes.push('Transformation & Growth');
-      
-      // Check for strong earth signs (grounding, abundance)  
-      const earthCount = (results.sun.element === 'Earth' ? 1 : 0) +
-                        (results.moon.element === 'Earth' ? 1 : 0) +
-                        (results.rising.element === 'Earth' ? 1 : 0);
-      if (earthCount >= 2) themes.push('Abundance & Success', 'Protection & Grounding');
-      
-      // Check for strong air signs (clarity, communication)
-      const airCount = (results.sun.element === 'Air' ? 1 : 0) +
-                      (results.moon.element === 'Air' ? 1 : 0) +
-                      (results.rising.element === 'Air' ? 1 : 0);
-      if (airCount >= 2) themes.push('Clarity & Intuition');
-      
-      // Check for strong water signs (emotion, intuition)
-      const waterCount = (results.sun.element === 'Water' ? 1 : 0) +
-                        (results.moon.element === 'Water' ? 1 : 0) +
-                        (results.rising.element === 'Water' ? 1 : 0);
-      if (waterCount >= 2) themes.push('Love & Relationships', 'Clarity & Intuition');
-      
-      // Always include at least one theme
-      if (themes.length === 0) {
-        themes.push('Clarity & Intuition');
-      }
-      
-      return themes;
-    }
-
-    function generateCrystalRecommendations(results) {
-      const themes = analyzeBirthChartThemes(results);
-      const recommendations = [];
-      
-      themes.forEach(theme => {
-        const themeArr = crystals.filter(crystal => crystal.category === theme);
-        if (themeArr.length > 0) {
-          const randomCrystal = themeArr[Math.floor(Math.random() * themeArr.length)];
-          if (!recommendations.some(r => r.name === randomCrystal.name)) {
-            recommendations.push(randomCrystal);
-          }
-        }
-      });
-      
-      // Ensure we have at least 2 recommendations
-      while (recommendations.length < 2) {
-        const randomCrystal = crystals[Math.floor(Math.random() * crystals.length)];
-        if (!recommendations.some(r => r.name === randomCrystal.name)) {
-          recommendations.push(randomCrystal);
-        }
-      }
-      
-      return recommendations.slice(0, 3); // Max 3 recommendations
-    }
-
-    function displayCrystalRecommendations(results) {
-      const recommendations = generateCrystalRecommendations(results);
-      
-      const crystalHTML = `
-        <div class="shopping-section">
-          <h3>✨ Recommended Crystals for Your Chart ✨</h3>
-          <p>Based on your astrological energies, these crystals can support your spiritual journey:</p>
-          
-          <div class="crystal-recommendations">
-            ${recommendations.map(crystal => `
-              <div class="crystal-card">
-                <div class="crystal-name">${crystal.name}</div>
-                <div class="crystal-properties">${crystal.properties}</div>
-                <div class="crystal-best-for">Perfect for ${crystal.bestFor}</div>
-              </div>
-            `).join('')}
-          </div>
-          
-          <div style="text-align: center; margin-top: 2rem;">
-            <p style="color: #e0e0e0; margin-bottom: 1rem;">Find these beautiful crystals and more in my shop!</p>
-            <a href="https://eastcoastgemsbycara.myshopify.com" target="_blank" class="shop-cta">Visit My Crystal Shop</a>
-          </div>
-        </div>
-      `;
-      
-      return crystalHTML;
-    }
     function getElementForSign(sign) {
-      const fireSignes = ['Aries', 'Leo', 'Sagittarius'];
+      const fireSigns = ['Aries', 'Leo', 'Sagittarius'];
       const earthSigns = ['Taurus', 'Virgo', 'Capricorn'];
       const airSigns = ['Gemini', 'Libra', 'Aquarius'];
       const waterSigns = ['Cancer', 'Scorpio', 'Pisces'];
-      
-      if (fireSignes.includes(sign)) return 'Fire';
+      if (fireSigns.includes(sign)) return 'Fire';
       if (earthSigns.includes(sign)) return 'Earth';
       if (airSigns.includes(sign)) return 'Air';
       if (waterSigns.includes(sign)) return 'Water';
       return 'Air'; // default
     }
 
+    // --- Main Form Submission Handler ---
     (function() {
-      // Configuration
+      // ...existing code...
+    })();
+  </script>
       const CONFIG = {
         apiKey: 'f4828f886eb04102855182883c0428a2',
         backendUrl: 'https://birth-chart-5kyi.onrender.com/chart',
-        // Using a reliable astrological wheel image
         wheelImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Astrological_Chart_-_New_Millennium.svg'
       };
 
-      // DOM Elements
       const elements = {
         form: document.getElementById('birth-form'),
         resultsDiv: document.getElementById('results'),
@@ -550,27 +447,102 @@
         location: document.getElementById('location')
       };
 
-      const skyCtx = elements.skyCanvas.getContext('2d');
+      // --- Add Form Submission Listener ---
+      elements.form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        elements.resultsDiv.style.display = 'block';
+        showLoading();
 
-      // Constants
-      const SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-        "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+        // Get form values
+        const birthdate = elements.birthdate.value;
+        const birthtime = elements.birthtime.value;
+        const location = elements.location.value;
+        const readingType = document.querySelector('input[name="readingType"]:checked').value;
 
-      const PLANET_COLORS = {
-        Sun: "#FFD700", Moon: "#C0C0C0", Mercury: "#FFA500", Venus: "#FF69B4",
-        Mars: "#FF4500", Jupiter: "#8A2BE2", Saturn: "#2F4F4F",
-        Uranus: "#4FD0E3", Neptune: "#4169E1", Pluto: "#8B4513"
-      };
+        // Geocode location
+        let geo;
+        try {
+          geo = await geocodeLocation(location);
+        } catch (err) {
+          showError(err.message);
+          return;
+        }
 
-      const PLANET_SYMBOLS = {
-        Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
-        Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆", Pluto: "♇"
-      };
+        // Prepare chart params
+        const chartParams = {
+          date: birthdate,
+          time: birthtime,
+          lat: geo.lat,
+          lon: geo.lng,
+          type: readingType
+        };
 
-      const PLANET_NAMES = {
-        0: 'Sun', 1: 'Moon', 2: 'Mercury', 3: 'Venus', 4: 'Mars',
-        5: 'Jupiter', 6: 'Saturn', 7: 'Uranus', 8: 'Neptune', 9: 'Pluto'
-      };
+        // Fetch chart data
+        let chartData;
+        try {
+          chartData = await fetchChartData(chartParams);
+        } catch (err) {
+          showError(err.message);
+          return;
+        }
+
+        // Prepare results
+        const planetsRaw = chartData.planets;
+        const houses = chartData.houses;
+        const aspects = calculateAspects(planetsRaw);
+        const chartPattern = detectChartPattern(planetsRaw);
+
+        // Big Three
+        const sunSign = degToSign(planetsRaw.Sun.lon).sign;
+        const moonSign = degToSign(planetsRaw.Moon.lon).sign;
+        const risingSign = degToSign(chartData.ascendant).sign;
+
+        // Results HTML
+        let resultsHTML = '';
+        resultsHTML += `<div class="success">Your chart was calculated successfully!</div>`;
+        resultsHTML += `<h2>Your Big Three</h2>`;
+        resultsHTML += `<ul><li><strong>Sun:</strong> ${sunSign}</li><li><strong>Moon:</strong> ${moonSign}</li><li><strong>Rising:</strong> ${risingSign}</li></ul>`;
+        const bigThreeDesc = getBigThreeDescriptions(sunSign, moonSign, risingSign);
+        resultsHTML += `<p><strong>Sun:</strong> ${bigThreeDesc.sun}</p>`;
+        resultsHTML += `<p><strong>Moon:</strong> ${bigThreeDesc.moon}</p>`;
+        resultsHTML += `<p><strong>Rising:</strong> ${bigThreeDesc.ascendant}</p>`;
+
+        // Chart analysis
+        resultsHTML += getChartAnalysis(planetsRaw, houses, aspects, chartPattern);
+
+        // Planetary analysis
+        resultsHTML += getPlanetaryAnalysis(planetsRaw);
+
+        // Crystal recommendations
+        resultsHTML += displayCrystalRecommendations({ sun: { element: getElementForSign(sunSign) }, moon: { element: getElementForSign(moonSign) }, rising: { element: getElementForSign(risingSign) } });
+
+        elements.resultsDiv.innerHTML = resultsHTML;
+        elements.resultsDiv.style.display = 'block';
+        elements.chartDesc.style.display = 'block';
+        elements.chartContainer.style.display = 'block';
+
+        // Draw chart
+        const ctx = elements.canvas.getContext('2d');
+        drawCustomWheel(ctx);
+        drawChart(planetsRaw, houses, ctx);
+      });
+
+      // Removed stray 'function' keyword and duplicate getElementForSign definition
+
+      // ...existing code...
+            `).join('')}
+          </div>
+          
+          <div style="text-align: center; margin-top: 2rem;">
+            <p style="color: #e0e0e0; margin-bottom: 1rem;">Find these beautiful crystals and more in my shop!</p>
+            <a href="https://eastcoastgemsbycara.myshopify.com" target="_blank" class="shop-cta">Visit My Crystal Shop</a>
+          </div>
+        </div>
+      `;
+      
+      return crystalHTML;
+
+// --- End crystal recommendations function ---
 
       // Utility Functions
       function degToSign(deg) {
@@ -1101,8 +1073,10 @@
             const sign = degToSign(data.lon).sign;
             const planetInfo = planetMeanings[planet];
             
-            analysis += `<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; border-left: 3px solid ${PLANET_COLORS[planet]};">`;
-            analysis += `<h4 style="margin: 0 0 0.5rem 0; color: ${PLANET_COLORS[planet]};">${PLANET_SYMBOLS[planet]} ${planet} in ${sign} - ${planetInfo.area}</h4>`;
+            const borderColor = PLANET_COLORS[planet] || '#b23cf0';
+            const textColor = PLANET_COLORS[planet] || '#b23cf0';
+            analysis += `<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; border-left: 3px solid ${borderColor};">`;
+            analysis += `<h4 style="margin: 0 0 0.5rem 0; color: ${textColor};">${PLANET_SYMBOLS[planet]} ${planet} in ${sign} - ${planetInfo.area}</h4>`;
             analysis += `<p style="margin: 0; font-size: 0.9rem; color: #666;">Your ${planet} ${planetInfo.description}. In ${sign}, this energy expresses through ${getSignExpression(planet, sign)}.</p>`;
             analysis += `</div>`;
           }
@@ -1607,7 +1581,8 @@
               outputHTML += `<div class="aspect-list"><ul>`;
               for (const asp of aspects) {
                 const exactText = asp.exact ? ' (Exact!)' : '';
-                outputHTML += `<li style="color: ${asp.color};">
+                const aspectColor = asp.color || '#b23cf0';
+                outputHTML += `<li style="color: ${aspectColor};">
                   ${PLANET_SYMBOLS[asp.p1]} ${asp.p1} ${asp.symbol} ${PLANET_SYMBOLS[asp.p2]} ${asp.p2} 
                   <small>(${asp.orb}° orb${exactText})</small>
                 </li>`;
@@ -1678,8 +1653,146 @@
       const today = new Date().toISOString().split('T')[0];
       elements.birthdate.max = today;
       
-    })();
+    // End of main script
   </script>
 
-</body>
-</html>
+<body style="background: linear-gradient(135deg, #2a0845 0%, #b23cf0 100%); min-height: 100vh; margin: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
+
+  <!-- Cosmic Banner Section -->
+  <section class="banner cosmic-banner" style="position:relative;overflow:hidden;">
+    <!-- Floating star emojis -->
+    <div class="cosmic-floating-stars" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+      <span class="star-emoji" style="position:absolute;left:10%;top:20%;font-size:2rem;animation:floatStar 4s infinite alternate;">✨</span>
+      <span class="star-emoji" style="position:absolute;left:80%;top:30%;font-size:2.5rem;animation:floatStar 5s infinite alternate-reverse;">🌟</span>
+      <span class="star-emoji" style="position:absolute;left:50%;top:10%;font-size:1.8rem;animation:floatStar 3.5s infinite alternate;">⭐</span>
+      <span class="star-emoji" style="position:absolute;left:25%;top:60%;font-size:2.2rem;animation:floatStar 4.5s infinite alternate-reverse;">✨</span>
+      <span class="star-emoji" style="position:absolute;left:70%;top:75%;font-size:2rem;animation:floatStar 3s infinite alternate;">🌟</span>
+    </div>
+    <div class="banner__content page-width" style="position:relative;z-index:1;">
+      <div class="banner__box content-container gradient" style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:600px;margin:0 auto;padding:2.5rem 2rem;background:rgba(34,8,69,0.7);border-radius:18px;box-shadow:0 4px 24px rgba(178,60,240,0.12);text-align:center;">
+        <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="East Coast Gems Logo" style="max-width:120px;margin-bottom:1rem;border-radius:16px;box-shadow:0 0 16px #b23cf0;">
+        <h2 class="banner__heading animated-gradient" style="font-size:2.5rem; font-family:'Segoe UI', Roboto, Arial, sans-serif; font-weight:700; margin-bottom:0.5rem;">✨ East Coast Gems ✨</h2>
+        <div class="cosmic-product-card">
+          <p class="cosmic-product-title">Featured product coming soon!</p>
+        </div>
+        <div class="banner__subtitle" style="font-size:1.3rem;color:#ffe66f;font-weight:600;margin-bottom:0.5rem;text-shadow:0 0 8px #b23cf0;">Unlock the cosmic mysteries—crystals, gems, and celestial energy await your spirit’s journey.</div>
+        <div class="banner__text" style="font-size:1.1rem;color:#e0e0e0;margin-bottom:1rem;max-width:600px;font-style:italic;">Step into a universe of wonder, where every stone is a portal and every jewel a talisman. Our handpicked treasures are charged with intention, ready to illuminate your path, amplify your magic, and connect you to the stars above. Embrace your destiny—let your soul sparkle!</div>
+        <div class="banner__buttons" style="display:flex;gap:1rem;justify-content:center;margin-bottom:1.5rem;">
+          <a href="/collections" class="button button--primary" style="background:linear-gradient(90deg,#b23cf0 0%,#ffd700 100%);color:#fff;font-weight:600;border-radius:30px;padding:0.75rem 2rem;text-decoration:none;box-shadow:0 2px 8px rgba(178,60,240,0.15);">Shop Collections</a>
+          <a href="/collections/all" class="button button--primary" style="background:linear-gradient(90deg,#b23cf0 0%,#ffd700 100%);color:#fff;font-weight:600;border-radius:30px;padding:0.75rem 2rem;text-decoration:none;box-shadow:0 2px 8px rgba(178,60,240,0.15);">Shop All</a>
+        </div>
+        <div class="banner__floating cosmic-glow" style="width:100%;text-align:center;margin-top:2rem;font-size:1.2rem;color:#ffd700;animation:floatText 3s infinite alternate;">
+          ✨ Let the universe guide you to your perfect treasure ✨
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+  .animated-gradient {
+   background: linear-gradient(270deg, #b23cf0, #6fffe9, #ffb6ff, #ffe66f, #b23cf0);
+  background-size: 800% 800%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* Removed unknown property 'text-fill-color' */
+  animation: gradientMove 6s ease-in-out infinite;
+  }
+  .cosmic-product-card {
+    background: linear-gradient(135deg, #b23cf0 0%, #2a0845 100%);
+    border: 2px solid rgba(255,215,0,0.8);
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(178,60,240,0.5);
+    color: #ffd700;
+    padding: 1.5rem;
+    margin: 2rem auto;
+    max-width: 400px;
+  }
+  .cosmic-product-img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(178,60,240,0.3);
+  }
+  .cosmic-product-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem 0;
+  }
+  .cosmic-product-price {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .cosmic-btn {
+    display: inline-block;
+    background: #b23cf0;
+    color: #fff;
+    border: 2px solid #ffd700;
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(178,60,240,0.5);
+    text-decoration: none;
+    transition: .2s;
+  }
+  .cosmic-btn:hover {
+    background: #ffd700;
+    color: #2a0845;
+    border-color: #b23cf0;
+  }
+  .cosmic-glow {
+    text-shadow: 0 0 12px #ffd700, 0 0 24px #b23cf0;
+  }
+  @keyframes floatText {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-12px); }
+  }
+  @keyframes floatStar {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-18px); }
+  }
+  @keyframes gradientMove {
+    0% {background-position:0% 50%}
+    50% {background-position:100% 50%}
+    100% {background-position:0% 50%}
+  }
+  /* Upgrade main UI containers and buttons */
+  .success, .error {
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(178,60,240,0.08);
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+  }
+  .success {
+    background: linear-gradient(90deg,#b23cf0 0%,#ffd700 100%);
+    color: #fff;
+    border: none;
+  }
+  .error {
+    background: linear-gradient(90deg,#ff6b6b 0%,#b23cf0 100%);
+    color: #fff;
+    border: none;
+  }
+  .shop-cta {
+    background: linear-gradient(90deg,#b23cf0 0%,#ffd700 100%);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 30px;
+    padding: 0.75rem 2rem;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(178,60,240,0.15);
+    margin-top: 1rem;
+    display: inline-block;
+    transition: .2s;
+  }
+  .shop-cta:hover {
+    background: #ffd700;
+    color: #2a0845;
+    border-color: #b23cf0;
+  }
+  </style>
+
+  <script>
+    (function() {
