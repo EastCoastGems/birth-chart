@@ -1075,7 +1075,7 @@
             
             const borderColor = PLANET_COLORS[planet] || '#b23cf0';
             const textColor = PLANET_COLORS[planet] || '#b23cf0';
-            analysis += `<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; border-left: 3px solid ${borderColor};">`;
+            analysis += '<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; border-left: 3px solid ' + borderColor + ';">';
             analysis += `<h4 style="margin: 0 0 0.5rem 0; color: ${textColor};">${PLANET_SYMBOLS[planet]} ${planet} in ${sign} - ${planetInfo.area}</h4>`;
             analysis += `<p style="margin: 0; font-size: 0.9rem; color: #666;">Your ${planet} ${planetInfo.description}. In ${sign}, this energy expresses through ${getSignExpression(planet, sign)}.</p>`;
             analysis += `</div>`;
@@ -1658,36 +1658,7 @@
 
 <body style="background: linear-gradient(135deg, #2a0845 0%, #b23cf0 100%); min-height: 100vh; margin: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
 
-  <!-- Cosmic Banner Section -->
-  <section class="banner cosmic-banner" style="position:relative;overflow:hidden;">
-    <!-- Floating star emojis -->
-    <div class="cosmic-floating-stars" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
-      <span class="star-emoji" style="position:absolute;left:10%;top:20%;font-size:2rem;animation:floatStar 4s infinite alternate;">✨</span>
-      <span class="star-emoji" style="position:absolute;left:80%;top:30%;font-size:2.5rem;animation:floatStar 5s infinite alternate-reverse;">🌟</span>
-      <span class="star-emoji" style="position:absolute;left:50%;top:10%;font-size:1.8rem;animation:floatStar 3.5s infinite alternate;">⭐</span>
-      <span class="star-emoji" style="position:absolute;left:25%;top:60%;font-size:2.2rem;animation:floatStar 4.5s infinite alternate-reverse;">✨</span>
-      <span class="star-emoji" style="position:absolute;left:70%;top:75%;font-size:2rem;animation:floatStar 3s infinite alternate;">🌟</span>
-    </div>
-    <div class="banner__content page-width" style="position:relative;z-index:1;">
-      <div class="banner__box content-container gradient" style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:600px;margin:0 auto;padding:2.5rem 2rem;background:rgba(34,8,69,0.7);border-radius:18px;box-shadow:0 4px 24px rgba(178,60,240,0.12);text-align:center;">
-        <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="East Coast Gems Logo" style="max-width:120px;margin-bottom:1rem;border-radius:16px;box-shadow:0 0 16px #b23cf0;">
-        <h2 class="banner__heading animated-gradient" style="font-size:2.5rem; font-family:'Segoe UI', Roboto, Arial, sans-serif; font-weight:700; margin-bottom:0.5rem;">✨ East Coast Gems ✨</h2>
-        <div class="cosmic-product-card">
-          <p class="cosmic-product-title">Featured product coming soon!</p>
-        </div>
-        <div class="banner__subtitle" style="font-size:1.3rem;color:#ffe66f;font-weight:600;margin-bottom:0.5rem;text-shadow:0 0 8px #b23cf0;">Unlock the cosmic mysteries—crystals, gems, and celestial energy await your spirit’s journey.</div>
-        <div class="banner__text" style="font-size:1.1rem;color:#e0e0e0;margin-bottom:1rem;max-width:600px;font-style:italic;">Step into a universe of wonder, where every stone is a portal and every jewel a talisman. Our handpicked treasures are charged with intention, ready to illuminate your path, amplify your magic, and connect you to the stars above. Embrace your destiny—let your soul sparkle!</div>
-        <div class="banner__buttons" style="display:flex;gap:1rem;justify-content:center;margin-bottom:1.5rem;">
-          <a href="/collections" class="button button--primary" style="background:linear-gradient(90deg,#b23cf0 0%,#ffd700 100%);color:#fff;font-weight:600;border-radius:30px;padding:0.75rem 2rem;text-decoration:none;box-shadow:0 2px 8px rgba(178,60,240,0.15);">Shop Collections</a>
-          <a href="/collections/all" class="button button--primary" style="background:linear-gradient(90deg,#b23cf0 0%,#ffd700 100%);color:#fff;font-weight:600;border-radius:30px;padding:0.75rem 2rem;text-decoration:none;box-shadow:0 2px 8px rgba(178,60,240,0.15);">Shop All</a>
-        </div>
-        <div class="banner__floating cosmic-glow" style="width:100%;text-align:center;margin-top:2rem;font-size:1.2rem;color:#ffd700;animation:floatText 3s infinite alternate;">
-          ✨ Let the universe guide you to your perfect treasure ✨
-        </div>
-      </div>
-    </div>
-  </section>
-
+  
   <style>
   .animated-gradient {
    background: linear-gradient(270deg, #b23cf0, #6fffe9, #ffb6ff, #ffe66f, #b23cf0);
