@@ -395,96 +395,41 @@
       <button id="downloadBtn">📥 Download Your Sky Map</button>
     </div>
 
-    <div id="results"></div>
+    <div id="results" style="display:none;"></div>
   </div>
 
   <script>
-    const crystals = [
-      // Love & Relationships
-      { name: "Rose Quartz", category: "Love & Relationships", properties: "Unconditional love, emotional healing", bestFor: "opening your heart to deeper connections" },
-      { name: "Green Aventurine", category: "Love & Relationships", properties: "Heart chakra healing, compassion", bestFor: "healing past relationship wounds" },
-      { name: "Moonstone", category: "Love & Relationships", properties: "Divine feminine energy, intuition", bestFor: "balancing emotions in relationships" },
-      // Clarity & Intuition
-      { name: "Amethyst", category: "Clarity & Intuition", properties: "Third eye activation, spiritual awareness", bestFor: "deepening your spiritual practice" },
-      { name: "Clear Quartz", category: "Clarity & Intuition", properties: "Amplification, clarity", bestFor: "clearing mental fog and confusion" },
-      { name: "Fluorite", category: "Clarity & Intuition", properties: "Mental clarity, focus", bestFor: "making important decisions" }
-    ];
+    // All JavaScript should be inside this script tag
+    const CONFIG = {
+      apiKey: 'f4828f886eb04102855182883c0428a2',
+      backendUrl: 'https://birth-chart-5kyi.onrender.com/chart',
+      wheelImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Astrological_Chart_-_New_Millennium.svg'
+    };
 
-    function getElementForSign(sign) {
-      const fireSigns = ['Aries', 'Leo', 'Sagittarius'];
-      const earthSigns = ['Taurus', 'Virgo', 'Capricorn'];
-      const airSigns = ['Gemini', 'Libra', 'Aquarius'];
-      const waterSigns = ['Cancer', 'Scorpio', 'Pisces'];
-      if (fireSigns.includes(sign)) return 'Fire';
-      if (earthSigns.includes(sign)) return 'Earth';
-      if (airSigns.includes(sign)) return 'Air';
-      if (waterSigns.includes(sign)) return 'Water';
-      return 'Air'; // default
-    }
+    const elements = {
+      form: document.getElementById('birth-form'),
+      resultsDiv: document.getElementById('results'),
+      chartContainer: document.querySelector('.chart-container'),
+      canvas: document.getElementById('birth-chart'),
+      skyContainer: document.querySelector('.sky-container'),
+      skyCanvas: document.getElementById('skyCanvas'),
+      downloadBtn: document.getElementById('downloadBtn'),
+      chartDesc: document.getElementById('chart-description'),
+      birthdate: document.getElementById('birthdate'),
+      birthtime: document.getElementById('birthtime'),
+      location: document.getElementById('location')
+    };
 
-    // --- Main Form Submission Handler ---
-    (function() {
-      // ...existing code...
-    })();
+    elements.resultsDiv.style.display = 'none';
+
+    elements.form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      elements.resultsDiv.style.display = 'block';
+      showLoading();
+      // ...rest of your JS code...
+    });
+    // ...rest of your JS code...
   </script>
-      const CONFIG = {
-        apiKey: 'f4828f886eb04102855182883c0428a2',
-        backendUrl: 'https://birth-chart-5kyi.onrender.com/chart',
-        wheelImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Astrological_Chart_-_New_Millennium.svg'
-      };
-
-      const elements = {
-        form: document.getElementById('birth-form'),
-        resultsDiv: document.getElementById('results'),
-        chartContainer: document.querySelector('.chart-container'),
-        canvas: document.getElementById('birth-chart'),
-        skyContainer: document.querySelector('.sky-container'),
-        skyCanvas: document.getElementById('skyCanvas'),
-        downloadBtn: document.getElementById('downloadBtn'),
-        chartDesc: document.getElementById('chart-description'),
-        birthdate: document.getElementById('birthdate'),
-        birthtime: document.getElementById('birthtime'),
-        location: document.getElementById('location')
-      };
-
-      // --- Add Form Submission Listener ---
-      elements.form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        elements.resultsDiv.style.display = 'block';
-        showLoading();
-
-        // Get form values
-        const birthdate = elements.birthdate.value;
-        const birthtime = elements.birthtime.value;
-        const location = elements.location.value;
-        const readingType = document.querySelector('input[name="readingType"]:checked').value;
-
-        // Geocode location
-        let geo;
-        try {
-          geo = await geocodeLocation(location);
-        } catch (err) {
-          showError(err.message);
-          return;
-        }
-
-        // Prepare chart params
-        const chartParams = {
-          date: birthdate,
-          time: birthtime,
-          lat: geo.lat,
-          lon: geo.lng,
-          type: readingType
-        };
-
-        // Fetch chart data
-        let chartData;
-        try {
-          chartData = await fetchChartData(chartParams);
-        } catch (err) {
-          showError(err.message);
-          return;
-        }
 
         // Prepare results
         const planetsRaw = chartData.planets;
