@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discover Your Astrology Blueprint</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 2rem;
+      text-align: center;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header img {
+      max-width: 180px;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    h1 {
+      color: #ffffff;
+      font-weight: bold;
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    form, #results {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 450px;
+      margin: 2rem auto;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    #results {
+      display: none;
+    }
+    
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      box-sizing: border-box;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #b23cf0;
+      box-shadow: 0 0 0 3px rgba(178, 60, 240, 0.1);
+    }
+    
+    button {
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, #b23cf0 0%, #962dcc 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(178, 60, 240, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .radio-group {
+      margin-top: 1rem;
+    }
+    
+    .radio-group label {
+      display: inline-block;
+      margin-right: 1.5rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .radio-group input[type="radio"] {
+      width: auto;
+      margin-right: 0.5rem;
+    }
+    
+    .radio-group label:hover {
+      background: rgba(178, 60, 240, 0.1);
+    }
+    
+    .chart-container {
+      display: none;
+      margin: 2rem auto;
+      border-radius: 50%;
+      background: linear-gradient(90deg,
+        rgba(255,0,0,0.12),
+        rgba(255,127,0,0.12),
+        rgba(255,255,0,0.12),
+        rgba(0,255,0,0.12),
+        rgba(0,0,255,0.12),
+        rgba(75,0,130,0.12),
+        rgba(148,0,211,0.12));
+      width: 400px;
+      height: 400px;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    #birth-chart {
+      background: transparent;
+      border-radius: 50%;
+    }
+    
+    .sky-container {
+      display: none;
+      margin: 2rem auto;
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+    }
+    
+    #skyCanvas {
+      width: 100%;
+      height: 250px;
+      background: radial-gradient(ellipse at bottom, #1a237e, #000051);
+      border-radius: 10px;
+      box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+    }
+    
+    #downloadBtn {
+      margin-top: 1rem;
+      background: linear-gradient(135deg, #424242 0%, #212121 100%);
+      color: white;
+      width: auto;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    #downloadBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(66, 66, 66, 0.4);
+    }
+    
+    .loading {
+      font-style: italic;
+      color: #666;
+      font-size: 1.1rem;
+    }
+    
+    #chart-description {
+      margin: 2rem auto;
+      max-width: 450px;
+      color: #ffffff;
+      font-size: 1.2rem;
+      display: none;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .error {
+      background: rgba(244, 67, 54, 0.1);
+      border: 1px solid #f44336;
+      color: #d32f2f;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    
+    .success {
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid #4caf50;
+      color: #388e3c;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    
+    .aspect-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #e1e5e9;
+      border-radius: 8px;
+      padding: 0.5rem;
+      background: rgba(248, 249, 250, 0.8);
+    }
+    
+    /* Crystal Shopping section styles */
+    .shopping-section {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: rgba(178, 60, 240, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(178, 60, 240, 0.2);
+      backdrop-filter: blur(15px);
+      text-align: center;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .shop-header {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #b23cf0;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .shop-description {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+
+    .crystal-recommendations {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .crystal-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .crystal-card:hover {
+      transform: translateY(-5px);
+      background: rgba(178, 60, 240, 0.15);
+      border-color: rgba(178, 60, 240, 0.4);
+      box-shadow: 0 10px 30px rgba(178, 60, 240, 0.3);
+    }
+
+    .crystal-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #333333;
+      margin-bottom: 0.5rem;
+      text-shadow: none;
+    }
+
+    .crystal-category {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #444444;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 1;
+    }
+
+    .crystal-properties {
+      font-size: 0.95rem;
+      color: #555555;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      opacity: 1;
+    }
+
+    .crystal-best-for {
+      font-size: 0.9rem;
+      color: #333333;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background: rgba(178, 60, 240, 0.15);
+      border-radius: 8px;
+      border-left: 3px solid #b23cf0;
+    }
+
+    .crystal-best-for strong {
+      color: #333333;
+      font-weight: bold;
+    }
+
+    .shop-cta {
+      background: linear-gradient(135deg, #b23cf0, #8a2be2);
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(178, 60, 240, 0.4);
+      margin-top: 1rem;
+    }
+
+    .shop-cta a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .shop-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(178, 60, 240, 0.6);
+      filter: brightness(1.1);
+    }
+
+    .why-crystals {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: #c0c0c0;
+      font-style: italic;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      form, #results {
+        margin: 1rem auto;
+        padding: 1.5rem;
+      }
+      
+      .chart-container {
+        width: 300px;
+        height: 300px;
+      }
+      
+      .radio-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .crystal-recommendations {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="Astrology Blueprint Logo">
+    </header>
+
+    <h1>Discover Your Astrology Blueprint</h1>
+
+    <form id="birth-form" autocomplete="off">
+      <label>Date of Birth:
+        <input type="date" id="birthdate" required />
+      </label>
+      <label>Time of Birth:
+        <input type="time" id="birthtime" required />
+      </label>
+      <label>Birthplace (City, State or Country):
+        <input type="text" id="location" placeholder="e.g. New York, NY or London, UK" required />
+      </label>
+      <div class="radio-group">
+        <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label>
+        <label><input type="radio" name="readingType" value="fullChart"> Complete Chart</label>
+      </div>
+      <button type="submit">Generate Your Chart</button>
+    </form>
+
+    <div id="chart-description">
+      Your personalized astrology wheel with planetary positions and house cusps.
+    </div>
+
+    <div class="chart-container">
+      <canvas id="birth-chart" width="400" height="400" aria-label="Astrology chart wheel"></canvas>
+    </div>
+
+    <div class="sky-container">
+      <canvas id="skyCanvas" width="400" height="250" aria-label="Sky map showing planetary positions"></canvas>
+      <button id="downloadBtn">📥 Download Your Sky Map</button>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const crystals = [
+      // Love & Relationships
+      { name: "Rose Quartz", category: "Love & Relationships", properties: "Unconditional love, emotional healing", bestFor: "opening your heart to deeper connections" },
+      { name: "Green Aventurine", category: "Love & Relationships", properties: "Heart chakra healing, compassion", bestFor: "healing past relationship wounds" },
+      { name: "Moonstone", category: "Love & Relationships", properties: "Divine feminine energy, intuition", bestFor: "balancing emotions in relationships" },
+      
+      // Clarity & Intuition
+      { name: "Amethyst", category: "Clarity & Intuition", properties: "Third eye activation, spiritual awareness", bestFor: "deepening your spiritual practice" },
+      { name: "Clear Quartz", category: "Clarity & Intuition", properties: "Amplification, clarity", bestFor: "clearing mental fog and confusion" },
+      { name: "Fluorite", category: "Clarity & Intuition", properties: "Mental clarity, focus", bestFor: "making important decisions" },
+      
+      // Abundance & Success  
+      { name: "Citrine", category: "Abundance & Success", properties: "Manifestation, prosperity", bestFor: "attracting financial abundance" },
+      { name: "Pyrite", category: "Abundance & Success", properties: "Confidence, willpower", bestFor: "pursuing your goals with determination" },
+      { name: "Green Jade", category: "Abundance & Success", properties: "Good fortune, harmony", bestFor: "creating lasting prosperity" },
+      
+      // Protection & Grounding
+      { name: "Black Tourmaline", category: "Protection & Grounding", properties: "Psychic protection, grounding", bestFor: "shielding yourself from negative energy" },
+      { name: "Hematite", category: "Protection & Grounding", properties: "Grounding, strength", bestFor: "staying centered during challenging times" },
+      { name: "Smoky Quartz", category: "Protection & Grounding", properties: "Transmutation, cleansing", bestFor: "releasing what no longer serves you" },
+      
+      // Transformation & Growth
+      { name: "Labradorite", category: "Transformation & Growth", properties: "Transformation, magic", bestFor: "embracing major life changes" },
+      { name: "Garnet", category: "Transformation & Growth", properties: "Passion, regeneration", bestFor: "igniting your inner fire" },
+      { name: "Carnelian", category: "Transformation & Growth", properties: "Courage, creativity", bestFor: "taking bold action toward your dreams" }
+    ];
+
+    function analyzeBirthChartThemes(results) {
+      const themes = [];
+      
+      // Check for strong fire signs (passion, action)
+      const fireCount = (results.sun.element === 'Fire' ? 1 : 0) +
+                       (results.moon.element === 'Fire' ? 1 : 0) +
+                       (results.rising.element === 'Fire' ? 1 : 0);
+      if (fireCount >= 2) themes.push('Transformation & Growth');
+      
+      // Check for strong earth signs (grounding, abundance)  
+      const earthCount = (results.sun.element === 'Earth' ? 1 : 0) +
+                        (results.moon.element === 'Earth' ? 1 : 0) +
+                        (results.rising.element === 'Earth' ? 1 : 0);
+      if (earthCount >= 2) themes.push('Abundance & Success', 'Protection & Grounding');
+      
+      // Check for strong air signs (clarity, communication)
+      const airCount = (results.sun.element === 'Air' ? 1 : 0) +
+                      (results.moon.element === 'Air' ? 1 : 0) +
+                      (results.rising.element === 'Air' ? 1 : 0);
+      if (airCount >= 2) themes.push('Clarity & Intuition');
+      
+      // Check for strong water signs (emotion, intuition)
+      const waterCount = (results.sun.element === 'Water' ? 1 : 0) +
+                        (results.moon.element === 'Water' ? 1 : 0) +
+                        (results.rising.element === 'Water' ? 1 : 0);
+      if (waterCount >= 2) themes.push('Love & Relationships', 'Clarity & Intuition');
+      
+      // Always include at least one theme
+      if (themes.length === 0) {
+        themes.push('Clarity & Intuition');
+      }
+      
+      return themes;
+    }
+
+    function generateCrystalRecommendations(results) {
+      const themes = analyzeBirthChartThemes(results);
+      const recommendations = [];
+      
+      themes.forEach(theme => {
+        const themeArr = crystals.filter(crystal => crystal.category === theme);
+        if (themeArr.length > 0) {
+          const randomCrystal = themeArr[Math.floor(Math.random() * themeArr.length)];
+          if (!recommendations.some(r => r.name === randomCrystal.name)) {
+            recommendations.push(randomCrystal);
+          }
+        }
+      });
+      
+      // Ensure we have at least 2 recommendations
+      while (recommendations.length < 2) {
+        const randomCrystal = crystals[Math.floor(Math.random() * crystals.length)];
+        if (!recommendations.some(r => r.name === randomCrystal.name)) {
+          recommendations.push(randomCrystal);
+        }
+      }
+      
+      return recommendations.slice(0, 3); // Max 3 recommendations
+    }
+
+    function displayCrystalRecommendations(results) {
+      const recommendations = generateCrystalRecommendations(results);
+      
+      const crystalHTML = `
+        <div class="shopping-section">
+          <h3>✨ Recommended Crystals for Your Chart ✨</h3>
+          <p>Based on your astrological energies, these crystals can support your spiritual journey:</p>
+          
+          <div class="crystal-recommendations">
+            ${recommendations.map(crystal => `
+              <div class="crystal-card">
+                <div class="crystal-name">${crystal.name}</div>
+                <div class="crystal-properties">${crystal.properties}</div>
+                <div class="crystal-best-for">Perfect for ${crystal.bestFor}</div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div style="text-align: center; margin-top: 2rem;">
+            <p style="color: #e0e0e0; margin-bottom: 1rem;">Find these beautiful crystals and more in my shop!</p>
+            <a href="https://eastcoastgemsbycara.myshopify.com" target="_blank" class="shop-cta">Visit My Crystal Shop</a>
+          </div>
+        </div>
+      `;
+      
+      return crystalHTML;
+    }
+    function getElementForSign(sign) {
+      const fireSignes = ['Aries', 'Leo', 'Sagittarius'];
+      const earthSigns = ['Taurus', 'Virgo', 'Capricorn'];
+      const airSigns = ['Gemini', 'Libra', 'Aquarius'];
+      const waterSigns = ['Cancer', 'Scorpio', 'Pisces'];
+      
+      if (fireSignes.includes(sign)) return 'Fire';
+      if (earthSigns.includes(sign)) return 'Earth';
+      if (airSigns.includes(sign)) return 'Air';
+      if (waterSigns.includes(sign)) return 'Water';
+      return 'Air'; // default
+    }
+
+    (function() {
+      // Configuration
+      const CONFIG = {
+        apiKey: 'f4828f886eb04102855182883c0428a2',
+        backendUrl: 'https://birth-chart-5kyi.onrender.com/chart',
+        // Using a reliable astrological wheel image
+        wheelImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Astrological_Chart_-_New_Millennium.svg'
+      };
+
+      // DOM Elements
+      const elements = {
+        form: document.getElementById('birth-form'),
+        resultsDiv: document.getElementById('results'),
+        chartContainer: document.querySelector('.chart-container'),
+        canvas: document.getElementById('birth-chart'),
+        skyContainer: document.querySelector('.sky-container'),
+        skyCanvas: document.getElementById('skyCanvas'),
+        downloadBtn: document.getElementById('downloadBtn'),
+        chartDesc: document.getElementById('chart-description'),
+        birthdate: document.getElementById('birthdate'),
+        birthtime: document.getElementById('birthtime'),
+        location: document.getElementById('location')
+      };
+
+      const skyCtx = elements.skyCanvas.getContext('2d');
+
+      // Constants
+      const SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+        "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+
+      const PLANET_COLORS = {
+        Sun: "#FFD700", Moon: "#C0C0C0", Mercury: "#FFA500", Venus: "#FF69B4",
+        Mars: "#FF4500", Jupiter: "#8A2BE2", Saturn: "#2F4F4F",
+        Uranus: "#4FD0E3", Neptune: "#4169E1", Pluto: "#8B4513"
+      };
+
+      const PLANET_SYMBOLS = {
+        Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
+        Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆", Pluto: "♇"
+      };
+
+      const PLANET_NAMES = {
+        0: 'Sun', 1: 'Moon', 2: 'Mercury', 3: 'Venus', 4: 'Mars',
+        5: 'Jupiter', 6: 'Saturn', 7: 'Uranus', 8: 'Neptune', 9: 'Pluto'
+      };
+
+      // Utility Functions
+      function degToSign(deg) {
+        deg = ((deg % 360) + 360) % 360;
+        const index = Math.floor(deg / 30);
+        return { 
+          sign: SIGNS[index], 
+          degree: (deg % 30).toFixed(2), 
+          raw: deg,
+          minutes: Math.floor((deg % 1) * 60),
+          seconds: Math.floor(((deg % 1) * 60 % 1) * 60)
+        };
+      }
+
+      function eclipticToAzimuth(deg) {
+        return (deg / 360) * elements.skyCanvas.width;
+      }
+
+      function planetAltitude(deg) {
+        return 125 - 75 * Math.cos(deg * Math.PI / 180);
+      }
+
+      function showError(message) {
+        elements.resultsDiv.innerHTML = `<div class="error">⚠️ Error: ${message}</div>`;
+        elements.resultsDiv.style.display = 'block';
+      }
+
+      function showLoading() {
+        elements.resultsDiv.innerHTML = '<p class="loading">🔮 Calculating your birth chart...</p>';
+        elements.resultsDiv.style.display = 'block';
+      }
+
+      // Aspect Calculations
+      function calculateAspects(planetsRaw) {
+        const aspects = [];
+        const aspectAngles = [
+          { name: "Conjunction", symbol: "☌", angle: 0, orb: 8, color: "#FF6B6B" },
+          { name: "Opposition", symbol: "☍", angle: 180, orb: 8, color: "#4ECDC4" },
+          { name: "Trine", symbol: "△", angle: 120, orb: 7, color: "#45B7D1" },
+          { name: "Square", symbol: "□", angle: 90, orb: 6, color: "#F9CA24" },
+          { name: "Sextile", symbol: "✶", angle: 60, orb: 5, color: "#6C5CE7" }
+        ];
+
+        const keys = Object.keys(planetsRaw);
+        for (let i = 0; i < keys.length; i++) {
+          for (let j = i + 1; j < keys.length; j++) {
+            const p1 = keys[i], p2 = keys[j];
+            const lon1 = planetsRaw[p1].lon, lon2 = planetsRaw[p2].lon;
+            let diff = Math.abs(lon1 - lon2);
+            if (diff > 180) diff = 360 - diff;
+
+            for (const asp of aspectAngles) {
+              if (Math.abs(diff - asp.angle) <= asp.orb) {
+                aspects.push({
+                  p1, p2, type: asp.name, symbol: asp.symbol, 
+                  orb: Math.abs(diff - asp.angle).toFixed(2),
+                  color: asp.color,
+                  exact: Math.abs(diff - asp.angle) < 1
+                });
+                break; // Only one aspect per planet pair
+              }
+            }
+          }
+        }
+        return aspects.sort((a, b) => parseFloat(a.orb) - parseFloat(b.orb));
+      }
+
+      // Chart Pattern Detection
+      function detectChartPattern(planetsRaw) {
+        const longitudes = Object.values(planetsRaw).map(p => p.lon).sort((a, b) => a - b);
+        let maxGap = 0;
+        let gaps = [];
+
+        for (let i = 0; i < longitudes.length; i++) {
+          const next = longitudes[(i + 1) % longitudes.length];
+          let gap = (next - longitudes[i] + 360) % 360;
+          gaps.push(gap);
+          if (gap > maxGap) maxGap = gap;
+        }
+
+        const totalSpread = (longitudes[longitudes.length - 1] - longitudes[0] + 360) % 360;
+
+        if (maxGap > 180) return "Splash Pattern - Planets scattered evenly around the chart";
+        if (totalSpread < 120) return "Bundle Pattern - All planets within 120°, indicating focused energy";
+        if (maxGap > 120) return "Bowl Pattern - Planets occupy about half the chart";
+        if (gaps.filter(g => g > 60).length === 1) return "Bucket Pattern - One planet isolated from the main group";
+        if (totalSpread > 240) return "Locomotive Pattern - Planets occupy 2/3 of the chart with one empty third";
+        return "See-Saw Pattern - Planets in two opposing groups";
+      }
+
+      // Geocoding with error handling
+      async function geocodeLocation(location) {
+        try {
+          const response = await fetch(
+            `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(location)}&key=${CONFIG.apiKey}&limit=1`
+          );
+          
+          if (!response.ok) {
+            throw new Error(`Geocoding service error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          if (!data.results || data.results.length === 0) {
+            throw new Error('Location not found. Please try a different format (e.g., "New York, NY" or "London, UK")');
+          }
+          
+          return data.results[0].geometry;
+        } catch (error) {
+          throw new Error(`Failed to find location: ${error.message}`);
+        }
+      }
+
+      // Backend API call with retry logic
+      async function fetchChartData(chartParams, retries = 2) {
+        for (let attempt = 0; attempt <= retries; attempt++) {
+          try {
+            const response = await fetch(CONFIG.backendUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(chartParams),
+              timeout: 10000 // 10 second timeout
+            });
+
+            if (!response.ok) {
+              throw new Error(`Backend service error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.planets || !data.houses || data.ascendant === undefined) {
+              throw new Error('Invalid data received from calculation service');
+            }
+            
+            return data;
+          } catch (error) {
+            if (attempt === retries) {
+              throw new Error(`Chart calculation failed: ${error.message}`);
+            }
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+          }
+        }
+      }
+
+      // Draw custom astrological wheel
+      function drawCustomWheel(ctx) {
+        const centerX = elements.canvas.width / 2;
+        const centerY = elements.canvas.height / 2;
+        const outerRadius = elements.canvas.width / 2 - 20;
+        const innerRadius = outerRadius - 60;
+        
+        // Clear canvas with white background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, elements.canvas.width, elements.canvas.height);
+        
+        // Draw zodiac sign sections first (background)
+        const signNames = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+        const signFullNames = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
+                              'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+        const signColors = [
+          '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3',
+          '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43', '#0abde3', '#ee5a24'
+        ];
+        
+        // Draw sign sections
+        for (let i = 0; i < 12; i++) {
+          const startAngle = (i * 30 - 90) * Math.PI / 180; // Aries at top
+          const endAngle = ((i + 1) * 30 - 90) * Math.PI / 180;
+          
+          // Fill sign section with subtle color
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+          ctx.lineTo(centerX, centerY);
+          ctx.fillStyle = signColors[i] + '15'; // Very light transparency
+          ctx.fill();
+          
+          // Draw sign division lines
+          const x1 = centerX + innerRadius * Math.cos(startAngle);
+          const y1 = centerY + innerRadius * Math.sin(startAngle);
+          const x2 = centerX + outerRadius * Math.cos(startAngle);
+          const y2 = centerY + outerRadius * Math.sin(startAngle);
+          
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = '#666';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          // Draw sign symbol
+          const midAngle = (startAngle + endAngle) / 2;
+          const symbolRadius = innerRadius + 30;
+          const symbolX = centerX + symbolRadius * Math.cos(midAngle);
+          const symbolY = centerY + symbolRadius * Math.sin(midAngle);
+          
+          ctx.font = 'bold 24px Arial';
+          ctx.fillStyle = signColors[i];
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(signNames[i], symbolX, symbolY);
+          
+          // Draw sign name (smaller text)
+          const nameRadius = symbolRadius - 20;
+          const nameX = centerX + nameRadius * Math.cos(midAngle);
+          const nameY = centerY + nameRadius * Math.sin(midAngle);
+          
+          ctx.font = '10px Arial';
+          ctx.fillStyle = '#666';
+          ctx.fillText(signFullNames[i], nameX, nameY);
+        }
+        
+        // Draw outer circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Draw inner circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw degree markers
+        ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 1;
+        ctx.font = '8px Arial';
+        ctx.fillStyle = '#999';
+        ctx.textAlign = 'center';
+        
+        for (let deg = 0; deg < 360; deg += 10) {
+          const angle = (deg - 90) * Math.PI / 180;
+          const isMajor = deg % 30 === 0;
+          const isCardinal = deg % 90 === 0;
+          
+          let startRadius, lineWidth;
+          if (isCardinal) {
+            startRadius = innerRadius - 15;
+            lineWidth = 3;
+            ctx.strokeStyle = '#333';
+          } else if (isMajor) {
+            startRadius = innerRadius - 10;
+            lineWidth = 2;
+            ctx.strokeStyle = '#666';
+          } else {
+            startRadius = innerRadius - 5;
+            lineWidth = 1;
+            ctx.strokeStyle = '#ccc';
+          }
+          
+          ctx.lineWidth = lineWidth;
+          
+          const x1 = centerX + startRadius * Math.cos(angle);
+          const y1 = centerY + startRadius * Math.sin(angle);
+          const x2 = centerX + innerRadius * Math.cos(angle);
+          const y2 = centerY + innerRadius * Math.sin(angle);
+          
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+          
+          // Add degree labels for major markers
+          if (isMajor) {
+            const labelRadius = startRadius - 10;
+            const labelX = centerX + labelRadius * Math.cos(angle);
+            const labelY = centerY + labelRadius * Math.sin(angle);
+            ctx.fillText(deg + '°', labelX, labelY);
+          }
+        }
+        
+        // Draw center point
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = '#333';
+        ctx.fill();
+      }
+
+      // Enhanced chart drawing
+      function drawChart(planetsRaw, houses, ctx) {
+        const centerX = elements.canvas.width / 2;
+        const centerY = elements.canvas.height / 2;
+        const radius = elements.canvas.width / 2 - 40;
+
+        // Draw house cusps
+        ctx.save();
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1.5;
+        ctx.font = 'bold 12px Arial';
+        ctx.fillStyle = '#333';
+
+        for (let i = 1; i <= 12; i++) {
+          const deg = houses[i].raw;
+          const angle = (deg - 90) * Math.PI / 180; // 0° Aries at top
+          const x1 = centerX + (radius - 20) * Math.cos(angle);
+          const y1 = centerY + (radius - 20) * Math.sin(angle);
+          const x2 = centerX + (radius + 15) * Math.cos(angle);
+          const y2 = centerY + (radius + 15) * Math.sin(angle);
+
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+
+          ctx.fillText(i.toString(), x2 + 8, y2 + 4);
+        }
+        ctx.restore();
+
+        // Draw planets with improved positioning
+        for (const [key, planet] of Object.entries(planetsRaw)) {
+          const deg = planet.lon;
+          const angle = (deg - 90) * Math.PI / 180;
+          const x = centerX + (radius - 35) * Math.cos(angle);
+          const y = centerY + (radius - 35) * Math.sin(angle);
+
+          // Planet circle
+          ctx.beginPath();
+          ctx.arc(x, y, 8, 0, 2 * Math.PI);
+          ctx.fillStyle = PLANET_COLORS[key] || '#b23cf0';
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Planet symbol
+          ctx.font = 'bold 16px Arial';
+          ctx.fillStyle = '#222';
+          ctx.textAlign = 'center';
+          ctx.fillText(PLANET_SYMBOLS[key] || key.charAt(0), x + 20, y + 5);
+        }
+      }
+
+      // Generate comprehensive chart analysis
+      function getChartAnalysis(planetsRaw, houses, aspects, chartPattern) {
+        let analysis = '';
+        
+        // Overall chart analysis
+        analysis += `<div style="background: rgba(178, 60, 240, 0.1); padding: 1.5rem; border-radius: 15px; margin: 1.5rem 0; border: 1px solid rgba(178, 60, 240, 0.3);">`;
+        analysis += `<h3 style="color: #b23cf0; margin-top: 0;">🔮 What Your Chart Reveals About You</h3>`;
+        
+        // Planet distribution analysis
+        const elementCounts = countElements(planetsRaw);
+        const modalityCounts = countModalities(planetsRaw);
+        
+        analysis += `<div style="margin: 1rem 0;">`;
+        analysis += `<h4 style="color: #333;">🌟 Your Elemental Nature:</h4>`;
+        analysis += getElementAnalysis(elementCounts);
+        analysis += `</div>`;
+        
+        analysis += `<div style="margin: 1rem 0;">`;
+        analysis += `<h4 style="color: #333;">⚡ Your Life Approach:</h4>`;
+        analysis += getModalityAnalysis(modalityCounts);
+        analysis += `</div>`;
+        
+        analysis += `<div style="margin: 1rem 0;">`;
+        analysis += `<h4 style="color: #333;">🎭 Your Chart Pattern:</h4>`;
+        analysis += `<p style="margin: 0.5rem 0;">${getPatternAnalysis(chartPattern)}</p>`;
+        analysis += `</div>`;
+        
+        if (aspects.length > 0) {
+          analysis += `<div style="margin: 1rem 0;">`;
+          analysis += `<h4 style="color: #333;">🔗 Key Planetary Relationships:</h4>`;
+          analysis += getAspectAnalysis(aspects);
+          analysis += `</div>`;
+        }
+        
+        analysis += `</div>`;
+        
+        return analysis;
+      }
+
+      // Count elements in chart
+      function countElements(planetsRaw) {
+        const elements = { Fire: 0, Earth: 0, Air: 0, Water: 0 };
+        const elementMap = {
+          Aries: 'Fire', Leo: 'Fire', Sagittarius: 'Fire',
+          Taurus: 'Earth', Virgo: 'Earth', Capricorn: 'Earth',
+          Gemini: 'Air', Libra: 'Air', Aquarius: 'Air',
+          Cancer: 'Water', Scorpio: 'Water', Pisces: 'Water'
+        };
+        
+        for (const planet in planetsRaw) {
+          const sign = degToSign(planetsRaw[planet].lon).sign;
+          elements[elementMap[sign]]++;
+        }
+        return elements;
+      }
+
+      // Count modalities in chart
+      function countModalities(planetsRaw) {
+        const modalities = { Cardinal: 0, Fixed: 0, Mutable: 0 };
+        const modalityMap = {
+          Aries: 'Cardinal', Cancer: 'Cardinal', Libra: 'Cardinal', Capricorn: 'Cardinal',
+          Taurus: 'Fixed', Leo: 'Fixed', Scorpio: 'Fixed', Aquarius: 'Fixed',
+          Gemini: 'Mutable', Virgo: 'Mutable', Sagittarius: 'Mutable', Pisces: 'Mutable'
+        };
+        
+        for (const planet in planetsRaw) {
+          const sign = degToSign(planetsRaw[planet].lon).sign;
+          modalities[modalityMap[sign]]++;
+        }
+        return modalities;
+      }
+
+      // Analyze elemental distribution
+      function getElementAnalysis(elements) {
+        const total = Object.values(elements).reduce((a, b) => a + b, 0);
+        const dominant = Object.entries(elements).sort((a, b) => b[1] - a[1])[0];
+        const lacking = Object.entries(elements).filter(([el, count]) => count === 0).map(([el]) => el);
+        
+        let analysis = `<p>Your dominant element is <strong>${dominant[0]}</strong> (${dominant[1]}/${total} planets). `;
+        
+        const elementMeanings = {
+          Fire: "You're naturally enthusiastic, energetic, and action-oriented. You lead with passion and inspire others.",
+          Earth: "You're practical, grounded, and focused on tangible results. You build lasting foundations in life.",
+          Air: "You're intellectual, communicative, and socially oriented. Ideas and relationships drive you forward.",
+          Water: "You're intuitive, emotional, and deeply empathetic. You navigate life through feelings and instincts."
+        };
+        
+        analysis += elementMeanings[dominant[0]];
+        
+        if (lacking.length > 0) {
+          const lackingMeanings = {
+            Fire: "developing more spontaneity and leadership",
+            Earth: "building more practical structure and patience",
+            Air: "enhancing communication and objectivity", 
+            Water: "deepening emotional connections and intuition"
+          };
+          analysis += ` You may benefit from ${lacking.map(el => lackingMeanings[el]).join(' and ')}.`;
+        }
+        
+        analysis += `</p>`;
+        return analysis;
+      }
+
+      // Analyze modality distribution
+      function getModalityAnalysis(modalities) {
+        const total = Object.values(modalities).reduce((a, b) => a + b, 0);
+        const dominant = Object.entries(modalities).sort((a, b) => b[1] - a[1])[0];
+        
+        let analysis = `<p>Your primary life approach is <strong>${dominant[0]}</strong> (${dominant[1]}/${total} planets). `;
+        
+        const modalityMeanings = {
+          Cardinal: "You're a natural initiator who loves starting new projects and leading change. You thrive on taking action and making things happen.",
+          Fixed: "You're determined and persistent, preferring to develop and perfect what you start. You provide stability and see things through to completion.",
+          Mutable: "You're adaptable and flexible, comfortable with change and variety. You excel at adjusting to circumstances and helping others transition."
+        };
+        
+        analysis += modalityMeanings[dominant[0]] + `</p>`;
+        return analysis;
+      }
+
+      // Analyze chart pattern meaning
+      function getPatternAnalysis(chartPattern) {
+        const patternMeanings = {
+          "Splash": "Your energy is distributed evenly across all life areas, making you well-rounded and versatile. You have diverse interests and can adapt to many situations.",
+          "Bundle": "Your concentrated planetary energy creates intense focus and specialization. You pour deep energy into specific life areas and can become highly expert in your chosen fields.",
+          "Bowl": "You have strong focus in certain life areas while other areas remain less emphasized. This creates a purposeful, directed approach to life with clear priorities.",
+          "Bucket": "One planet acts as a 'handle' to your chart, representing a special talent or focus area that can guide your entire life direction. This planetary energy is your key to success.",
+          "Locomotive": "You have dynamic, goal-oriented energy that moves in a specific direction. You're driven to achieve and can maintain momentum toward your objectives.",
+          "See-Saw": "You experience life through polarities and oppositions, giving you the ability to see multiple perspectives and seek balance between different life areas."
+        };
+        
+        for (const [pattern, meaning] of Object.entries(patternMeanings)) {
+          if (chartPattern.includes(pattern)) {
+            return meaning;
+          }
+        }
+        return "Your unique planetary distribution creates a distinctive life approach that blends multiple astrological patterns.";
+      }
+
+      // Analyze major aspects
+      function getAspectAnalysis(aspects) {
+        let analysis = `<p>`;
+        const exactAspects = aspects.filter(asp => asp.exact);
+        
+        if (exactAspects.length > 0) {
+          analysis += `You have ${exactAspects.length} exact aspect${exactAspects.length > 1 ? 's' : ''}, indicating particularly strong planetary connections. `;
+        }
+        
+        const aspectCounts = {};
+        aspects.forEach(asp => {
+          aspectCounts[asp.type] = (aspectCounts[asp.type] || 0) + 1;
+        });
+        
+        const dominantAspect = Object.entries(aspectCounts).sort((a, b) => b[1] - a[1])[0];
+        
+        const aspectMeanings = {
+          "Conjunction": "Your planets work together harmoniously, creating focused and integrated energy in your personality.",
+          "Opposition": "You experience dynamic tension that drives growth and awareness through balancing opposing forces.",
+          "Trine": "You have natural talents and easy-flowing energy that supports your goals with minimal effort.",
+          "Square": "You face productive challenges that motivate you to grow stronger and develop resilience through action.",
+          "Sextile": "You have opportunities for growth through cooperation and positive connections with others."
+        };
+        
+        if (dominantAspect) {
+          analysis += `Your chart is dominated by ${dominantAspect[0]} aspects (${dominantAspect[1]}), meaning ${aspectMeanings[dominantAspect[0]].toLowerCase()}`;
+        }
+        
+        analysis += `</p>`;
+        return analysis;
+      }
+
+      // Generate detailed planetary analysis
+      function getPlanetaryAnalysis(planetsRaw) {
+        let analysis = `<div style="background: rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 15px; margin: 1.5rem 0;">`;
+        analysis += `<h3 style="color: #b23cf0; margin-top: 0;">🪐 What Your Planets Reveal</h3>`;
+        
+        const planetMeanings = {
+          Sun: { area: "Core Identity", description: "represents your fundamental self, life purpose, and creative expression" },
+          Moon: { area: "Emotional Nature", description: "governs your feelings, instincts, and subconscious responses" },
+          Mercury: { area: "Communication", description: "influences how you think, learn, and express yourself" },
+          Venus: { area: "Love & Values", description: "shapes your approach to relationships, beauty, and what you value" },
+          Mars: { area: "Action & Drive", description: "determines how you pursue goals and express your energy" },
+          Jupiter: { area: "Growth & Wisdom", description: "expands your worldview and brings opportunities for learning" },
+          Saturn: { area: "Structure & Responsibility", description: "teaches discipline and helps you build lasting achievements" },
+          Uranus: { area: "Innovation & Freedom", description: "brings sudden changes and urges for independence" },
+          Neptune: { area: "Dreams & Spirituality", description: "connects you to imagination, intuition, and higher consciousness" },
+          Pluto: { area: "Transformation", description: "drives deep psychological change and personal power" }
+        };
+        
+        for (const [planet, data] of Object.entries(planetsRaw)) {
+          if (planetMeanings[planet]) {
+            const sign = degToSign(data.lon).sign;
+            const planetInfo = planetMeanings[planet];
+            
+            analysis += `<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; border-left: 3px solid ${PLANET_COLORS[planet]};">`;
+            analysis += `<h4 style="margin: 0 0 0.5rem 0; color: ${PLANET_COLORS[planet]};">${PLANET_SYMBOLS[planet]} ${planet} in ${sign} - ${planetInfo.area}</h4>`;
+            analysis += `<p style="margin: 0; font-size: 0.9rem; color: #666;">Your ${planet} ${planetInfo.description}. In ${sign}, this energy expresses through ${getSignExpression(planet, sign)}.</p>`;
+            analysis += `</div>`;
+          }
+        }
+        
+        analysis += `</div>`;
+        return analysis;
+      }
+
+      // Get how a planet expresses through a sign
+      function getSignExpression(planet, sign) {
+        const expressions = {
+          Sun: {
+            Aries: "bold leadership and pioneering spirit",
+            Taurus: "steady determination and appreciation for beauty",
+            Gemini: "curious communication and mental agility",
+            Cancer: "nurturing protection and emotional depth",
+            Leo: "creative self-expression and natural charisma",
+            Virgo: "practical service and attention to detail",
+            Libra: "harmonious relationships and aesthetic refinement",
+            Scorpio: "intense transformation and emotional power",
+            Sagittarius: "adventurous exploration and philosophical wisdom",
+            Capricorn: "ambitious achievement and responsible leadership",
+            Aquarius: "innovative thinking and humanitarian ideals",
+            Pisces: "compassionate creativity and spiritual sensitivity"
+          },
+          Moon: {
+            Aries: "quick emotional responses and need for independence",
+            Taurus: "steady emotional security and comfort-seeking",
+            Gemini: "mental processing of feelings and communication needs",
+            Cancer: "deep emotional intuition and protective instincts",
+            Leo: "dramatic emotional expression and need for appreciation", 
+            Virgo: "practical emotional support and desire to help others",
+            Libra: "harmonious emotional balance and partnership focus",
+            Scorpio: "intense emotional depth and transformative feelings",
+            Sagittarius: "optimistic emotional outlook and freedom-seeking",
+            Capricorn: "controlled emotional expression and goal-oriented feelings",
+            Aquarius: "detached emotional perspective and friendship needs",
+            Pisces: "intuitive emotional sensitivity and empathetic responses"
+          },
+          Mercury: {
+            Aries: "direct, quick thinking and assertive communication",
+            Taurus: "deliberate, practical thinking and steady communication",
+            Gemini: "versatile, rapid thinking and adaptable communication",
+            Cancer: "intuitive, feeling-based thinking and nurturing communication",
+            Leo: "creative, confident thinking and dramatic communication",
+            Virgo: "analytical, detailed thinking and precise communication",
+            Libra: "balanced, diplomatic thinking and harmonious communication",
+            Scorpio: "deep, investigative thinking and intense communication",
+            Sagittarius: "philosophical, broad thinking and inspirational communication",
+            Capricorn: "structured, strategic thinking and authoritative communication",
+            Aquarius: "innovative, unconventional thinking and progressive communication",
+            Pisces: "imaginative, intuitive thinking and empathetic communication"
+          },
+          Venus: {
+            Aries: "passionate, spontaneous love and bold aesthetic preferences",
+            Taurus: "sensual, loyal love and appreciation for natural beauty",
+            Gemini: "intellectual, varied love and appreciation for wit and cleverness",
+            Cancer: "nurturing, protective love and appreciation for comfort and tradition",
+            Leo: "dramatic, generous love and appreciation for luxury and creativity",
+            Virgo: "practical, devoted love and appreciation for simplicity and refinement",
+            Libra: "harmonious, romantic love and appreciation for balance and elegance",
+            Scorpio: "intense, transformative love and appreciation for mystery and depth",
+            Sagittarius: "adventurous, freedom-loving relationships and appreciation for culture",
+            Capricorn: "responsible, committed love and appreciation for quality and status",
+            Aquarius: "friendly, unconventional love and appreciation for uniqueness",
+            Pisces: "compassionate, spiritual love and appreciation for art and beauty"
+          },
+          Mars: {
+            Aries: "direct, aggressive action and competitive drive",
+            Taurus: "steady, determined action and persistent drive",
+            Gemini: "versatile, mental action and communicative drive",
+            Cancer: "protective, emotional action and nurturing drive",
+            Leo: "confident, creative action and leadership drive",
+            Virgo: "precise, helpful action and service-oriented drive",
+            Libra: "diplomatic, cooperative action and harmony-seeking drive",
+            Scorpio: "intense, strategic action and transformative drive",
+            Sagittarius: "adventurous, philosophical action and freedom-seeking drive",
+            Capricorn: "disciplined, ambitious action and achievement-oriented drive",
+            Aquarius: "innovative, group-oriented action and humanitarian drive",
+            Pisces: "intuitive, compassionate action and spiritual drive"
+          }
+        };
+
+        const defaultExpression = `${sign} energy, bringing its unique qualities to your ${planet.toLowerCase()}`;
+        return expressions[planet]?.[sign] || defaultExpression;
+      }
+
+      // Generate Big Three descriptions
+      function getBigThreeDescriptions(sunSign, moonSign, ascendantSign) {
+        const descriptions = {
+          // Sun sign descriptions
+          sun: {
+            Aries: "Your core self is bold, pioneering, and energetic. You're a natural leader who thrives on challenges and new beginnings.",
+            Taurus: "Your essence is grounded, reliable, and sensual. You value stability, beauty, and the finer things in life.",
+            Gemini: "Your core nature is curious, communicative, and adaptable. You thrive on variety, learning, and social connections.",
+            Cancer: "Your inner self is nurturing, intuitive, and emotionally deep. You value family, home, and emotional security.",
+            Leo: "Your essence is creative, confident, and dramatic. You shine when expressing yourself and inspiring others.",
+            Virgo: "Your core self is practical, analytical, and service-oriented. You excel at organization and helping others improve.",
+            Libra: "Your nature is harmonious, diplomatic, and aesthetic. You seek balance, beauty, and fair partnerships.",
+            Scorpio: "Your essence is intense, transformative, and mysterious. You have deep emotional insight and regenerative power.",
+            Sagittarius: "Your core self is adventurous, philosophical, and optimistic. You seek truth, freedom, and higher meaning.",
+            Capricorn: "Your nature is ambitious, disciplined, and responsible. You build lasting structures and achieve long-term goals.",
+            Aquarius: "Your essence is innovative, humanitarian, and independent. You envision a better future for humanity.",
+            Pisces: "Your core self is compassionate, intuitive, and artistic. You have deep empathy and spiritual sensitivity."
+          },
+          // Moon sign descriptions
+          moon: {
+            Aries: "Emotionally, you're quick to react and need independence. You feel energized by action and new experiences.",
+            Taurus: "Your emotional nature craves security and comfort. You find peace in routine, nature, and sensual pleasures.",
+            Gemini: "Emotionally, you process feelings through communication. You need mental stimulation and variety to feel satisfied.",
+            Cancer: "Your emotional world is deep and nurturing. You have strong intuition and need emotional security and belonging.",
+            Leo: "Emotionally, you need appreciation and creative expression. You have a warm, generous heart and natural dramatic flair.",
+            Virgo: "Your emotional nature seeks order and purpose. You feel fulfilled when helping others and perfecting your skills.",
+            Libra: "Emotionally, you need harmony and partnership. You're happiest when relationships are balanced and beautiful.",
+            Scorpio: "Your emotional depths are intense and transformative. You have powerful intuition and need emotional authenticity.",
+            Sagittarius: "Emotionally, you need freedom and adventure. You feel uplifted by learning, travel, and philosophical exploration.",
+            Capricorn: "Your emotional nature is steady and goal-oriented. You feel secure when working toward meaningful achievements.",
+            Aquarius: "Emotionally, you need independence and idealistic pursuits. You're fulfilled by friendship and humanitarian causes.",
+            Pisces: "Your emotional world is sensitive and imaginative. You have deep empathy and need spiritual connection."
+          },
+          // Ascendant descriptions
+          ascendant: {
+            Aries: "You appear energetic, direct, and pioneering to others. People see you as a natural leader who takes initiative.",
+            Taurus: "You come across as stable, reliable, and grounded. Others perceive you as calm, practical, and trustworthy.",
+            Gemini: "You appear curious, talkative, and adaptable. People see you as intelligent, witty, and socially engaging.",
+            Cancer: "You seem nurturing, protective, and intuitive to others. People are drawn to your caring, empathetic nature.",
+            Leo: "You appear confident, charismatic, and creative. Others see you as warm, generous, and naturally dramatic.",
+            Virgo: "You come across as organized, helpful, and detail-oriented. People perceive you as reliable and analytical.",
+            Libra: "You appear charming, diplomatic, and aesthetically aware. Others see you as graceful and peace-loving.",
+            Scorpio: "You seem intense, mysterious, and powerful. People sense your depth and transformative presence.",
+            Sagittarius: "You appear optimistic, adventurous, and philosophical. Others see you as free-spirited and inspiring.",
+            Capricorn: "You come across as ambitious, responsible, and authoritative. People perceive you as mature and capable.",
+            Aquarius: "You appear unique, innovative, and friendly. Others see you as progressive and intellectually interesting.",
+            Pisces: "You seem compassionate, artistic, and spiritually aware. People are drawn to your gentle, intuitive nature."
+          }
+        };
+
+        return {
+          sun: descriptions.sun[sunSign] || "Your Sun sign represents your core identity and life purpose.",
+          moon: descriptions.moon[moonSign] || "Your Moon sign reveals your emotional nature and inner world.",
+          ascendant: descriptions.ascendant[ascendantSign] || "Your Ascendant shows how you appear to others and approach life."
+        };
+      }
+
+      // Generate Big Three combined summary
+      function getBigThreeSummary(sunSign, moonSign, ascendantSign) {
+        // Create personality combinations
+        const combinations = {
+          'Fire-Fire': 'You radiate pure energy and enthusiasm, inspiring others with your passionate and dynamic nature.',
+          'Fire-Earth': 'You blend passionate vision with practical action, making you an effective leader who gets things done.',
+          'Fire-Air': 'You combine energetic action with intellectual brilliance, expressing ideas with enthusiasm and creativity.',
+          'Fire-Water': 'You merge passionate drive with emotional depth, creating a powerful and intuitive approach to life.',
+          'Earth-Fire': 'You ground fiery energy with practical wisdom, making you a reliable leader who inspires through action.',
+          'Earth-Earth': 'You embody stability and persistence, building lasting achievements through steady, methodical effort.',
+          'Earth-Air': 'You combine practical skills with intellectual clarity, making you excellent at organizing ideas into reality.',
+          'Earth-Water': 'You blend material stability with emotional intuition, creating a nurturing and dependable presence.',
+          'Air-Fire': 'You unite intellectual brilliance with energetic action, making you a dynamic communicator and innovator.',
+          'Air-Earth': 'You merge mental agility with practical application, excelling at turning ideas into tangible results.',
+          'Air-Air': 'You live in the realm of ideas and communication, thriving on intellectual connections and social interaction.',
+          'Air-Water': 'You combine rational thinking with emotional intelligence, making you a compassionate and insightful communicator.',
+          'Water-Fire': 'You blend emotional depth with passionate action, creating an intensely intuitive and inspiring presence.',
+          'Water-Earth': 'You unite emotional sensitivity with practical grounding, making you a nurturing provider and protector.',
+          'Water-Air': 'You merge intuitive feelings with intellectual understanding, excelling at emotional communication and empathy.',
+          'Water-Water': 'You navigate life through pure emotional intelligence, with deep intuition and psychic sensitivity guiding your path.'
+        };
+        
+        const elementMap = {
+          Aries: 'Fire', Leo: 'Fire', Sagittarius: 'Fire',
+          Taurus: 'Earth', Virgo: 'Earth', Capricorn: 'Earth', 
+          Gemini: 'Air', Libra: 'Air', Aquarius: 'Air',
+          Cancer: 'Water', Scorpio: 'Water', Pisces: 'Water'
+        };
+        
+        const sunElement = elementMap[sunSign];
+        const moonElement = elementMap[moonSign];
+        const ascElement = elementMap[ascendantSign];
+        
+        // Get the sun-moon combination
+        const combination = `${sunElement}-${moonElement}`;
+        let summary = combinations[combination] || `Your ${sunSign} Sun and ${moonSign} Moon create a unique blend of energies that shapes your approach to life.`;
+        
+        // Add ascendant influence
+        if (ascElement !== sunElement && ascElement !== moonElement) {
+          summary += ` Your ${ascendantSign} Ascendant adds ${ascElement.toLowerCase()} energy to how others perceive you, creating a multi-layered personality that's both complex and fascinating.`;
+        } else if (ascElement === sunElement || ascElement === moonElement) {
+          summary += ` Your ${ascendantSign} Ascendant reinforces your ${ascElement.toLowerCase()} nature, making this elemental energy particularly prominent in your personality and public image.`;
+        }
+        
+        return summary;
+      }
+
+      // Enhanced sky map
+      function drawSkyMap(planetsRaw) {
+        elements.skyContainer.style.display = 'block';
+        skyCtx.clearRect(0, 0, elements.skyCanvas.width, elements.skyCanvas.height);
+
+        // Create realistic sky gradient
+        const grad = skyCtx.createRadialGradient(
+          elements.skyCanvas.width/2, elements.skyCanvas.height, 0,
+          elements.skyCanvas.width/2, elements.skyCanvas.height, elements.skyCanvas.height
+        );
+        grad.addColorStop(0, "#1a237e");
+        grad.addColorStop(0.7, "#000051");
+        grad.addColorStop(1, "#000");
+        skyCtx.fillStyle = grad;
+        skyCtx.fillRect(0, 0, elements.skyCanvas.width, elements.skyCanvas.height);
+
+        // Draw stars
+        for (let i = 0; i < 80; i++) {
+          const x = Math.random() * elements.skyCanvas.width;
+          const y = Math.random() * elements.skyCanvas.height;
+          const size = Math.random() * 2 + 0.5; // Vary star sizes
+          const brightness = Math.random() * 0.7 + 0.3; // Random brightness
+          
+          // Draw a more realistic star shape
+          skyCtx.save();
+          skyCtx.translate(x, y);
+          skyCtx.rotate(Math.random() * Math.PI * 2); // Random rotation
+          
+          skyCtx.beginPath();
+          
+          // Create a 4-pointed star shape
+          const spikes = 4;
+          const outerRadius = size;
+          const innerRadius = size * 0.4;
+          
+          for (let j = 0; j < spikes * 2; j++) {
+            const radius = j % 2 === 0 ? outerRadius : innerRadius;
+            const angle = (j * Math.PI) / spikes;
+            const x = radius * Math.cos(angle);
+            const y = radius * Math.sin(angle);
+            
+            if (j === 0) {
+              skyCtx.moveTo(x, y);
+            } else {
+              skyCtx.lineTo(x, y);
+            }
+          }
+          
+          skyCtx.closePath();
+          
+          // Add a subtle glow effect
+          skyCtx.shadowColor = "#ffffff";
+          skyCtx.shadowBlur = size * 2;
+          skyCtx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+          skyCtx.fill();
+          
+          // Add a bright center point
+          skyCtx.shadowBlur = 0;
+          skyCtx.beginPath();
+          skyCtx.arc(0, 0, size * 0.3, 0, 2 * Math.PI);
+          skyCtx.fillStyle = `rgba(255, 255, 255, ${Math.min(brightness + 0.3, 1)})`;
+          skyCtx.fill();
+          
+          skyCtx.restore();
+        }
+        
+        // Add some larger, brighter stars for variety
+        for (let i = 0; i < 15; i++) {
+          const x = Math.random() * elements.skyCanvas.width;
+          const y = Math.random() * elements.skyCanvas.height;
+          const size = Math.random() * 1.5 + 1;
+          
+          skyCtx.save();
+          skyCtx.translate(x, y);
+          
+          // Draw cross-shaped bright star
+          skyCtx.beginPath();
+          skyCtx.strokeStyle = `rgba(255, 255, 255, 0.8)`;
+          skyCtx.lineWidth = 0.5;
+          skyCtx.shadowColor = "#ffffff";
+          skyCtx.shadowBlur = 8;
+          
+          // Vertical line
+          skyCtx.moveTo(0, -size * 3);
+          skyCtx.lineTo(0, size * 3);
+          
+          // Horizontal line
+          skyCtx.moveTo(-size * 3, 0);
+          skyCtx.lineTo(size * 3, 0);
+          
+          skyCtx.stroke();
+          
+          // Bright center
+          skyCtx.shadowBlur = 0;
+          skyCtx.beginPath();
+          skyCtx.arc(0, 0, size * 0.4, 0, 2 * Math.PI);
+          skyCtx.fillStyle = "rgba(255, 255, 255, 0.9)";
+          skyCtx.fill();
+          
+          skyCtx.restore();
+        }
+
+        // Draw planets
+        for (const [key, planet] of Object.entries(planetsRaw)) {
+          const deg = planet.lon;
+          const x = eclipticToAzimuth(deg);
+          const y = planetAltitude(deg);
+
+          // Planet glow effect
+          skyCtx.beginPath();
+          skyCtx.arc(x, y, 12, 0, 2 * Math.PI);
+          skyCtx.fillStyle = PLANET_COLORS[key] || '#b23cf0';
+          skyCtx.shadowColor = PLANET_COLORS[key] || '#b23cf0';
+          skyCtx.shadowBlur = 15;
+          skyCtx.fill();
+          skyCtx.shadowBlur = 0;
+
+          // Planet symbol
+          skyCtx.font = 'bold 20px Arial';
+          skyCtx.fillStyle = '#fff';
+          skyCtx.textAlign = 'center';
+          skyCtx.fillText(PLANET_SYMBOLS[key] || key.charAt(0), x, y - 20);
+        }
+      }
+
+      // Form submission handler
+      elements.form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Reset display
+        showLoading();
+        elements.chartContainer.style.display = 'none';
+        elements.skyContainer.style.display = 'none';
+        elements.chartDesc.style.display = 'none';
+
+        // Get form data
+        const date = elements.birthdate.value;
+        const time = elements.birthtime.value;
+        const location = elements.location.value;
+        const readingType = document.querySelector('input[name="readingType"]:checked').value;
+
+        // Validation
+        if (!date || !time || !location) {
+          showError('Please fill out all fields.');
+          return;
+        }
+
+        try {
+          // Geocode location
+          const { lat, lng } = await geocodeLocation(location);
+
+          // Parse date and time
+          const [year, month, day] = date.split('-').map(Number);
+          const [hour, minute] = time.split(':').map(Number);
+
+          // Fetch chart data
+          const backendData = await fetchChartData({ year, month, day, hour, minute, lat, lng });
+
+          // Process data
+          const ascendant = backendData.ascendant;
+          const planetsRaw = {};
+          
+          for (const pid in backendData.planets) {
+            if (PLANET_NAMES[pid]) {
+              planetsRaw[PLANET_NAMES[pid]] = { lon: backendData.planets[pid] };
+            }
+          }
+
+          const houses = {};
+          const hsrc = backendData.houses;
+          
+          // Debug: Log the house data structure
+          console.log('Backend house data:', hsrc);
+          console.log('Backend full response:', backendData);
+          
+          // Check if we have valid house data
+          if (!hsrc || (Array.isArray(hsrc) && hsrc.length === 0) || (typeof hsrc === 'object' && Object.keys(hsrc).length === 0)) {
+            console.warn('No valid house data received from backend');
+            // Use ascendant to calculate basic house cusps (30-degree intervals)
+            for (let i = 1; i <= 12; i++) {
+              const houseDeg = (ascendant + (i - 1) * 30) % 360;
+              houses[i] = degToSign(houseDeg);
+            }
+          } else {
+            // Process actual house data
+            for (let i = 1; i <= 12; i++) {
+              let houseDeg;
+              if (Array.isArray(hsrc)) {
+                houseDeg = hsrc[i-1];
+              } else {
+                houseDeg = hsrc[i] ?? hsrc[String(i)];
+              }
+              
+              // Better validation and fallback
+              if (typeof houseDeg !== "number" || isNaN(houseDeg) || houseDeg === 0) {
+                console.warn(`Invalid house ${i} data:`, houseDeg);
+                // Fallback: use ascendant + 30-degree intervals
+                houseDeg = (ascendant + (i - 1) * 30) % 360;
+              }
+              houses[i] = degToSign(houseDeg);
+            }
+          }
+
+          // Calculate aspects and pattern
+          const aspects = calculateAspects(planetsRaw);
+          const chartPattern = detectChartPattern(planetsRaw);
+
+          // Generate results HTML
+          let outputHTML = `<h2>🌟 Your Birth Chart Analysis</h2>`;
+          outputHTML += `<div class="success">📍 Birth Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}</div>`;
+          outputHTML += `<p><strong>🔮 Ascendant (Rising Sign):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
+          
+          // For Big Three, show analysis above the chart
+          let bigThreeAnalysis = '';
+          
+          if (readingType === 'bigThree') {
+            const sunSign = degToSign(planetsRaw.Sun.lon).sign;
+            const moonSign = degToSign(planetsRaw.Moon.lon).sign;
+            const ascendantSign = degToSign(ascendant).sign;
+            const descriptions = getBigThreeDescriptions(sunSign, moonSign, ascendantSign);
+            
+            outputHTML += `<h3>✨ Your Big Three</h3>`;
+            outputHTML += `<div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.3);">`;
+            outputHTML += `<p style="margin: 0; color: #333; font-size: 1rem; text-align: center; font-style: italic;">Your core personality • Your emotional nature • How you present to the world</p>`;
+            outputHTML += `</div>`;
+            
+            outputHTML += `<div style="background: linear-gradient(135deg, rgba(178, 60, 240, 0.1), rgba(150, 45, 204, 0.1)); padding: 2rem; border-radius: 15px; margin: 1rem 0; border: 1px solid rgba(178, 60, 240, 0.2);">`;
+            
+            outputHTML += `<div style="margin-bottom: 2rem; padding: 1rem; background: rgba(255, 215, 0, 0.1); border-radius: 10px; border-left: 4px solid #FFD700;">`;
+            outputHTML += `<h4 style="margin: 0 0 0.5rem 0; color: #FFD700; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 0.5rem;">${PLANET_SYMBOLS.Sun}</span>Sun in ${sunSign} ${degToSign(planetsRaw.Sun.lon).degree}° - Your Core Personality</h4>`;
+            outputHTML += `<p style="margin: 0; font-style: italic; color: #555;">${descriptions.sun}</p>`;
+            outputHTML += `</div>`;
+            
+            outputHTML += `<div style="margin-bottom: 2rem; padding: 1rem; background: rgba(192, 192, 192, 0.1); border-radius: 10px; border-left: 4px solid #C0C0C0;">`;
+            outputHTML += `<h4 style="margin: 0 0 0.5rem 0; color: #666; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 0.5rem;">${PLANET_SYMBOLS.Moon}</span>Moon in ${moonSign} ${degToSign(planetsRaw.Moon.lon).degree}° - Your Emotional Nature</h4>`;
+            outputHTML += `<p style="margin: 0; font-style: italic; color: #555;">${descriptions.moon}</p>`;
+            outputHTML += `</div>`;
+            
+            outputHTML += `<div style="padding: 1rem; background: rgba(178, 60, 240, 0.1); border-radius: 10px; border-left: 4px solid #b23cf0;">`;
+            outputHTML += `<h4 style="margin: 0 0 0.5rem 0; color: #b23cf0; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 0.5rem;">🔮</span>Ascendant in ${ascendantSign} ${degToSign(ascendant).degree}° - How You Present Yourself</h4>`;
+            outputHTML += `<p style="margin: 0; font-style: italic; color: #555;">${descriptions.ascendant}</p>`;
+            outputHTML += `</div>`;
+            
+            outputHTML += `</div>`;
+            
+            // Add Big Three summary interpretation
+            outputHTML += `<div style="background: rgba(255, 255, 255, 0.15); padding: 1.5rem; border-radius: 15px; margin: 1rem 0; border: 1px solid rgba(255,255,255,0.3);">`;
+            outputHTML += `<h4 style="color: #333; margin-top: 0;">🌟 Your Big Three Summary</h4>`;
+            outputHTML += `<p style="margin: 0; color: #444; line-height: 1.6;">`;
+            outputHTML += getBigThreeSummary(sunSign, moonSign, ascendantSign);
+            outputHTML += `</p></div>`;
+            
+            outputHTML += `</div>`;
+            
+            // Store this analysis to show above chart
+            bigThreeAnalysis = outputHTML;
+            
+            // Reset outputHTML for positioning after chart
+            outputHTML = `<h2>🌟 Your Birth Chart Analysis</h2>`;
+            outputHTML += `<div class="success">📍 Birth Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}</div>`;
+            outputHTML += `<p><strong>🔮 Ascendant (Rising Sign):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
+          } else {
+            outputHTML += `<h3>🪐 Planetary Positions</h3><ul>`;
+            for (const [key, planet] of Object.entries(planetsRaw)) {
+              const sign = degToSign(planet.lon);
+              outputHTML += `<li><strong>${PLANET_SYMBOLS[key]} ${key}:</strong> ${sign.sign} ${sign.degree}°</li>`;
+            }
+            outputHTML += `</ul>`;
+
+            outputHTML += `<h3>🏠 House Cusps</h3>`;
+            
+            // Add debug info if houses seem incorrect
+            const allSameSign = houses[1].sign === houses[2].sign && houses[2].sign === houses[3].sign;
+            if (allSameSign) {
+              outputHTML += `<div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 0.5rem; margin: 0.5rem 0; border-radius: 4px;">
+                ⚠️ <strong>Note:</strong> Houses are showing calculated values based on your Ascendant. 
+                The backend may not be providing precise house cusp data.
+              </div>`;
+            }
+            
+            outputHTML += `<ul>`;
+            for (let i = 1; i <= 12; i++) {
+              outputHTML += `<li>House ${i}: ${houses[i].sign} ${houses[i].degree}°</li>`;
+            }
+            outputHTML += `</ul>`;
+            
+            // Add comprehensive chart analysis
+            outputHTML += getChartAnalysis(planetsRaw, houses, aspects, chartPattern);
+            
+            // Add detailed planetary analysis
+            outputHTML += getPlanetaryAnalysis(planetsRaw);
+          }
+
+          // For Big Three, show analysis above chart first
+          if (readingType === 'bigThree') {
+            outputHTML = bigThreeAnalysis + outputHTML;
+          }
+
+          // Chart pattern (only for full chart)
+          if (readingType !== 'bigThree') {
+            outputHTML += `<h3>🎯 Chart Pattern</h3><p>${chartPattern}</p>`;
+          }
+
+          // Aspects (only for full chart)  
+          if (readingType !== 'bigThree') {
+            outputHTML += `<h3>⚡ Major Aspects</h3>`;
+            if (aspects.length === 0) {
+              outputHTML += `<p>No major aspects found within orb.</p>`;
+            } else {
+              outputHTML += `<div class="aspect-list"><ul>`;
+              for (const asp of aspects) {
+                const exactText = asp.exact ? ' (Exact!)' : '';
+                outputHTML += `<li style="color: ${asp.color};">
+                  ${PLANET_SYMBOLS[asp.p1]} ${asp.p1} ${asp.symbol} ${PLANET_SYMBOLS[asp.p2]} ${asp.p2} 
+                  <small>(${asp.orb}° orb${exactText})</small>
+                </li>`;
+              }
+              outputHTML += `</ul></div>`;
+            }
+          }
+
+          // For full chart, show all the details below the chart
+          if (readingType !== 'bigThree') {
+            // This will be shown after the chart
+            window.fullChartDetails = outputHTML;
+          }
+
+          // Draw charts
+          elements.chartContainer.style.display = 'flex';
+          elements.chartDesc.style.display = 'block';
+          
+          const ctx = elements.canvas.getContext('2d');
+          
+          // Use custom wheel for reliability and perfect alignment
+          ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+          drawCustomWheel(ctx);
+          drawChart(planetsRaw, houses, ctx);
+
+          // Draw sky map
+          drawSkyMap(planetsRaw);
+
+          // For full chart, show details after the chart
+          if (readingType !== 'bigThree' && window.fullChartDetails) {
+            // Add crystal recommendations to full chart results
+            const fullResultsWithCrystals = window.fullChartDetails + displayCrystalRecommendations({
+              sun: { element: getElementForSign(degToSign(planetsRaw.Sun.lon).sign) },
+              moon: { element: getElementForSign(degToSign(planetsRaw.Moon.lon).sign) },
+              rising: { element: getElementForSign(degToSign(ascendant).sign) }
+            });
+            elements.resultsDiv.innerHTML = fullResultsWithCrystals;
+            elements.resultsDiv.style.display = 'block';
+          } else if (readingType === 'bigThree') {
+            // Add crystal recommendations to Big Three results
+            const bigThreeWithCrystals = outputHTML + displayCrystalRecommendations({
+              sun: { element: getElementForSign(degToSign(planetsRaw.Sun.lon).sign) },
+              moon: { element: getElementForSign(degToSign(planetsRaw.Moon.lon).sign) },
+              rising: { element: getElementForSign(degToSign(ascendant).sign) }
+            });
+            elements.resultsDiv.innerHTML = bigThreeWithCrystals;
+            elements.resultsDiv.style.display = 'block';
+          }
+
+          // Setup download
+          elements.downloadBtn.onclick = () => {
+            const link = document.createElement('a');
+            link.download = `sky-map-${date.replace(/-/g, '')}.png`;
+            link.href = elements.skyCanvas.toDataURL('image/png');
+            link.click();
+          };
+
+        } catch (error) {
+          console.error('Chart generation error:', error);
+          showError(error.message);
+          elements.chartContainer.style.display = 'none';
+          elements.skyContainer.style.display = 'none';
+          elements.chartDesc.style.display = 'none';
+        }
+      });
+
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      elements.birthdate.max = today;
+      
+    })();
+  </script>
+
+</body>
+</html>
