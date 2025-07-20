@@ -38,21 +38,28 @@ app.post('/api/chart', async (req, res) => {
     // Calculate planetary positions
     const planets = {};
     try {
-      const planetList = [
-        'Sun', 'Moon', 'Mercury', 'Venus', 'Mars',
-        'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'
-      ];
-      for (const pname of planetList) {
-        let result;
-        try {
-          result = planetposition[pname.toLowerCase()]?.position(jd);
-        } catch (err) {
-          console.error(`Error calling planetposition.${pname.toLowerCase()}.position(jd):`, err);
-        }
-        if (!result || typeof result.lon !== 'number') {
-          console.warn(`planetposition.${pname.toLowerCase()}.position(jd) returned:`, result);
-        }
-        planets[pname] = result?.lon ?? null;
+      // Use Swiss Ephemeris for planet positions
+      const swePlanets = {
+        Sun: swisseph.SE_SUN,
+        Moon: swisseph.SE_MOON,
+        Mercury: swisseph.SE_MERCURY,
+        Venus: swisseph.SE_VENUS,
+        Mars: swisseph.SE_MARS,
+        Jupiter: swisseph.SE_JUPITER,
+        Saturn: swisseph.SE_SATURN,
+        Uranus: swisseph.SE_URANUS,
+        Neptune: swisseph.SE_NEPTUNE,
+        Pluto: swisseph.SE_PLUTO
+      };
+      for (const [pname, sweId] of Object.entries(swePlanets)) {
+        swisseph.swe_calc_ut(jd, sweId, 0, (planetResult) => {
+          if (planetResult.error) {
+            console.warn(`swisseph.swe_calc_ut error for ${pname}:`, planetResult.error);
+            planets[pname] = null;
+          } else {
+            planets[pname] = planetResult.longitude;
+          }
+        });
       }
     } catch (planetErr) {
       console.error('Planet calculation error:', planetErr);
