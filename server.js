@@ -44,18 +44,23 @@ app.post('/api/chart', async (req, res) => {
     }
     const jd = julian.CalendarGregorianToJD(year, month, day) + (hour + minute / 60) / 24;
     // Calculate planetary positions
-    const planets = {
-      Sun: planetposition.sun.position(jd).lon,
-      Moon: planetposition.moon.position(jd).lon,
-      Mercury: planetposition.mercury.position(jd).lon,
-      Venus: planetposition.venus.position(jd).lon,
-      Mars: planetposition.mars.position(jd).lon,
-      Jupiter: planetposition.jupiter.position(jd).lon,
-      Saturn: planetposition.saturn.position(jd).lon,
-      Uranus: planetposition.uranus.position(jd).lon,
-      Neptune: planetposition.neptune.position(jd).lon,
-      Pluto: planetposition.pluto.position(jd).lon
-    };
+    // Use astronomia's planet modules directly
+    const planets = {};
+    try {
+      planets.Sun = planetposition.sun ? planetposition.sun.position(jd).lon : null;
+      planets.Moon = planetposition.moon ? planetposition.moon.position(jd).lon : null;
+      planets.Mercury = planetposition.mercury ? planetposition.mercury.position(jd).lon : null;
+      planets.Venus = planetposition.venus ? planetposition.venus.position(jd).lon : null;
+      planets.Mars = planetposition.mars ? planetposition.mars.position(jd).lon : null;
+      planets.Jupiter = planetposition.jupiter ? planetposition.jupiter.position(jd).lon : null;
+      planets.Saturn = planetposition.saturn ? planetposition.saturn.position(jd).lon : null;
+      planets.Uranus = planetposition.uranus ? planetposition.uranus.position(jd).lon : null;
+      planets.Neptune = planetposition.neptune ? planetposition.neptune.position(jd).lon : null;
+      planets.Pluto = planetposition.pluto ? planetposition.pluto.position(jd).lon : null;
+    } catch (planetErr) {
+      console.error('Planet calculation error:', planetErr);
+      return res.status(500).json({ error: 'Planet calculation failed', details: planetErr.message });
+    }
 
     // Calculate houses and ascendant using swisseph
     swisseph.swe_set_ephe_path(__dirname); // Set ephemeris path
