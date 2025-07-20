@@ -1306,7 +1306,6 @@
           // Process actual house data
           for (let i = 1; i <= 12; i++) {
             let houseDeg = hsrc[String(i)]?.lon;
-            // Better validation and fallback
             if (typeof houseDeg !== "number" || isNaN(houseDeg) || houseDeg === 0) {
               console.warn(`Invalid house ${i} data:`, houseDeg);
               houseDeg = (ascendant + (i - 1) * 30) % 360;
