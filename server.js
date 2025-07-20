@@ -1,3 +1,5 @@
+const swisseph = require('swisseph');
+const { planetposition, julian } = require('astronomia');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -32,23 +34,52 @@ app.post('/api/chart', async (req, res) => {
       });
     }
     
-    // Here you could add server-side validation or processing
-    // For now, we'll just validate the input and return success
+    // Calculate Julian Day
     const birthDate = new Date(year, month - 1, day, hour, minute);
-    
     if (isNaN(birthDate.getTime())) {
       return res.status(400).json({ error: 'Invalid date/time provided' });
     }
-    
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
       return res.status(400).json({ error: 'Invalid coordinates provided' });
     }
-    
-    res.json({
-      message: 'Chart request processed successfully',
-      input: { year, month, day, hour, minute, lat, lng },
-      birthDate: birthDate.toISOString(),
-      note: 'This endpoint can be extended for server-side chart calculations'
+    const jd = julian.CalendarGregorianToJD(year, month, day) + (hour + minute / 60) / 24;
+    // Calculate planetary positions
+    const planets = {
+      Sun: planetposition.sun.position(jd).lon,
+      Moon: planetposition.moon.position(jd).lon,
+      Mercury: planetposition.mercury.position(jd).lon,
+      Venus: planetposition.venus.position(jd).lon,
+      Mars: planetposition.mars.position(jd).lon,
+      Jupiter: planetposition.jupiter.position(jd).lon,
+      Saturn: planetposition.saturn.position(jd).lon,
+      Uranus: planetposition.uranus.position(jd).lon,
+      Neptune: planetposition.neptune.position(jd).lon,
+      Pluto: planetposition.pluto.position(jd).lon
+    };
+
+    // Calculate houses and ascendant using swisseph
+    swisseph.swe_set_ephe_path(__dirname); // Set ephemeris path
+    swisseph.swe_houses(jd, lat, lng, 'P', (housesResult) => {
+      const houses = {};
+      for (let i = 1; i <= 12; i++) {
+        let cusp = housesResult.cusps[i];
+        if (typeof cusp !== 'number' || isNaN(cusp)) {
+          cusp = 0;
+        }
+        houses[i] = { lon: cusp };
+      }
+      let ascendant = housesResult.ascendant;
+      if (typeof ascendant !== 'number' || isNaN(ascendant)) {
+        ascendant = 0;
+      }
+      res.json({
+        planets,
+        houses,
+        ascendant,
+        message: 'Chart calculated with astronomia and swisseph',
+        input: { year, month, day, hour, minute, lat, lng },
+        birthDate: birthDate.toISOString()
+      });
     });
     
   } catch (error) {
