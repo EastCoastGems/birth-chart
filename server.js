@@ -38,16 +38,22 @@ app.post('/api/chart', async (req, res) => {
     // Calculate planetary positions
     const planets = {};
     try {
-      planets.Sun = planetposition.sun?.position(jd)?.lon ?? null;
-      planets.Moon = planetposition.moon?.position(jd)?.lon ?? null;
-      planets.Mercury = planetposition.mercury?.position(jd)?.lon ?? null;
-      planets.Venus = planetposition.venus?.position(jd)?.lon ?? null;
-      planets.Mars = planetposition.mars?.position(jd)?.lon ?? null;
-      planets.Jupiter = planetposition.jupiter?.position(jd)?.lon ?? null;
-      planets.Saturn = planetposition.saturn?.position(jd)?.lon ?? null;
-      planets.Uranus = planetposition.uranus?.position(jd)?.lon ?? null;
-      planets.Neptune = planetposition.neptune?.position(jd)?.lon ?? null;
-      planets.Pluto = planetposition.pluto?.position(jd)?.lon ?? null;
+      const planetList = [
+        'Sun', 'Moon', 'Mercury', 'Venus', 'Mars',
+        'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'
+      ];
+      for (const pname of planetList) {
+        let result;
+        try {
+          result = planetposition[pname.toLowerCase()]?.position(jd);
+        } catch (err) {
+          console.error(`Error calling planetposition.${pname.toLowerCase()}.position(jd):`, err);
+        }
+        if (!result || typeof result.lon !== 'number') {
+          console.warn(`planetposition.${pname.toLowerCase()}.position(jd) returned:`, result);
+        }
+        planets[pname] = result?.lon ?? null;
+      }
     } catch (planetErr) {
       console.error('Planet calculation error:', planetErr);
       return res.status(500).json({ error: 'Planet calculation failed', details: planetErr.message });
