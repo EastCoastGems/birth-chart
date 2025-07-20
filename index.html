@@ -1345,9 +1345,17 @@
           let bigThreeAnalysis = '';
           
           if (readingType === 'bigThree') {
-            const sunSign = degToSign(planetsRaw.Sun.lon).sign;
-            const moonSign = degToSign(planetsRaw.Moon.lon).sign;
-            const ascendantSign = degToSign(ascendant).sign;
+            let sunSign = '(data missing)', moonSign = '(data missing)', ascendantSign = degToSign(ascendant).sign;
+            if (planetsRaw.Sun && typeof planetsRaw.Sun.lon === 'number') {
+              sunSign = degToSign(planetsRaw.Sun.lon).sign;
+            } else {
+              console.warn('Big Three: Sun data missing or invalid', planetsRaw.Sun);
+            }
+            if (planetsRaw.Moon && typeof planetsRaw.Moon.lon === 'number') {
+              moonSign = degToSign(planetsRaw.Moon.lon).sign;
+            } else {
+              console.warn('Big Three: Moon data missing or invalid', planetsRaw.Moon);
+            }
             const descriptions = getBigThreeDescriptions(sunSign, moonSign, ascendantSign);
             
             outputHTML += `<h3>✨ Your Big Three</h3>`;
