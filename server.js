@@ -58,8 +58,8 @@ app.post('/api/chart', async (req, res) => {
         Pluto: 15.0
       },
       houses: {
-        1: { raw: 0 }, 2: { raw: 30 }, 3: { raw: 60 }, 4: { raw: 90 }, 5: { raw: 120 }, 6: { raw: 150 },
-        7: { raw: 180 }, 8: { raw: 210 }, 9: { raw: 240 }, 10: { raw: 270 }, 11: { raw: 300 }, 12: { raw: 330 }
+        1: { lon: 0 }, 2: { lon: 30 }, 3: { lon: 60 }, 4: { lon: 90 }, 5: { lon: 120 }, 6: { lon: 150 },
+        7: { lon: 180 }, 8: { lon: 210 }, 9: { lon: 240 }, 10: { lon: 270 }, 11: { lon: 300 }, 12: { lon: 330 }
       },
       ascendant: 0,
       message: 'Chart request processed successfully',
