@@ -326,7 +326,209 @@
       });
 
       // ...Paste all other utility functions and chart logic here (degToSign, drawCustomWheel, drawChart, drawSkyMap, getBigThreeDescriptions, etc.)...
-      // ...existing code from your previous working version...
+      // --- Utility Functions and Chart Logic ---
+      // Show loading spinner
+      function showLoading() {
+        elements.resultsDiv.innerHTML = '<div class="success">Calculating your chart... <span style="font-size:1.5rem;">🔮</span></div>';
+      }
+
+      // Show error message
+      function showError(msg) {
+        elements.resultsDiv.innerHTML = `<div class="error">${msg}</div>`;
+        elements.resultsDiv.style.display = 'block';
+      }
+
+      // Geocode location using OpenStreetMap Nominatim
+      async function geocodeLocation(location) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data.length) throw new Error('Location not found. Please enter a valid city, state, or country.');
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      }
+
+      // Fetch chart data from backend
+      async function fetchChartData(params) {
+        // Parse date and time
+        const [year, month, day] = params.date.split('-').map(Number);
+        const [hour, minute] = params.time.split(':').map(Number);
+        const body = {
+          year, month, day, hour, minute,
+          lat: params.lat,
+          lng: params.lng
+        };
+        const res = await fetch(CONFIG.backendUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        // Add readingType to chartData
+        data.readingType = params.readingType;
+        return data;
+      }
+
+      // Zodiac sign lookup
+      const SIGNS = [
+        { sign: 'Aries', deg: 0 },
+        { sign: 'Taurus', deg: 30 },
+        { sign: 'Gemini', deg: 60 },
+        { sign: 'Cancer', deg: 90 },
+        { sign: 'Leo', deg: 120 },
+        { sign: 'Virgo', deg: 150 },
+        { sign: 'Libra', deg: 180 },
+        { sign: 'Scorpio', deg: 210 },
+        { sign: 'Sagittarius', deg: 240 },
+        { sign: 'Capricorn', deg: 270 },
+        { sign: 'Aquarius', deg: 300 },
+        { sign: 'Pisces', deg: 330 }
+      ];
+      function degToSign(deg) {
+        deg = ((deg % 360) + 360) % 360;
+        for (let i = SIGNS.length - 1; i >= 0; i--) {
+          if (deg >= SIGNS[i].deg) return SIGNS[i];
+        }
+        return SIGNS[0];
+      }
+
+      // Draw chart wheel background
+      function drawCustomWheel(ctx) {
+        const img = new window.Image();
+        img.src = CONFIG.wheelImageUrl;
+        img.onload = function() {
+          ctx.drawImage(img, 0, 0, 400, 400);
+        };
+      }
+
+      // Draw planets and houses on chart
+      function drawChart(planets, houses, ctx) {
+        // Draw planets as colored dots
+        const planetColors = {
+          Sun: '#FFD700', Moon: '#B2B2FF', Mercury: '#C0C0C0', Venus: '#FFB6B6', Mars: '#FF6F6F', Jupiter: '#6FFFE9', Saturn: '#B23CF0', Uranus: '#6F6FFF', Neptune: '#6FFFFF', Pluto: '#FFB23C'
+        };
+        const planetAngles = Object.entries(planets).map(([name, lon]) => ({ name, lon }));
+        planetAngles.forEach((p, i) => {
+          const angle = ((p.lon % 360) - 90) * Math.PI / 180;
+          const r = 160;
+          const x = 200 + r * Math.cos(angle);
+          const y = 200 + r * Math.sin(angle);
+          ctx.beginPath();
+          ctx.arc(x, y, 10, 0, 2 * Math.PI);
+          ctx.fillStyle = planetColors[p.name] || '#fff';
+          ctx.fill();
+          ctx.font = 'bold 14px Segoe UI';
+          ctx.fillStyle = '#222';
+          ctx.fillText(p.name, x - 18, y - 14);
+        });
+        // Draw house cusps
+        Object.entries(houses).forEach(([num, h]) => {
+          const angle = ((h.lon % 360) - 90) * Math.PI / 180;
+          const r = 180;
+          const x = 200 + r * Math.cos(angle);
+          const y = 200 + r * Math.sin(angle);
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, 2 * Math.PI);
+          ctx.fillStyle = '#ffe66f';
+          ctx.fill();
+          ctx.font = 'bold 12px Segoe UI';
+          ctx.fillStyle = '#b23cf0';
+          ctx.fillText(num, x - 6, y - 10);
+        });
+      }
+
+      // Draw sky map (simple horizon view)
+      function drawSkyMap(planets) {
+        const ctx = elements.skyCanvas.getContext('2d');
+        ctx.clearRect(0, 0, elements.skyCanvas.width, elements.skyCanvas.height);
+        ctx.fillStyle = '#2a0845';
+        ctx.fillRect(0, 0, 400, 200);
+        Object.entries(planets).forEach(([name, lon], i) => {
+          const x = 20 + (i * 36);
+          const y = 100 - Math.sin(lon * Math.PI / 180) * 80;
+          ctx.beginPath();
+          ctx.arc(x, y, 12, 0, 2 * Math.PI);
+          ctx.fillStyle = '#ffd700';
+          ctx.fill();
+          ctx.font = 'bold 13px Segoe UI';
+          ctx.fillStyle = '#fff';
+          ctx.fillText(name, x - 18, y - 18);
+        });
+      }
+
+      // Big Three descriptions
+      function getBigThreeDescriptions(sun, moon, asc) {
+        return {
+          sun: `Your Sun sign (${sun}) represents your core essence and conscious self.`,
+          moon: `Your Moon sign (${moon}) reveals your emotional nature and inner world.`,
+          ascendant: `Your Ascendant (${asc}) shapes your outward personality and how others see you.`
+        };
+      }
+      function getBigThreeSummary(sun, moon, asc) {
+        return `The combination of your Sun, Moon, and Ascendant signs creates your unique astrological blueprint.`;
+      }
+
+      // Aspects (simple conjunctions)
+      function calculateAspects(planets) {
+        const aspects = [];
+        const names = Object.keys(planets);
+        for (let i = 0; i < names.length; i++) {
+          for (let j = i + 1; j < names.length; j++) {
+            const a = planets[names[i]];
+            const b = planets[names[j]];
+            const diff = Math.abs(a - b);
+            if (diff < 8 || Math.abs(diff - 360) < 8) {
+              aspects.push(`${names[i]} conjunct ${names[j]}`);
+            }
+          }
+        }
+        return aspects;
+      }
+
+      // Chart pattern detection (very basic)
+      function detectChartPattern(planets) {
+        const lons = Object.values(planets);
+        const spread = Math.max(...lons) - Math.min(...lons);
+        if (spread < 120) return 'Bundle';
+        if (spread < 180) return 'Bowl';
+        if (spread < 240) return 'Bucket';
+        return 'Splash';
+      }
+
+      // Chart analysis HTML
+      function getChartAnalysis(planets, houses, aspects, pattern) {
+        let html = `<div class="success"><h3>Chart Pattern: ${pattern}</h3>`;
+        if (aspects.length) {
+          html += `<p><strong>Major Aspects:</strong> ${aspects.join(', ')}</p>`;
+        }
+        html += `<h4>Planetary Positions:</h4><ul>`;
+        Object.entries(planets).forEach(([name, lon]) => {
+          const sign = degToSign(lon).sign;
+          html += `<li>${name}: ${sign} (${lon.toFixed(2)}°)</li>`;
+        });
+        html += `</ul></div>`;
+        return html;
+      }
+
+      // Planetary analysis HTML
+      function getPlanetaryAnalysis(planets) {
+        let html = `<div class="success"><h4>Planetary Insights</h4><ul>`;
+        Object.entries(planets).forEach(([name, lon]) => {
+          const sign = degToSign(lon).sign;
+          html += `<li>${name} in ${sign}: This planet influences your ${name.toLowerCase()} traits.</li>`;
+        });
+        html += `</ul></div>`;
+        return html;
+      }
+
+      // Crystal recommendations (simple)
+      function displayCrystalRecommendations(chartData) {
+        const sunSign = degToSign(chartData.planets.Sun.lon).sign;
+        const crystals = {
+          Aries: 'Carnelian', Taurus: 'Rose Quartz', Gemini: 'Citrine', Cancer: 'Moonstone', Leo: 'Tiger’s Eye', Virgo: 'Amazonite', Libra: 'Lapis Lazuli', Scorpio: 'Obsidian', Sagittarius: 'Turquoise', Capricorn: 'Garnet', Aquarius: 'Amethyst', Pisces: 'Aquamarine'
+        };
+        return `<div class="success"><h4>Crystal Recommendation</h4><p>For your Sun sign (${sunSign}), we recommend: <strong>${crystals[sunSign] || 'Clear Quartz'}</strong>.</p></div>`;
+      }
     });
     // --- End working birth chart logic ---
   </script>
