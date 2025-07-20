@@ -1316,6 +1316,8 @@
             let houseDeg = undefined;
             if (hsrc[String(i)] && typeof hsrc[String(i)].lon === "number") {
               houseDeg = hsrc[String(i)].lon;
+            } else if (hsrc[String(i)] && hsrc[String(i)].lon === undefined) {
+              console.warn(`House ${i} exists but .lon is undefined:`, hsrc[String(i)]);
             } else {
               console.warn(`House ${i} missing or invalid:`, hsrc[String(i)]);
             }
