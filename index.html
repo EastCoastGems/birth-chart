@@ -1313,18 +1313,20 @@
           } else {
             // Process actual house data with robust fallback and logging
             for (let i = 1; i <= 12; i++) {
-              let houseDeg = undefined;
-              if (hsrc[String(i)] && typeof hsrc[String(i)].lon === "number") {
-                houseDeg = hsrc[String(i)].lon;
-              } else {
-                console.warn(`House ${i} missing or invalid:`, hsrc[String(i)]);
-              }
-              // Fallback if missing or invalid
-              if (typeof houseDeg !== "number" || isNaN(houseDeg) || houseDeg === 0) {
-                houseDeg = (ascendant + (i - 1) * 30) % 360;
-                console.warn(`Using fallback for house ${i}:`, houseDeg);
-              }
-              houses[i] = degToSign(houseDeg);
+            let houseDeg = undefined;
+            if (hsrc[String(i)] && typeof hsrc[String(i)].lon === "number") {
+              houseDeg = hsrc[String(i)].lon;
+            } else {
+              console.warn(`House ${i} missing or invalid:`, hsrc[String(i)]);
+            }
+            // Fallback if missing or invalid
+            if (typeof houseDeg !== "number" || isNaN(houseDeg) || houseDeg === 0) {
+              houseDeg = (ascendant + (i - 1) * 30) % 360;
+              console.warn(`Using fallback for house ${i}:`, houseDeg);
+            }
+            // Store all house info in houses[i] for later use
+            houses[i] = degToSign(houseDeg);
+            houses[i].raw = houseDeg; // Always set raw to the degree value
             }
           }
 
@@ -1397,7 +1399,7 @@
             outputHTML += `<h3>🏠 House Cusps</h3>`;
             
             // Add debug info if houses seem incorrect
-            const allSameSign = houses[1].sign === houses[2].sign && houses[2].sign === houses[3].sign;
+            const allSameSign = houses[1]?.sign === houses[2]?.sign && houses[2]?.sign === houses[3]?.sign;
             if (allSameSign) {
               outputHTML += `<div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 0.5rem; margin: 0.5rem 0; border-radius: 4px;">
                 ⚠️ <strong>Note:</strong> Houses are showing calculated values based on your Ascendant. 
@@ -1407,7 +1409,11 @@
             
             outputHTML += `<ul>`;
             for (let i = 1; i <= 12; i++) {
-              outputHTML += `<li>House ${i}: ${houses[i].sign} ${houses[i].degree}°</li>`;
+              if (houses[i] && typeof houses[i].sign === "string" && typeof houses[i].degree === "number") {
+                outputHTML += `<li>House ${i}: ${houses[i].sign} ${houses[i].degree}°</li>`;
+              } else {
+                outputHTML += `<li>House ${i}: (data missing)</li>`;
+              }
             }
             outputHTML += `</ul>`;
             
