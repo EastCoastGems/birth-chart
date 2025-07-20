@@ -362,7 +362,7 @@
       
       h1 {
         font-size: 2rem;
-      }
+      
       
       form, #results {
         margin: 1rem auto;
@@ -387,6 +387,19 @@
 </head>
 <body>
   <div class="container">
+    <script>
+      window.addEventListener('error', function(event) {
+        event.preventDefault();
+        var resultsDiv = document.getElementById('results');
+        if (resultsDiv) {
+          resultsDiv.innerHTML = '<div class="error">⚠️ A critical error occurred: ' + event.message + '</div>';
+          resultsDiv.style.display = 'block';
+        } else {
+          alert('A critical error occurred: ' + event.message);
+        }
+        return false;
+      });
+    </script>
     <header>
       <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="Astrology Blueprint Logo">
     </header>
@@ -747,7 +760,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       // Draw custom astrological wheel
-      function drawCustomWheel(ctx) {
+      function drawAstrologyWheel() {
         const centerX = elements.canvas.width / 2;
         const centerY = elements.canvas.height / 2;
         const outerRadius = elements.canvas.width / 2 - 20;
