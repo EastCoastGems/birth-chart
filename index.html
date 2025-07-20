@@ -1331,40 +1331,20 @@
           // Generate results HTML
           let outputHTML = '';
           if (readingType === 'bigThree') {
-            let sunSign = '(data missing)', moonSign = '(data missing)', ascendantSign = degToSign(ascendant).sign;
-            if (planetsRaw.Sun && typeof planetsRaw.Sun.lon === 'number') {
-              sunSign = degToSign(planetsRaw.Sun.lon).sign;
-            } else {
-              console.warn('Big Three: Sun data missing or invalid', planetsRaw.Sun);
-            }
-            if (planetsRaw.Moon && typeof planetsRaw.Moon.lon === 'number') {
-              moonSign = degToSign(planetsRaw.Moon.lon).sign;
-            } else {
-              console.warn('Big Three: Moon data missing or invalid', planetsRaw.Moon);
-            }
+            let sunSign = degToSign(planetsRaw.Sun.lon).sign;
+            let moonSign = degToSign(planetsRaw.Moon.lon).sign;
+            let ascendantSign = degToSign(ascendant).sign;
             const descriptions = getBigThreeDescriptions(sunSign, moonSign, ascendantSign);
-            outputHTML += `<h2 style="color:#b23cf0; text-align:center; margin-bottom:1.5rem;">🌟 Your Big Three Analysis</h2>`;
-            outputHTML += `<div style="background: linear-gradient(90deg, #f3e8ff 0%, #e0c3fc 100%); color:#333; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; text-align:center;">Your core personality • Your emotional nature • How you present to the world</div>`;
-            outputHTML += `<div style="background: linear-gradient(135deg, #f3e8ff 0%, #e0c3fc 100%); padding:2rem; border-radius:18px; margin:1rem 0; border:1px solid #e0c3fc; box-shadow:0 2px 8px rgba(178,60,240,0.08);">`;
-            outputHTML += `<div style="margin-bottom:2rem; padding:1rem; background:rgba(255,215,0,0.12); border-radius:12px; border-left:5px solid #FFD700; box-shadow:0 1px 4px rgba(255,215,0,0.08);">`;
-            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#FFD700; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Sun}</span>Sun in ${sunSign} ${planetsRaw.Sun && typeof planetsRaw.Sun.lon === 'number' ? degToSign(planetsRaw.Sun.lon).degree : ''}° - Your Core Personality</h4>`;
-            outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.sun}</p>`;
-            outputHTML += `</div>`;
-            outputHTML += `<div style="margin-bottom:2rem; padding:1rem; background:rgba(192,192,192,0.12); border-radius:12px; border-left:5px solid #C0C0C0; box-shadow:0 1px 4px rgba(192,192,192,0.08);">`;
-            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#666; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Moon}</span>Moon in ${moonSign} ${planetsRaw.Moon && typeof planetsRaw.Moon.lon === 'number' ? degToSign(planetsRaw.Moon.lon).degree : ''}° - Your Emotional Nature</h4>`;
-            outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.moon}</p>`;
-            outputHTML += `</div>`;
-            outputHTML += `<div style="padding:1rem; background:rgba(178,60,240,0.12); border-radius:12px; border-left:5px solid #b23cf0; box-shadow:0 1px 4px rgba(178,60,240,0.08);">`;
-            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#b23cf0; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">🔮</span>Ascendant in ${ascendantSign} ${degToSign(ascendant).degree}° - How You Present Yourself</h4>`;
-            outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.ascendant}</p>`;
-            outputHTML += `</div>`;
-            outputHTML += `</div>`;
-            outputHTML += `<div style="background: rgba(255, 255, 255, 0.15); padding: 1.5rem; border-radius: 15px; margin: 1rem 0; border: 1px solid rgba(255,255,255,0.3);">`;
-            outputHTML += `<h4 style="color: #333; margin-top: 0;">🌟 Your Big Three Summary</h4>`;
-            outputHTML += `<p style="margin: 0; color: #444; line-height: 1.6;">`;
-            outputHTML += getBigThreeSummary(sunSign, moonSign, ascendantSign);
-            outputHTML += `</p></div>`;
-            elements.resultsDiv.innerHTML = outputHTML;
+            elements.resultsDiv.innerHTML = `
+              <div class="success">
+                <h3>🌞 Sun Sign: ${sunSign}</h3>
+                <p>${descriptions.sun}</p>
+                <h3>🌙 Moon Sign: ${moonSign}</h3>
+                <p>${descriptions.moon}</p>
+                <h3>Ascendant (Rising Sign): ${ascendantSign}</h3>
+                <p>${descriptions.ascendant}</p>
+              </div>
+            `;
             elements.resultsDiv.style.display = 'block';
             return;
           }
