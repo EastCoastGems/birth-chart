@@ -1284,9 +1284,14 @@
           // Process data
           const ascendant = backendData.ascendant;
           const planetsRaw = {};
-          // Accept both numeric and named keys from backend
+          // Log backend planets object for diagnosis
+          console.log('Backend planets object:', backendData.planets);
+          // Map numeric keys ("0", "1", ...) and named keys ("Sun", "Moon", ...)
           for (const pid in backendData.planets) {
-            let planetName = PLANET_NAMES[pid] || pid;
+            let planetName = PLANET_NAMES[pid];
+            if (!planetName && typeof pid === 'string' && pid.length > 2) {
+              planetName = pid; // Use named key directly
+            }
             if (planetName && typeof backendData.planets[pid] === 'number') {
               planetsRaw[planetName] = { lon: backendData.planets[pid] };
             }
