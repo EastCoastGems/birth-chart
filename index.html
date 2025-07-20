@@ -1426,38 +1426,19 @@
 
           // For Big Three, show analysis above chart first
           if (readingType === 'bigThree') {
-            outputHTML = bigThreeAnalysis + getPlanetaryAnalysis(planetsRaw) + outputHTML;
-          }
-
-          // Chart pattern (only for full chart)
-          if (readingType !== 'bigThree') {
-          }
-
-          // For Big Three, show analysis above chart first
-          if (readingType === 'bigThree') {
-            outputHTML = bigThreeAnalysis + outputHTML;
-          }
-
-          // Chart pattern (only for full chart)
-          if ( readingType !== 'bigThree') {
-            outputHTML += `<h3>🎯 Chart Pattern</h3><p>${chartPattern}</p>`;
-          }
-
-          // Aspects (only for full chart)  
-          if (readingType !== 'bigThree') {
-            outputHTML += `<h3>⚡ Major Aspects</h3>`;
+            outputHTML = bigThreeAnalysis;
+          } else {
+            outputHTML += '<h3>&#127919; Chart Pattern</h3><p>' + chartPattern + '</p>';
+            outputHTML += '<h3>&#9889; Major Aspects</h3>';
             if (aspects.length === 0) {
-              outputHTML += `<p>No major aspects found within orb.</p>`;
+              outputHTML += '<p>No major aspects found within orb.</p>';
             } else {
-              outputHTML += `<div class="aspect-list"><ul>`;
+              outputHTML += "<div class='aspect-list'><ul>";
               for (const asp of aspects) {
                 const exactText = asp.exact ? ' (Exact!)' : '';
-                outputHTML += `<li style="color: ${asp.color};">
-                  ${PLANET_SYMBOLS[asp.p1]} ${asp.p1} ${asp.symbol} ${PLANET_SYMBOLS[asp.p2]} ${asp.p2} 
-                  <small>(${asp.orb}° orb${exactText})</small>
-                </li>`;
+                outputHTML += "<li style='color: " + asp.color + ";'>" + PLANET_SYMBOLS[asp.p1] + " " + asp.p1 + " " + asp.symbol + " " + PLANET_SYMBOLS[asp.p2] + " " + asp.p2 + " <small>(" + asp.orb + "° orb" + exactText + ")</small></li>";
               }
-              outputHTML += `</ul></div>`;
+              outputHTML += "</ul></div>";
             }
           }
 
