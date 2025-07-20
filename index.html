@@ -1305,16 +1305,10 @@
           } else {
           // Process actual house data
           for (let i = 1; i <= 12; i++) {
-            let houseDeg;
-            if (Array.isArray(hsrc)) {
-              houseDeg = hsrc[i-1]?.lon;
-            } else {
-              houseDeg = hsrc[i]?.lon ?? hsrc[String(i)]?.lon;
-            }
+            let houseDeg = hsrc[String(i)]?.lon;
             // Better validation and fallback
             if (typeof houseDeg !== "number" || isNaN(houseDeg) || houseDeg === 0) {
               console.warn(`Invalid house ${i} data:`, houseDeg);
-              // Fallback: use ascendant + 30-degree intervals
               houseDeg = (ascendant + (i - 1) * 30) % 360;
             }
             houses[i] = degToSign(houseDeg);
