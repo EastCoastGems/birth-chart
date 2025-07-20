@@ -205,89 +205,122 @@
           if (wheelDesc) wheelDesc.style.display = 'none';
         });
       </script>
-    </div>
+    (function() {
+      // Configuration
+      const CONFIG = {
+        apiKey: 'f4828f886eb04102855182883c0428a2',
+        backendUrl: 'https://birth-chart-wc1f.onrender.com/api/chart',
+        wheelImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Astrological_Chart_-_New_Millennium.svg'
+      };
 
-    <div class="chart-container">
-      <canvas id="birth-chart" width="400" height="400" aria-label="Astrology chart wheel"></canvas>
-    </div>
+      // DOM Elements
+      const elements = {
+        form: document.getElementById('birth-form'),
+        resultsDiv: document.getElementById('results'),
+        chartContainer: document.querySelector('.chart-container'),
+        canvas: document.getElementById('birth-chart'),
+        skyContainer: document.querySelector('.sky-container'),
+        skyCanvas: document.getElementById('skyCanvas'),
+        downloadBtn: document.getElementById('downloadBtn'),
+        chartDesc: document.getElementById('chart-description'),
+        birthdate: document.getElementById('birthdate'),
+        birthtime: document.getElementById('birthtime'),
+        location: document.getElementById('location')
+      };
+      // Hide chart, sky map, and download button by default
+      elements.chartContainer.style.display = 'none';
+      elements.skyContainer.style.display = 'none';
+      elements.downloadBtn.style.display = 'none';
 
-    <div class="sky-container">
-      <canvas id="skyCanvas" width="400" height="250" aria-label="Sky map showing planetary positions"></canvas>
-      <button id="downloadBtn">📥 Download Your Sky Map</button>
-    </div>
+      const skyCtx = elements.skyCanvas.getContext('2d');
 
-    <div id="results"></div>
-  </div>
+      // ...existing constants and utility functions...
 
-  <style>
-    #skyCanvas {
-      position: static;
-      width: 400px !important;
-      height: 250px !important;
-      z-index: auto;
-      pointer-events: auto;
-      display: inline-block;
-    }
-    .main-content, .chart-container, .results, .sky-container, .chart-desc {
-      position: relative;
-      z-index: 2;
-    }
-  </style>
-  <script>
-    const crystals = [
-      // Love & Relationships
-      { name: "Rose Quartz", category: "Love & Relationships", properties: "Unconditional love, emotional healing", bestFor: "opening your heart to deeper connections" },
-      { name: "Green Aventurine", category: "Love & Relationships", properties: "Heart chakra healing, compassion", bestFor: "healing past relationship wounds" },
-      { name: "Moonstone", category: "Love & Relationships", properties: "Divine feminine energy, intuition", bestFor: "balancing emotions in relationships" },
-      
-      // Clarity & Intuition
-      { name: "Amethyst", category: "Clarity & Intuition", properties: "Third eye activation, spiritual awareness", bestFor: "deepening your spiritual practice" },
-      { name: "Clear Quartz", category: "Clarity & Intuition", properties: "Amplification, clarity", bestFor: "clearing mental fog and confusion" },
-      { name: "Fluorite", category: "Clarity & Intuition", properties: "Mental clarity, focus", bestFor: "making important decisions" },
-      
-      // Abundance & Success  
-      { name: "Citrine", category: "Abundance & Success", properties: "Manifestation, prosperity", bestFor: "attracting financial abundance" },
-      { name: "Pyrite", category: "Abundance & Success", properties: "Confidence, willpower", bestFor: "pursuing your goals with determination" },
-      { name: "Green Jade", category: "Abundance & Success", properties: "Good fortune, harmony", bestFor: "creating lasting prosperity" },
-      
-      // Protection & Grounding
-      { name: "Black Tourmaline", category: "Protection & Grounding", properties: "Psychic protection, grounding", bestFor: "shielding yourself from negative energy" },
-      { name: "Hematite", category: "Protection & Grounding", properties: "Grounding, strength", bestFor: "staying centered during challenging times" },
-      { name: "Smoky Quartz", category: "Protection & Grounding", properties: "Transmutation, cleansing", bestFor: "releasing what no longer serves you" },
-      
-      // Transformation & Growth
-      { name: "Labradorite", category: "Transformation & Growth", properties: "Transformation, magic", bestFor: "embracing major life changes" },
-      { name: "Garnet", category: "Transformation & Growth", properties: "Passion, regeneration", bestFor: "igniting your inner fire" },
-      { name: "Carnelian", category: "Transformation & Growth", properties: "Courage, creativity", bestFor: "taking bold action toward your dreams" }
-    ];
+      // Form submission handler
+      elements.form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        elements.resultsDiv.innerHTML = '';
+        elements.chartContainer.style.display = 'none';
+        elements.skyContainer.style.display = 'none';
+        elements.downloadBtn.style.display = 'none';
+        showLoading();
 
-    function analyzeBirthChartThemes(results) {
-      const themes = [];
-      
-      // Check for strong fire signs (passion, action)
-      const fireCount = (results.sun.element === 'Fire' ? 1 : 0) +
-                       (results.moon.element === 'Fire' ? 1 : 0) +
-                       (results.rising.element === 'Fire' ? 1 : 0);
-      if (fireCount >= 2) themes.push('Transformation & Growth');
-      
-      // Check for strong earth signs (grounding, abundance)  
-      const earthCount = (results.sun.element === 'Earth' ? 1 : 0) +
-                        (results.moon.element === 'Earth' ? 1 : 0) +
-                        (results.rising.element === 'Earth' ? 1 : 0);
-      if (earthCount >= 2) themes.push('Abundance & Success', 'Protection & Grounding');
-      
-      // Check for strong air signs (clarity, communication)
-      const airCount = (results.sun.element === 'Air' ? 1 : 0) +
-                      (results.moon.element === 'Air' ? 1 : 0) +
-                      (results.rising.element === 'Air' ? 1 : 0);
-      if (airCount >= 2) themes.push('Clarity & Intuition');
-      
-      // Check for strong water signs (emotion, intuition)
-      const waterCount = (results.sun.element === 'Water' ? 1 : 0) +
-                        (results.moon.element === 'Water' ? 1 : 0) +
-                        (results.rising.element === 'Water' ? 1 : 0);
-      if (waterCount >= 2) themes.push('Love & Relationships', 'Clarity & Intuition');
-      
+        // Get form values
+        const birthdate = elements.birthdate.value;
+        const birthtime = elements.birthtime.value;
+        const location = elements.location.value;
+        const readingType = document.querySelector('input[name="readingType"]:checked').value;
+
+        // Geocode location
+        let geo;
+        try {
+          geo = await geocodeLocation(location);
+        } catch (err) {
+          showError(err.message);
+          return;
+        }
+
+        // Prepare chart params
+        const chartParams = {
+          date: birthdate,
+          time: birthtime,
+          lat: geo.lat,
+          lng: geo.lng,
+          readingType: readingType
+        };
+
+        // Fetch chart data
+        let chartData;
+        try {
+          chartData = await fetchChartData(chartParams);
+        } catch (err) {
+          showError(err.message);
+          return;
+        }
+
+        // Show chart and sky map
+        elements.chartContainer.style.display = 'flex';
+        elements.skyContainer.style.display = 'block';
+        elements.downloadBtn.style.display = 'inline-block';
+
+        // Draw chart
+        const ctx = elements.canvas.getContext('2d');
+        ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+        drawCustomWheel(ctx);
+        drawChart(chartData.planets, chartData.houses, ctx);
+
+        // Draw sky map
+        drawSkyMap(chartData.planets);
+
+        // Results block
+        let resultsHTML = '';
+        if (readingType === 'bigThree') {
+          const sunSign = degToSign(chartData.planets.Sun.lon).sign;
+          const moonSign = degToSign(chartData.planets.Moon.lon).sign;
+          const ascSign = degToSign(chartData.ascendant).sign;
+          const bigThreeDesc = getBigThreeDescriptions(sunSign, moonSign, ascSign);
+          resultsHTML += `<div class="success"><h3>🌞 Sun: ${sunSign}</h3><p>${bigThreeDesc.sun}</p><h3>🌙 Moon: ${moonSign}</h3><p>${bigThreeDesc.moon}</p><h3>⬆️ Ascendant: ${ascSign}</h3><p>${bigThreeDesc.ascendant}</p><p style='margin-top:1rem;'>${getBigThreeSummary(sunSign, moonSign, ascSign)}</p></div>`;
+        } else {
+          // Full chart analysis
+          const aspects = calculateAspects(chartData.planets);
+          const chartPattern = detectChartPattern(chartData.planets);
+          resultsHTML += getChartAnalysis(chartData.planets, chartData.houses, aspects, chartPattern);
+          resultsHTML += getPlanetaryAnalysis(chartData.planets);
+        }
+        // Crystal recommendations
+        resultsHTML += displayCrystalRecommendations(chartData);
+        elements.resultsDiv.innerHTML = resultsHTML;
+        elements.resultsDiv.style.display = 'block';
+      });
+
+      // Download sky map button
+      elements.downloadBtn.addEventListener('click', function() {
+        const link = document.createElement('a');
+        link.download = 'sky-map.png';
+        link.href = elements.skyCanvas.toDataURL('image/png');
+        link.click();
+      });
+    })();
       // Always include at least one theme
       if (themes.length === 0) {
         themes.push('Clarity & Intuition');
