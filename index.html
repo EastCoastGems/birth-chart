@@ -1237,7 +1237,6 @@
       elements.form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-      // ...existing code...
         showLoading();
         elements.chartContainer.style.display = 'none';
         elements.skyContainer.style.display = 'none';
@@ -1330,13 +1329,7 @@
           const chartPattern = detectChartPattern(planetsRaw);
 
           // Generate results HTML
-          let outputHTML = `<h2 style="color:#b23cf0; text-align:center; margin-bottom:1.5rem;">🌟 Your Birth Chart Analysis</h2>`;
-          outputHTML += `<div style="background: linear-gradient(90deg, #f3e8ff 0%, #e0c3fc 100%); color:#333; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; display:flex; align-items:center; gap:1rem;"><span style="font-size:1.5rem;">📍</span>Birth Location: <span style="font-weight:700;">${lat.toFixed(4)}, ${lng.toFixed(4)}</span></div>`;
-          outputHTML += `<div style="background: linear-gradient(90deg, #e0c3fc 0%, #f3e8ff 100%); color:#b23cf0; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; display:flex; align-items:center; gap:1rem;"><span style="font-size:1.5rem;">🔮</span>Ascendant (Rising Sign): <span style="font-weight:700;">${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</span></div>`;
-          
-          // For Big Three, show analysis above the chart
-          let bigThreeAnalysis = '';
-          
+          let outputHTML = '';
           if (readingType === 'bigThree') {
             let sunSign = '(data missing)', moonSign = '(data missing)', ascendantSign = degToSign(ascendant).sign;
             if (planetsRaw.Sun && typeof planetsRaw.Sun.lon === 'number') {
@@ -1350,46 +1343,31 @@
               console.warn('Big Three: Moon data missing or invalid', planetsRaw.Moon);
             }
             const descriptions = getBigThreeDescriptions(sunSign, moonSign, ascendantSign);
-            
-            outputHTML += `<h3 style="color:#b23cf0; text-align:center; margin-bottom:1rem;">✨ Your Big Three</h3>`;
+            outputHTML += `<h2 style="color:#b23cf0; text-align:center; margin-bottom:1.5rem;">🌟 Your Big Three Analysis</h2>`;
             outputHTML += `<div style="background: linear-gradient(90deg, #f3e8ff 0%, #e0c3fc 100%); color:#333; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; text-align:center;">Your core personality • Your emotional nature • How you present to the world</div>`;
-
             outputHTML += `<div style="background: linear-gradient(135deg, #f3e8ff 0%, #e0c3fc 100%); padding:2rem; border-radius:18px; margin:1rem 0; border:1px solid #e0c3fc; box-shadow:0 2px 8px rgba(178,60,240,0.08);">`;
-
             outputHTML += `<div style="margin-bottom:2rem; padding:1rem; background:rgba(255,215,0,0.12); border-radius:12px; border-left:5px solid #FFD700; box-shadow:0 1px 4px rgba(255,215,0,0.08);">`;
-            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#FFD700; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Sun}</span>Sun in ${sunSign} ${degToSign(planetsRaw.Sun.lon).degree}° - Your Core Personality</h4>`;
+            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#FFD700; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Sun}</span>Sun in ${sunSign} ${planetsRaw.Sun && typeof planetsRaw.Sun.lon === 'number' ? degToSign(planetsRaw.Sun.lon).degree : ''}° - Your Core Personality</h4>`;
             outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.sun}</p>`;
             outputHTML += `</div>`;
-
             outputHTML += `<div style="margin-bottom:2rem; padding:1rem; background:rgba(192,192,192,0.12); border-radius:12px; border-left:5px solid #C0C0C0; box-shadow:0 1px 4px rgba(192,192,192,0.08);">`;
-            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#666; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Moon}</span>Moon in ${moonSign} ${degToSign(planetsRaw.Moon.lon).degree}° - Your Emotional Nature</h4>`;
+            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#666; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Moon}</span>Moon in ${moonSign} ${planetsRaw.Moon && typeof planetsRaw.Moon.lon === 'number' ? degToSign(planetsRaw.Moon.lon).degree : ''}° - Your Emotional Nature</h4>`;
             outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.moon}</p>`;
             outputHTML += `</div>`;
-
             outputHTML += `<div style="padding:1rem; background:rgba(178,60,240,0.12); border-radius:12px; border-left:5px solid #b23cf0; box-shadow:0 1px 4px rgba(178,60,240,0.08);">`;
             outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#b23cf0; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">🔮</span>Ascendant in ${ascendantSign} ${degToSign(ascendant).degree}° - How You Present Yourself</h4>`;
             outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.ascendant}</p>`;
             outputHTML += `</div>`;
-
             outputHTML += `</div>`;
-            
-            // Add Big Three summary interpretation
             outputHTML += `<div style="background: rgba(255, 255, 255, 0.15); padding: 1.5rem; border-radius: 15px; margin: 1rem 0; border: 1px solid rgba(255,255,255,0.3);">`;
             outputHTML += `<h4 style="color: #333; margin-top: 0;">🌟 Your Big Three Summary</h4>`;
             outputHTML += `<p style="margin: 0; color: #444; line-height: 1.6;">`;
             outputHTML += getBigThreeSummary(sunSign, moonSign, ascendantSign);
             outputHTML += `</p></div>`;
-            
-            outputHTML += `</div>`;
-            
-            // Store this analysis to show above chart
-            bigThreeAnalysis = outputHTML;
-            
-            // Reset outputHTML for positioning after chart
-            outputHTML = `<h2>🌟 Your Birth Chart Analysis</h2>`;
-            outputHTML += `<div class="success">📍 Birth Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}</div>`;
-            outputHTML += `<p><strong>🔮 Ascendant (Rising Sign):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
-          } else {
+            elements.resultsDiv.innerHTML = outputHTML;
+            elements.resultsDiv.style.display = 'block';
+            return;
+          }
             outputHTML += `<h3>🪐 Planetary Positions</h3><ul>`;
             for (const [key, planet] of Object.entries(planetsRaw)) {
               const sign = degToSign(planet.lon);
@@ -1432,16 +1410,6 @@
 
           // Chart pattern (only for full chart)
           if (readingType !== 'bigThree') {
-            outputHTML += getPlanetaryAnalysis(planetsRaw);
-          }
-
-          // For Big Three, show analysis above chart first
-          if (readingType === 'bigThree') {
-            outputHTML = bigThreeAnalysis + outputHTML;
-          }
-
-          // Chart pattern (only for full chart)
-          if ( readingType !== 'bigThree') {
             outputHTML += `<h3>🎯 Chart Pattern</h3><p>${chartPattern}</p>`;
           }
 
