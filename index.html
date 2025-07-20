@@ -220,14 +220,12 @@
 
   <style>
     #skyCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw !important;
-      height: 100vh !important;
-      z-index: 0;
-      pointer-events: none;
-      display: block;
+      position: static;
+      width: 400px !important;
+      height: 250px !important;
+      z-index: auto;
+      pointer-events: auto;
+      display: inline-block;
     }
     .main-content, .chart-container, .results, .sky-container, .chart-desc {
       position: relative;
@@ -1155,89 +1153,58 @@
         skyCtx.fillStyle = grad;
         skyCtx.fillRect(0, 0, elements.skyCanvas.width, elements.skyCanvas.height);
 
-        // Draw stars
-        for (let i = 0; i < 80; i++) {
+        // Draw faint background stars
+        for (let i = 0; i < 120; i++) {
           const x = Math.random() * elements.skyCanvas.width;
           const y = Math.random() * elements.skyCanvas.height;
-          const size = Math.random() * 2 + 0.5; // Vary star sizes
-          const brightness = Math.random() * 0.7 + 0.3; // Random brightness
-          
-          // Draw a more realistic star shape
+          const size = Math.random() * 1.2 + 0.2;
+          const brightness = Math.random() * 0.4 + 0.1;
+          const color = `rgba(${220 + Math.floor(Math.random()*35)},${220 + Math.floor(Math.random()*35)},255,${brightness})`;
           skyCtx.save();
-          skyCtx.translate(x, y);
-          skyCtx.rotate(Math.random() * Math.PI * 2); // Random rotation
-          
           skyCtx.beginPath();
-          
-          // Create a 4-pointed star shape
-          const spikes = 4;
-          const outerRadius = size;
-          const innerRadius = size * 0.4;
-          
-          for (let j = 0; j < spikes * 2; j++) {
-            const radius = j % 2 === 0 ? outerRadius : innerRadius;
-            const angle = (j * Math.PI) / spikes;
-            const x = radius * Math.cos(angle);
-            const y = radius * Math.sin(angle);
-            
-            if (j === 0) {
-              skyCtx.moveTo(x, y);
-            } else {
-              skyCtx.lineTo(x, y);
-            }
-          }
-          
-          skyCtx.closePath();
-          
-          // Add a subtle glow effect
-          skyCtx.shadowColor = "#ffffff";
-          skyCtx.shadowBlur = size * 2;
-          skyCtx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+          skyCtx.arc(x, y, size, 0, 2 * Math.PI);
+          skyCtx.shadowColor = color;
+          skyCtx.shadowBlur = size * 2.5;
+          skyCtx.fillStyle = color;
           skyCtx.fill();
-          
-          // Add a bright center point
-          skyCtx.shadowBlur = 0;
-          skyCtx.beginPath();
-          skyCtx.arc(0, 0, size * 0.3, 0, 2 * Math.PI);
-          skyCtx.fillStyle = `rgba(255, 255, 255, ${Math.min(brightness + 0.3, 1)})`;
-          skyCtx.fill();
-          
           skyCtx.restore();
         }
-        
-        // Add some larger, brighter stars for variety
-        for (let i = 0; i < 15; i++) {
+
+        // Draw medium and large glowing stars
+        for (let i = 0; i < 30; i++) {
           const x = Math.random() * elements.skyCanvas.width;
           const y = Math.random() * elements.skyCanvas.height;
-          const size = Math.random() * 1.5 + 1;
-          
+          const size = Math.random() * 2.5 + 0.7;
+          const brightness = Math.random() * 0.6 + 0.3;
+          const color = `rgba(255,255,${220 + Math.floor(Math.random()*35)},${brightness})`;
           skyCtx.save();
-          skyCtx.translate(x, y);
-          
-          // Draw cross-shaped bright star
           skyCtx.beginPath();
-          skyCtx.strokeStyle = `rgba(255, 255, 255, 0.8)`;
-          skyCtx.lineWidth = 0.5;
-          skyCtx.shadowColor = "#ffffff";
-          skyCtx.shadowBlur = 8;
-          
-          // Vertical line
-          skyCtx.moveTo(0, -size * 3);
-          skyCtx.lineTo(0, size * 3);
-          
-          // Horizontal line
-          skyCtx.moveTo(-size * 3, 0);
-          skyCtx.lineTo(size * 3, 0);
-          
-          skyCtx.stroke();
-          
-          // Bright center
+          skyCtx.arc(x, y, size, 0, 2 * Math.PI);
+          skyCtx.shadowColor = color;
+          skyCtx.shadowBlur = size * 4.5;
+          skyCtx.fillStyle = color;
+          skyCtx.fill();
+          // Add a bright center
           skyCtx.shadowBlur = 0;
           skyCtx.beginPath();
-          skyCtx.arc(0, 0, size * 0.4, 0, 2 * Math.PI);
-          skyCtx.fillStyle = "rgba(255, 255, 255, 0.9)";
+          skyCtx.arc(x, y, size * 0.35, 0, 2 * Math.PI);
+          skyCtx.fillStyle = `rgba(255,255,255,${Math.min(brightness + 0.3, 1)})`;
           skyCtx.fill();
-          
+          skyCtx.restore();
+        }
+
+        // Draw a few extra large, soft glowing stars
+        for (let i = 0; i < 6; i++) {
+          const x = Math.random() * elements.skyCanvas.width;
+          const y = Math.random() * elements.skyCanvas.height;
+          const size = Math.random() * 4 + 2.5;
+          skyCtx.save();
+          skyCtx.beginPath();
+          skyCtx.arc(x, y, size, 0, 2 * Math.PI);
+          skyCtx.shadowColor = "#fffbe6";
+          skyCtx.shadowBlur = size * 8;
+          skyCtx.fillStyle = "rgba(255,255,220,0.7)";
+          skyCtx.fill();
           skyCtx.restore();
         }
 
