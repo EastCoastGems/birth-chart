@@ -691,6 +691,10 @@
         ctx.fillStyle = '#333';
 
         for (let i = 1; i <= 12; i++) {
+          if (!houses[i] || typeof houses[i].raw !== "number" || isNaN(houses[i].raw)) {
+            console.warn(`drawChart: House ${i} is missing or has invalid 'raw' property:`, houses[i]);
+            continue; // Skip drawing this house cusp
+          }
           const deg = houses[i].raw;
           const angle = (deg - 90) * Math.PI / 180; // 0° Aries at top
           const x1 = centerX + (radius - 20) * Math.cos(angle);
@@ -1280,7 +1284,6 @@
           // Process data
           const ascendant = backendData.ascendant;
           const planetsRaw = {};
-          
           for (const pid in backendData.planets) {
             if (PLANET_NAMES[pid]) {
               planetsRaw[PLANET_NAMES[pid]] = { lon: backendData.planets[pid] };
@@ -1289,11 +1292,16 @@
 
           const houses = {};
           const hsrc = backendData.houses;
-          
-          // Debug: Log the house data structure
+
+          // Enhanced debug: Log the house data structure and each house value
           console.log('Backend house data:', hsrc);
+          if (hsrc) {
+            for (let i = 1; i <= 12; i++) {
+              console.log(`House ${i} raw:`, hsrc[String(i)]);
+            }
+          }
           console.log('Backend full response:', backendData);
-          
+
           // Check if we have valid house data
           if (!hsrc || (Array.isArray(hsrc) && hsrc.length === 0) || (typeof hsrc === 'object' && Object.keys(hsrc).length === 0)) {
             console.warn('No valid house data received from backend');
@@ -1303,16 +1311,21 @@
               houses[i] = degToSign(houseDeg);
             }
           } else {
-          // Process actual house data
-          for (let i = 1; i <= 12; i++) {
-            let houseDeg = hsrc[String(i)]?.lon;
-            // Better validation and fallback
-            if (typeof houseDeg !== "number" || isNaN(houseDeg) || houseDeg === 0) {
-              console.warn(`Invalid house ${i} data:`, houseDeg);
-              houseDeg = (ascendant + (i - 1) * 30) % 360;
+            // Process actual house data with robust fallback and logging
+            for (let i = 1; i <= 12; i++) {
+              let houseDeg = undefined;
+              if (hsrc[String(i)] && typeof hsrc[String(i)].lon === "number") {
+                houseDeg = hsrc[String(i)].lon;
+              } else {
+                console.warn(`House ${i} missing or invalid:`, hsrc[String(i)]);
+              }
+              // Fallback if missing or invalid
+              if (typeof houseDeg !== "number" || isNaN(houseDeg) || houseDeg === 0) {
+                houseDeg = (ascendant + (i - 1) * 30) % 360;
+                console.warn(`Using fallback for house ${i}:`, houseDeg);
+              }
+              houses[i] = degToSign(houseDeg);
             }
-            houses[i] = degToSign(houseDeg);
-          }
           }
 
           // Calculate aspects and pattern
