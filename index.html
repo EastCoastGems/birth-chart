@@ -218,6 +218,22 @@
     <div id="results"></div>
   </div>
 
+  <style>
+    #skyCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+    .main-content, .chart-container, .results, .sky-container, .chart-desc {
+      position: relative;
+      z-index: 2;
+    }
+  </style>
   <script>
     const crystals = [
       // Love & Relationships
@@ -1293,7 +1309,6 @@
           const ascendant = backendData.ascendant;
           const planetsRaw = {};
           // Log backend planets object for diagnosis
-          console.log('Backend planets object:', backendData.planets);
           // Map numeric keys ("0", "1", ...) and named keys ("Sun", "Moon", ...)
           for (const pid in backendData.planets) {
             let planetName = PLANET_NAMES[pid];
@@ -1305,21 +1320,11 @@
             }
           }
           // Defensive: Log planetsRaw if Sun or Moon missing
-          if (!planetsRaw.Sun || !planetsRaw.Moon) {
-            console.warn('planetsRaw missing Sun or Moon:', planetsRaw);
-          }
 
           const houses = {};
           const hsrc = backendData.houses;
 
           // Enhanced debug: Log the house data structure and each house value
-          console.log('Backend house data:', hsrc);
-          if (hsrc) {
-            for (let i = 1; i <= 12; i++) {
-              console.log(`House ${i} raw:`, hsrc[String(i)]);
-            }
-          }
-          console.log('Backend full response:', backendData);
 
           // Check if we have valid house data
           if (!hsrc || (Array.isArray(hsrc) && hsrc.length === 0) || (typeof hsrc === 'object' && Object.keys(hsrc).length === 0)) {
@@ -1356,9 +1361,9 @@
           const chartPattern = detectChartPattern(planetsRaw);
 
           // Generate results HTML
-          let outputHTML = `<h2>🌟 Your Birth Chart Analysis</h2>`;
-          outputHTML += `<div class="success">📍 Birth Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}</div>`;
-          outputHTML += `<p><strong>🔮 Ascendant (Rising Sign):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
+          let outputHTML = `<h2 style="color:#b23cf0; text-align:center; margin-bottom:1.5rem;">🌟 Your Birth Chart Analysis</h2>`;
+          outputHTML += `<div style="background: linear-gradient(90deg, #f3e8ff 0%, #e0c3fc 100%); color:#333; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; display:flex; align-items:center; gap:1rem;"><span style="font-size:1.5rem;">📍</span>Birth Location: <span style="font-weight:700;">${lat.toFixed(4)}, ${lng.toFixed(4)}</span></div>`;
+          outputHTML += `<div style="background: linear-gradient(90deg, #e0c3fc 0%, #f3e8ff 100%); color:#b23cf0; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; display:flex; align-items:center; gap:1rem;"><span style="font-size:1.5rem;">🔮</span>Ascendant (Rising Sign): <span style="font-weight:700;">${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</span></div>`;
           
           // For Big Three, show analysis above the chart
           let bigThreeAnalysis = '';
@@ -1377,28 +1382,26 @@
             }
             const descriptions = getBigThreeDescriptions(sunSign, moonSign, ascendantSign);
             
-            outputHTML += `<h3>✨ Your Big Three</h3>`;
-            outputHTML += `<div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.3);">`;
-            outputHTML += `<p style="margin: 0; color: #333; font-size: 1rem; text-align: center; font-style: italic;">Your core personality • Your emotional nature • How you present to the world</p>`;
+            outputHTML += `<h3 style="color:#b23cf0; text-align:center; margin-bottom:1rem;">✨ Your Big Three</h3>`;
+            outputHTML += `<div style="background: linear-gradient(90deg, #f3e8ff 0%, #e0c3fc 100%); color:#333; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; text-align:center;">Your core personality • Your emotional nature • How you present to the world</div>`;
+
+            outputHTML += `<div style="background: linear-gradient(135deg, #f3e8ff 0%, #e0c3fc 100%); padding:2rem; border-radius:18px; margin:1rem 0; border:1px solid #e0c3fc; box-shadow:0 2px 8px rgba(178,60,240,0.08);">`;
+
+            outputHTML += `<div style="margin-bottom:2rem; padding:1rem; background:rgba(255,215,0,0.12); border-radius:12px; border-left:5px solid #FFD700; box-shadow:0 1px 4px rgba(255,215,0,0.08);">`;
+            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#FFD700; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Sun}</span>Sun in ${sunSign} ${degToSign(planetsRaw.Sun.lon).degree}° - Your Core Personality</h4>`;
+            outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.sun}</p>`;
             outputHTML += `</div>`;
-            
-            outputHTML += `<div style="background: linear-gradient(135deg, rgba(178, 60, 240, 0.1), rgba(150, 45, 204, 0.1)); padding: 2rem; border-radius: 15px; margin: 1rem 0; border: 1px solid rgba(178, 60, 240, 0.2);">`;
-            
-            outputHTML += `<div style="margin-bottom: 2rem; padding: 1rem; background: rgba(255, 215, 0, 0.1); border-radius: 10px; border-left: 4px solid #FFD700;">`;
-            outputHTML += `<h4 style="margin: 0 0 0.5rem 0; color: #FFD700; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 0.5rem;">${PLANET_SYMBOLS.Sun}</span>Sun in ${sunSign} ${degToSign(planetsRaw.Sun.lon).degree}° - Your Core Personality</h4>`;
-            outputHTML += `<p style="margin: 0; font-style: italic; color: #555;">${descriptions.sun}</p>`;
+
+            outputHTML += `<div style="margin-bottom:2rem; padding:1rem; background:rgba(192,192,192,0.12); border-radius:12px; border-left:5px solid #C0C0C0; box-shadow:0 1px 4px rgba(192,192,192,0.08);">`;
+            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#666; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">${PLANET_SYMBOLS.Moon}</span>Moon in ${moonSign} ${degToSign(planetsRaw.Moon.lon).degree}° - Your Emotional Nature</h4>`;
+            outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.moon}</p>`;
             outputHTML += `</div>`;
-            
-            outputHTML += `<div style="margin-bottom: 2rem; padding: 1rem; background: rgba(192, 192, 192, 0.1); border-radius: 10px; border-left: 4px solid #C0C0C0;">`;
-            outputHTML += `<h4 style="margin: 0 0 0.5rem 0; color: #666; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 0.5rem;">${PLANET_SYMBOLS.Moon}</span>Moon in ${moonSign} ${degToSign(planetsRaw.Moon.lon).degree}° - Your Emotional Nature</h4>`;
-            outputHTML += `<p style="margin: 0; font-style: italic; color: #555;">${descriptions.moon}</p>`;
+
+            outputHTML += `<div style="padding:1rem; background:rgba(178,60,240,0.12); border-radius:12px; border-left:5px solid #b23cf0; box-shadow:0 1px 4px rgba(178,60,240,0.08);">`;
+            outputHTML += `<h4 style="margin:0 0 0.5rem 0; color:#b23cf0; display:flex; align-items:center;"><span style="font-size:1.5rem; margin-right:0.5rem;">🔮</span>Ascendant in ${ascendantSign} ${degToSign(ascendant).degree}° - How You Present Yourself</h4>`;
+            outputHTML += `<p style="margin:0; font-style:italic; color:#555;">${descriptions.ascendant}</p>`;
             outputHTML += `</div>`;
-            
-            outputHTML += `<div style="padding: 1rem; background: rgba(178, 60, 240, 0.1); border-radius: 10px; border-left: 4px solid #b23cf0;">`;
-            outputHTML += `<h4 style="margin: 0 0 0.5rem 0; color: #b23cf0; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 0.5rem;">🔮</span>Ascendant in ${ascendantSign} ${degToSign(ascendant).degree}° - How You Present Yourself</h4>`;
-            outputHTML += `<p style="margin: 0; font-style: italic; color: #555;">${descriptions.ascendant}</p>`;
-            outputHTML += `</div>`;
-            
+
             outputHTML += `</div>`;
             
             // Add Big Three summary interpretation
