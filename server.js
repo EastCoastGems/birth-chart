@@ -72,7 +72,7 @@ app.post('/api/chart', async (req, res) => {
       }
       const houses = {};
       for (let i = 1; i <= 12; i++) {
-        let cusp = housesResult.cusps[i];
+        let cusp = housesResult.house[i - 1];
         if (typeof cusp !== 'number' || isNaN(cusp)) {
           cusp = 0;
         }
