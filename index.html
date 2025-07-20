@@ -427,6 +427,7 @@
   </div>
 
   <script>
+document.addEventListener('DOMContentLoaded', function() {
     const crystals = [
       // Love & Relationships
       { name: "Rose Quartz", category: "Love & Relationships", properties: "Unconditional love, emotional healing", bestFor: "opening your heart to deeper connections" },
@@ -1129,7 +1130,7 @@
             const sign = degToSign(data.lon).sign;
             const planetInfo = planetMeanings[planet];
             
-            analysis += `<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; border-left: 3px solid ${PLANET_COLORS[planet]};">`;
+            analysis += `<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,215,0, 0.1); border-radius: 8px; border-left: 3px solid ${PLANET_COLORS[planet]};">`;
             analysis += `<h4 style="margin: 0 0 0.5rem 0; color: ${PLANET_COLORS[planet]};">${PLANET_SYMBOLS[planet]} ${planet} in ${sign} - ${planetInfo.area}</h4>`;
             analysis += `<p style="margin: 0; font-size: 0.9rem; color: #666;">Your ${planet} ${planetInfo.description}. In ${sign}, this energy expresses through ${getSignExpression(planet, sign)}.</p>`;
             analysis += `</div>`;
@@ -1286,7 +1287,7 @@
           'Fire-Water': 'You merge passionate drive with emotional depth, creating a powerful and intuitive approach to life.',
           'Earth-Fire': 'You ground fiery energy with practical wisdom, making you a reliable leader who inspires through action.',
           'Earth-Earth': 'You embody stability and persistence, building lasting achievements through steady, methodical effort.',
-          'Earth-Air': 'You combine practical skills with intellectual clarity, making you excellent at organizing ideas into reality.',
+          'Earth-Air': 'You combine practical skills with intellectual clarity, making you excellent at turning ideas into reality.',
           'Earth-Water': 'You blend material stability with emotional intuition, creating a nurturing and dependable presence.',
           'Air-Fire': 'You unite intellectual brilliance with energetic action, making you a dynamic communicator and innovator.',
           'Air-Earth': 'You merge mental agility with practical application, excelling at turning ideas into tangible results.',
@@ -1552,7 +1553,6 @@
             outputHTML += `<div style="background: linear-gradient(135deg, rgba(178, 60, 240, 0.1), rgba(150, 45, 204, 0.1)); padding: 2rem; border-radius: 15px; margin: 1rem 0; border: 1px solid rgba(178, 60, 240, 0.2);">`;
             
             outputHTML += `<div style="margin-bottom: 2rem; padding: 1rem; background: rgba(255, 215, 0, 0.1); border-radius: 10px; border-left: 4px solid #FFD700;">`;
-            outputHTML += `<h4 style="margin: 0 0 0.5rem 0; color: #FFD700; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 0.5rem;">${PLANET_SYMBOLS.Sun}</span>Sun in ${sunSign} ${degToSign(planetsRaw.Sun.lon).degree}° - Your Core Personality</h4>`;
             outputHTML += `<p style="margin: 0; font-style: italic; color: #555;">${descriptions.sun}</p>`;
             outputHTML += `</div>`;
             
