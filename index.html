@@ -2,81 +2,124 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Discover Your Astrology Blueprint</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmic Birth Chart | East Coast Gems</title>
+  <link rel="icon" href="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" />
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #2a0845 0%, #b23cf0 100%);
       margin: 0;
-      padding: 2rem;
-      text-align: center;
       min-height: 100vh;
+      color: #e0e0e0;
     }
-    
     .container {
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: 700px;
+      margin: 3rem auto;
+      background: rgba(34,8,69,0.7);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(178,60,240,0.12);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
     }
-    
-    header img {
-      max-width: 180px;
-      margin-bottom: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    .cosmic-floating-stars {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 0;
     }
-    
-    h1 {
-      color: #ffffff;
-      font-weight: bold;
-      margin-bottom: 2rem;
+    .star-emoji {
+      position: absolute;
+      animation: floatStar 4s infinite alternate;
+      z-index: 0;
+    }
+    .banner__heading {
       font-size: 2.5rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(270deg, #b23cf0, #6fffe9, #ffb6ff, #ffe66f, #b23cf0);
+      background-size: 800% 800%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientMove 6s ease-in-out infinite;
     }
-    
-    form, #results {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 2rem;
-      border-radius: 15px;
-      max-width: 450px;
-      margin: 2rem auto;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      text-align: left;
-      border: 1px solid rgba(255,255,255,0.2);
+    .banner__subtitle {
+      font-size: 1.3rem;
+      color: #ffe66f;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 8px #b23cf0;
     }
-    
-    #results {
-      display: none;
+    .banner__text {
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      margin-bottom: 1rem;
+      max-width: 600px;
+      font-style: italic;
+      margin-left: auto;
+      margin-right: auto;
     }
-    
+    .banner__floating {
+      width: 100%;
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #ffd700;
+      animation: floatText 3s infinite alternate;
+      text-shadow: 0 0 12px #ffd700, 0 0 24px #b23cf0;
+    }
+    @keyframes floatText {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-12px); }
+    }
+    @keyframes floatStar {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-18px); }
+    }
+    .radio-group {
+      display: flex;
+      gap: 1.5rem;
+      margin: 1rem 0;
+      align-items: center;
+      justify-content: center;
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+    }
     label {
       display: block;
       margin-top: 1rem;
       font-weight: 600;
-      color: #333;
+      color: #ffe66f;
+      text-align: left;
     }
-    
     input, select, button {
       width: 100%;
       padding: 0.75rem;
       margin-top: 0.5rem;
       font-size: 1rem;
-      box-sizing: border-box;
-      border: 2px solid #e1e5e9;
+      border: 2px solid #b23cf0;
       border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      box-sizing: border-box;
       transition: all 0.3s ease;
     }
-    
     input:focus, select:focus {
       outline: none;
-      border-color: #b23cf0;
-      box-shadow: 0 0 0 3px rgba(178, 60, 240, 0.1);
+      border-color: #ffd700;
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
     }
-    
     button {
       margin-top: 1.5rem;
-      background: linear-gradient(135deg, #b23cf0 0%, #962dcc 100%);
+      background: linear-gradient(90deg,#b23cf0 0%,#ffd700 100%);
       color: white;
       border: none;
       border-radius: 8px;
@@ -86,332 +129,78 @@
       letter-spacing: 1px;
       transition: all 0.3s ease;
     }
-    
     button:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(178, 60, 240, 0.4);
     }
-    
-    button:active {
-      transform: translateY(0);
-    }
-    
-    .radio-group {
-      margin-top: 1rem;
-    }
-    
-    .radio-group label {
-      display: inline-block;
-      margin-right: 1.5rem;
-      margin-bottom: 0.5rem;
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      transition: all 0.3s ease;
-    }
-    
-    .radio-group input[type="radio"] {
-      width: auto;
-      margin-right: 0.5rem;
-    }
-    
-    .radio-group label:hover {
-      background: rgba(178, 60, 240, 0.1);
-    }
-    
     .chart-container {
-      display: none;
       margin: 2rem auto;
-      border-radius: 50%;
-      background: linear-gradient(90deg,
-        rgba(255,0,0,0.12),
-        rgba(255,127,0,0.12),
-        rgba(255,255,0,0.12),
-        rgba(0,255,0,0.12),
-        rgba(0,0,255,0.12),
-        rgba(75,0,130,0.12),
-        rgba(148,0,211,0.12));
-      width: 400px;
-      height: 400px;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      display: none;
     }
-    
     #birth-chart {
       background: transparent;
       border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(178, 60, 240, 0.15);
     }
-    
-    .sky-container {
-      display: none;
-      margin: 2rem auto;
-      max-width: 450px;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1rem;
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
+    #results {
+      margin-top: 2rem;
+      text-align: left;
     }
-    
-    #skyCanvas {
-      width: 100%;
-      height: 250px;
-      background: radial-gradient(ellipse at bottom, #1a237e, #000051);
-      border-radius: 10px;
-      box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
-    }
-    
-    #downloadBtn {
-      margin-top: 1rem;
-      background: linear-gradient(135deg, #424242 0%, #212121 100%);
-      color: white;
-      width: auto;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      cursor: pointer;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    
-    #downloadBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(66, 66, 66, 0.4);
-    }
-    
-    .loading {
-      font-style: italic;
-      color: #666;
-      font-size: 1.1rem;
-    }
-    
-    #chart-description {
-      margin: 2rem auto;
-      max-width: 450px;
-      color: #ffffff;
-      font-size: 1.2rem;
-      display: none;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1rem;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-    }
-    
-    .error {
-      background: rgba(244, 67, 54, 0.1);
-      border: 1px solid #f44336;
-      color: #d32f2f;
-      padding: 1rem;
-      border-radius: 8px;
-      margin: 1rem 0;
-    }
-    
     .success {
-      background: rgba(76, 175, 80, 0.1);
-      border: 1px solid #4caf50;
+      background: #e0ffe0;
       color: #388e3c;
+      border-radius: 8px;
       padding: 1rem;
-      border-radius: 8px;
-      margin: 1rem 0;
-    }
-    
-    .aspect-list {
-      max-height: 300px;
-      overflow-y: auto;
-      border: 1px solid #e1e5e9;
-      border-radius: 8px;
-      padding: 0.5rem;
-      background: rgba(248, 249, 250, 0.8);
-    }
-    
-    /* Crystal Shopping section styles */
-    .shopping-section {
-      margin-top: 3rem;
-      padding: 2rem;
-      background: rgba(178, 60, 240, 0.05);
-      border-radius: 20px;
-      border: 1px solid rgba(178, 60, 240, 0.2);
-      backdrop-filter: blur(15px);
-      text-align: center;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .shop-header {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #b23cf0;
       margin-bottom: 1rem;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      border: 1px solid #b2fab4;
     }
-
-    .shop-description {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-      color: #e0e0e0;
-      line-height: 1.6;
-    }
-
-    .crystal-recommendations {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .crystal-card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .crystal-card:hover {
-      transform: translateY(-5px);
-      background: rgba(178, 60, 240, 0.15);
-      border-color: rgba(178, 60, 240, 0.4);
-      box-shadow: 0 10px 30px rgba(178, 60, 240, 0.3);
-    }
-
-    .crystal-name {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #333333;
-      margin-bottom: 0.5rem;
-      text-shadow: none;
-    }
-
-    .crystal-category {
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #444444;
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      opacity: 1;
-    }
-
-    .crystal-properties {
-      font-size: 0.95rem;
-      color: #555555;
-      line-height: 1.5;
-      margin-bottom: 1rem;
-      opacity: 1;
-    }
-
-    .crystal-best-for {
-      font-size: 0.9rem;
-      color: #333333;
-      line-height: 1.4;
-      margin-bottom: 1rem;
-      padding: 0.5rem;
-      background: rgba(178, 60, 240, 0.15);
+    .error {
+      background: #ffe0e0;
+      color: #d32f2f;
       border-radius: 8px;
-      border-left: 3px solid #b23cf0;
-    }
-
-    .crystal-best-for strong {
-      color: #333333;
-      font-weight: bold;
-    }
-
-    .shop-cta {
-      background: linear-gradient(135deg, #b23cf0, #8a2be2);
-      color: white;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 15px rgba(178, 60, 240, 0.4);
-      margin-top: 1rem;
-    }
-
-    .shop-cta a {
-      color: white;
-      text-decoration: none;
-    }
-
-    .shop-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(178, 60, 240, 0.6);
-      filter: brightness(1.1);
-    }
-
-    .why-crystals {
-      margin-top: 1.5rem;
-      font-size: 0.95rem;
-      color: #c0c0c0;
-      font-style: italic;
-    }
-    
-    @media (max-width: 768px) {
-      body {
-        padding: 1rem;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-      
-      form, #results {
-        margin: 1rem auto;
-        padding: 1.5rem;
-      }
-      
-      .chart-container {
-        width: 300px;
-        height: 300px;
-      }
-      
-      .radio-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-      }
-
-      .crystal-recommendations {
-        grid-template-columns: 1fr;
-      }
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #fab2b2;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="Astrology Blueprint Logo">
-    </header>
-
-    <h1>Discover Your Astrology Blueprint</h1>
-
-    <form id="birth-form" autocomplete="off">
-      <label>Date of Birth:
-        <input type="date" id="birthdate" required />
-      </label>
-      <label>Time of Birth:
-        <input type="time" id="birthtime" required />
-      </label>
-      <label>Birthplace (City, State or Country):
-        <input type="text" id="location" placeholder="e.g. New York, NY or London, UK" required />
-      </label>
+    <div class="cosmic-floating-stars">
+      <span class="star-emoji" style="left:10%;top:20%;font-size:2rem;animation:floatStar 4s infinite alternate;">✨</span>
+      <span class="star-emoji" style="left:80%;top:30%;font-size:2.5rem;animation:floatStar 5s infinite alternate-reverse;">🌟</span>
+      <span class="star-emoji" style="left:50%;top:10%;font-size:1.8rem;animation:floatStar 3.5s infinite alternate;">⭐</span>
+      <span class="star-emoji" style="left:25%;top:60%;font-size:2.2rem;animation:floatStar 4.5s infinite alternate-reverse;">✨</span>
+      <span class="star-emoji" style="left:70%;top:75%;font-size:2rem;animation:floatStar 3s infinite alternate;">🌟</span>
+    </div>
+    <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="East Coast Gems Logo" style="max-width:120px;margin-bottom:1rem;border-radius:16px;box-shadow:0 0 16px #b23cf0;">
+    <h2 class="banner__heading">Discover Your Astrology Blueprint</h2>
+    <div class="form-section">
+      <form id="birth-form">
+        <label>Date of Birth:
+          <input type="date" id="birthdate" required />
+        </label>
+        <label>Time of Birth:
+          <input type="time" id="birthtime" required />
+        </label>
+        <label>Birthplace (City, State or Country):
+          <input type="text" id="location" placeholder="e.g. New York, NY or London, UK" required />
+        </label>
       <div class="radio-group">
-        <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label>
-        <label><input type="radio" name="readingType" value="fullChart"> Complete Chart</label>
+        <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label><label><input type="radio" name="readingType" value="fullChart"> Complete Chart</label>
       </div>
       <button type="submit">Generate Your Chart</button>
-    </form>
-
+      </form>
     <div id="chart-description">
-      Your personalized astrology wheel with planetary positions and house cusps.
+      <!-- Removed astrology wheel description as requested -->
+      <!-- Wheel description removed as requested -->
+      <script>
+        // Hide wheel description on page load
+        document.addEventListener('DOMContentLoaded', function() {
+          var wheelDesc = document.getElementById('wheel-desc');
+          if (wheelDesc) wheelDesc.style.display = 'none';
+        });
+      </script>
     </div>
 
     <div class="chart-container">
@@ -577,6 +366,10 @@
         birthtime: document.getElementById('birthtime'),
         location: document.getElementById('location')
       };
+      // Hide download button by default
+      if (elements.downloadBtn) {
+        elements.downloadBtn.style.display = 'none';
+      }
 
       const skyCtx = elements.skyCanvas.getContext('2d');
 
@@ -1653,6 +1446,9 @@
           // Draw charts
           elements.chartContainer.style.display = 'flex';
           elements.chartDesc.style.display = 'block';
+          // Show wheel description only after results are generated
+          var wheelDesc = document.getElementById('wheel-desc');
+          if (wheelDesc) wheelDesc.style.display = 'inline';
           
           const ctx = elements.canvas.getContext('2d');
           
@@ -1686,12 +1482,15 @@
           }
 
           // Setup download
-          elements.downloadBtn.onclick = () => {
-            const link = document.createElement('a');
-            link.download = `sky-map-${date.replace(/-/g, '')}.png`;
-            link.href = elements.skyCanvas.toDataURL('image/png');
-            link.click();
-          };
+          if (elements.downloadBtn) {
+            elements.downloadBtn.style.display = 'inline-block';
+            elements.downloadBtn.onclick = () => {
+              const link = document.createElement('a');
+              link.download = `sky-map-${date.replace(/-/g, '')}.png`;
+              link.href = elements.skyCanvas.toDataURL('image/png');
+              link.click();
+            };
+          }
 
         } catch (error) {
           console.error('Chart generation error:', error);
