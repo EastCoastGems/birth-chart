@@ -62,9 +62,16 @@ app.post('/api/chart', async (req, res) => {
     swisseph.swe_houses(jd, lat, lng, 'P', (housesResult) => {
       const houses = {};
       for (let i = 1; i <= 12; i++) {
-        houses[i] = { lon: housesResult.cusps[i] };
+        let cusp = housesResult.cusps[i];
+        if (typeof cusp !== 'number' || isNaN(cusp)) {
+          cusp = 0;
+        }
+        houses[i] = { lon: cusp };
       }
-      const ascendant = housesResult.ascendant;
+      let ascendant = housesResult.ascendant;
+      if (typeof ascendant !== 'number' || isNaN(ascendant)) {
+        ascendant = 0;
+      }
       res.json({
         planets,
         houses,
