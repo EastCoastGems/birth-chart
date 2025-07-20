@@ -25,8 +25,8 @@ app.get('/health', (req, res) => {
 // API endpoint for chart data (if you want to add server-side processing)
 app.post('/api/chart', async (req, res) => {
   try {
+    console.log('DEBUG: req.body =', req.body);
     const { year, month, day, hour, minute, lat, lng } = req.body;
-    
     // Validate input
     if (!year || !month || !day || !hour || !minute || !lat || !lng) {
       return res.status(400).json({ 
@@ -65,6 +65,11 @@ app.post('/api/chart', async (req, res) => {
     // Calculate houses and ascendant using swisseph
     swisseph.swe_set_ephe_path(__dirname); // Set ephemeris path
     swisseph.swe_houses(jd, lat, lng, 'P', (housesResult) => {
+      console.log('swisseph.swe_houses result:', housesResult);
+      if (!housesResult || housesResult.error) {
+        console.error('Swiss Ephemeris error:', housesResult ? housesResult.error : 'No result');
+        return res.status(500).json({ error: 'Swiss Ephemeris calculation failed', details: housesResult ? housesResult.error : 'No result' });
+      }
       const houses = {};
       for (let i = 1; i <= 12; i++) {
         let cusp = housesResult.cusps[i];
