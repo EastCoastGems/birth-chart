@@ -1282,6 +1282,14 @@
           const backendData = await fetchChartData({ year, month, day, hour, minute, lat, lng });
 
           // Process data
+          // Check for missing/null planet data and show error if needed
+          const planetKeys = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
+          let missingPlanets = planetKeys.filter(p => !(backendData.planets && typeof backendData.planets[p] === 'number'));
+          if (missingPlanets.length > 0) {
+            showError(`Backend did not return valid data for: ${missingPlanets.join(", ")}. Please try again later or contact support.`);
+            console.error('Missing/null planet data:', backendData.planets);
+            return;
+          }
           const ascendant = backendData.ascendant;
           const planetsRaw = {};
           // Log backend planets object for diagnosis
