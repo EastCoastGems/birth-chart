@@ -342,7 +342,7 @@
           
           <div style="text-align: center; margin-top: 2rem;">
             <p style="color: #e0e0e0; margin-bottom: 1rem;">Find these beautiful crystals and more in my shop!</p>
-            <a href="https://eastcoastgemsbycara.myshopify.com" target="_blank" class="shop-cta">Visit My Crystal Shop</a>
+            <a href="https://eastcoastgemsbycara.myshopify.com" target="_blank" class="shop-cta" style="display:inline-block; margin-top:1.5rem; background: linear-gradient(90deg,#b23cf0 0%,#ffd700 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size:1rem; padding:0.75rem 2rem; box-shadow: 0 4px 12px rgba(178, 60, 240, 0.15); transition: all 0.3s ease; text-decoration:none;">Visit My Crystal Shop</a>
           </div>
         </div>
       `;
@@ -764,23 +764,23 @@
         const modalityCounts = countModalities(planetsRaw);
         
         analysis += `<div style="margin: 1rem 0;">`;
-        analysis += `<h4 style="color: #333;">🌟 Your Elemental Nature:</h4>`;
+        analysis += `<h4 style="color: #FFD700;">🌟 Your Elemental Nature:</h4>`;
         analysis += getElementAnalysis(elementCounts);
         analysis += `</div>`;
         
         analysis += `<div style="margin: 1rem 0;">`;
-        analysis += `<h4 style="color: #333;">⚡ Your Life Approach:</h4>`;
+        analysis += `<h4 style="color: #FFD700;">⚡ Your Life Approach:</h4>`;
         analysis += getModalityAnalysis(modalityCounts);
         analysis += `</div>`;
         
         analysis += `<div style="margin: 1rem 0;">`;
-        analysis += `<h4 style="color: #333;">🎭 Your Chart Pattern:</h4>`;
+        analysis += `<h4 style="color: #FFD700;">🎭 Your Chart Pattern:</h4>`;
         analysis += `<p style="margin: 0.5rem 0;">${getPatternAnalysis(chartPattern)}</p>`;
         analysis += `</div>`;
         
         if (aspects.length > 0) {
           analysis += `<div style="margin: 1rem 0;">`;
-          analysis += `<h4 style="color: #333;">🔗 Key Planetary Relationships:</h4>`;
+          analysis += `<h4 style="color: #FFD700;">🔗 Key Planetary Relationships:</h4>`;
           analysis += getAspectAnalysis(aspects);
           analysis += `</div>`;
         }
@@ -947,7 +947,7 @@
             
             analysis += `<div style="margin: 1rem 0; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; border-left: 3px solid ${PLANET_COLORS[planet]};">`;
             analysis += `<h4 style="margin: 0 0 0.5rem 0; color: ${PLANET_COLORS[planet]};">${PLANET_SYMBOLS[planet]} ${planet} in ${sign} - ${planetInfo.area}</h4>`;
-            analysis += `<p style="margin: 0; font-size: 0.9rem; color: #666;">Your ${planet} ${planetInfo.description}. In ${sign}, this energy expresses through ${getSignExpression(planet, sign)}.</p>`;
+            analysis += `<p style="margin: 0; font-size: 0.9rem; color: #fff;">Your ${planet} ${planetInfo.description}. In ${sign}, this energy expresses through ${getSignExpression(planet, sign)}.</p>`;
             analysis += `</div>`;
           }
         }
@@ -1302,6 +1302,7 @@
             for (let i = 1; i <= 12; i++) {
               const houseDeg = (ascendant + (i - 1) * 30) % 360;
               houses[i] = degToSign(houseDeg);
+              houses[i].raw = houseDeg;
             }
           } else {
             // Process actual house data with robust fallback and logging
@@ -1332,7 +1333,7 @@
           // Generate results HTML
           let outputHTML = `<h2 style="color:#b23cf0; text-align:center; margin-bottom:1.5rem;">🌟 Your Birth Chart Analysis</h2>`;
           outputHTML += `<div style="background: linear-gradient(90deg, #f3e8ff 0%, #e0c3fc 100%); color:#333; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; display:flex; align-items:center; gap:1rem;"><span style="font-size:1.5rem;">📍</span>Birth Location: <span style="font-weight:700;">${lat.toFixed(4)}, ${lng.toFixed(4)}</span></div>`;
-          outputHTML += `<div style="background: linear-gradient(90deg, #e0c3fc 0%, #f3e8ff 100%); color:#b23cf0; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; display:flex; align-items:center; gap:1rem;"><span style="font-size:1.5rem;">🔮</span>Ascendant (Rising Sign): <span style="font-weight:700;">${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</span></div>`;
+          outputHTML += `<div style="background: linear-gradient(90deg, #e0c3fc 0%, #f3e8ff 100%); color:#b23cf0; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; display:flex; align-items:center; gap:1rem;"><span style="font-size:1.5rem;">↑</span>Ascendant (Rising Sign): <span style="font-weight:700;">${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</span></div>`;
           
           // For Big Three, show analysis above the chart
           let bigThreeAnalysis = '';
@@ -1374,8 +1375,8 @@
             outputHTML += `</div>`;
             
             // Add Big Three summary interpretation
-            outputHTML += `<div style="background: rgba(255, 255, 255, 0.15); padding: 1.5rem; border-radius: 15px; margin: 1rem 0; border: 1px solid rgba(255,255,255,0.3);">`;
-            outputHTML += `<h4 style="color: #333; margin-top: 0;">🌟 Your Big Three Summary</h4>`;
+            outputHTML += `<div style="background: linear-gradient(90deg, #f3e8ff 0%, #e0c3fc 100%); color:#333; border-radius:16px; box-shadow:0 2px 8px rgba(178,60,240,0.08); padding:1rem 1.5rem; margin-bottom:1rem; font-size:1.1rem; font-weight:500; text-align:center;">
+            outputHTML += `<h3 style="color:#b23cf0; text-align:center; margin-bottom:1rem;">🌟 Your Big Three Summary</h3>`;
             outputHTML += `<p style="margin: 0; color: #444; line-height: 1.6;">`;
             outputHTML += getBigThreeSummary(sunSign, moonSign, ascendantSign);
             outputHTML += `</p></div>`;
@@ -1388,7 +1389,7 @@
             // Reset outputHTML for positioning after chart
             outputHTML = `<h2>🌟 Your Birth Chart Analysis</h2>`;
             outputHTML += `<div class="success">📍 Birth Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}</div>`;
-            outputHTML += `<p><strong>🔮 Ascendant (Rising Sign):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
+            outputHTML += `<p><strong>↑ Ascendant (Rising Sign):</strong> ${degToSign(ascendant).sign} ${degToSign(ascendant).degree}°</p>`;
           } else {
             outputHTML += `<h3>🪐 Planetary Positions</h3><ul>`;
             for (const [key, planet] of Object.entries(planetsRaw)) {
@@ -1421,18 +1422,15 @@
             // Add comprehensive chart analysis
             outputHTML += getChartAnalysis(planetsRaw, houses, aspects, chartPattern);
             
-            // Add detailed planetary analysis
-            outputHTML += getPlanetaryAnalysis(planetsRaw);
           }
 
           // For Big Three, show analysis above chart first
           if (readingType === 'bigThree') {
-            outputHTML = bigThreeAnalysis + outputHTML;
+            outputHTML = bigThreeAnalysis + getPlanetaryAnalysis(planetsRaw) + outputHTML;
           }
 
           // Chart pattern (only for full chart)
           if (readingType !== 'bigThree') {
-            outputHTML += getPlanetaryAnalysis(planetsRaw);
           }
 
           // For Big Three, show analysis above chart first
