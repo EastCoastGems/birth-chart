@@ -180,7 +180,7 @@
     <img src="https://i.ibb.co/ZRrgQ9db/IMG-2055.png" alt="East Coast Gems Logo" style="max-width:120px;margin-bottom:1rem;border-radius:16px;box-shadow:0 0 16px #b23cf0;">
     <h2 class="banner__heading">Discover Your Astrology Blueprint</h2>
     <div class="form-section">
-      <form id="birth-form">
+      <form id="birth-form" autocomplete="off">
         <label>Date of Birth:
           <input type="date" id="birthdate" required />
         </label>
@@ -190,14 +190,23 @@
         <label>Birthplace (City, State or Country):
           <input type="text" id="location" placeholder="e.g. New York, NY or London, UK" required />
         </label>
-      <div class="radio-group">
-        <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label><label><input type="radio" name="readingType" value="fullChart"> Complete Chart</label>
-      </div>
-      <button type="submit">Generate Your Chart</button>
+        <div class="radio-group">
+          <label><input type="radio" name="readingType" value="bigThree" checked> Big Three</label>
+          <label><input type="radio" name="readingType" value="fullChart"> Complete Chart</label>
+        </div>
+        <button type="submit">Generate Your Chart</button>
       </form>
-    <div id="chart-description"></div>
-
-</body>
+      <div id="chart-description"></div>
+    </div>
+    <div class="chart-container" style="display:none;">
+      <canvas id="birth-chart" width="400" height="400"></canvas>
+    </div>
+    <div class="sky-container" style="display:none;">
+      <canvas id="skyCanvas" width="400" height="200"></canvas>
+    </div>
+    <button id="downloadBtn" style="display:none;margin-top:1rem;">Download Sky Map</button>
+    <div id="results"></div>
+  </div>
   <script>
     // --- Working birth chart logic ---
     document.addEventListener('DOMContentLoaded', function() {
