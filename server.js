@@ -3,7 +3,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -45,6 +45,23 @@ app.post('/api/chart', async (req, res) => {
     }
     
     res.json({
+      planets: {
+        Sun: 120.5,
+        Moon: 210.3,
+        Mercury: 95.2,
+        Venus: 45.7,
+        Mars: 300.1,
+        Jupiter: 180.0,
+        Saturn: 270.0,
+        Uranus: 60.0,
+        Neptune: 330.0,
+        Pluto: 15.0
+      },
+      houses: {
+        1: { raw: 0 }, 2: { raw: 30 }, 3: { raw: 60 }, 4: { raw: 90 }, 5: { raw: 120 }, 6: { raw: 150 },
+        7: { raw: 180 }, 8: { raw: 210 }, 9: { raw: 240 }, 10: { raw: 270 }, 11: { raw: 300 }, 12: { raw: 330 }
+      },
+      ascendant: 0,
       message: 'Chart request processed successfully',
       input: { year, month, day, hour, minute, lat, lng },
       birthDate: birthDate.toISOString(),
