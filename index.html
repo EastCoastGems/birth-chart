@@ -1284,10 +1284,16 @@
           // Process data
           const ascendant = backendData.ascendant;
           const planetsRaw = {};
+          // Accept both numeric and named keys from backend
           for (const pid in backendData.planets) {
-            if (PLANET_NAMES[pid]) {
-              planetsRaw[PLANET_NAMES[pid]] = { lon: backendData.planets[pid] };
+            let planetName = PLANET_NAMES[pid] || pid;
+            if (planetName && typeof backendData.planets[pid] === 'number') {
+              planetsRaw[planetName] = { lon: backendData.planets[pid] };
             }
+          }
+          // Defensive: Log planetsRaw if Sun or Moon missing
+          if (!planetsRaw.Sun || !planetsRaw.Moon) {
+            console.warn('planetsRaw missing Sun or Moon:', planetsRaw);
           }
 
           const houses = {};
