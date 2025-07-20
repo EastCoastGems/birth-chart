@@ -1,0 +1,16 @@
+{
+  "name": "astro-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "swisseph": "^0.5.17"
+  },
+  "description": ""
+}
