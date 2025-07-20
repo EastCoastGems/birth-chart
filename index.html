@@ -715,34 +715,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Backend API call with retry logic
       async function fetchChartData(chartParams, retries = 2) {
-        for (let attempt = 0; attempt <= retries; attempt++) {
-          try {
-            const response = await fetch(CONFIG.backendUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(chartParams),
-              timeout: 10000 // 10 second timeout
-            });
-
-            if (!response.ok) {
-              throw new Error(`Backend service error: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            
-            if (!data.planets || !data.houses || data.ascendant === undefined) {
-              throw new Error('Invalid data received from calculation service');
-            }
-            
-            return data;
-          } catch (error) {
-            if (attempt === retries) {
-              throw new Error(`Chart calculation failed: ${error.message}`);
-            }
-            // Wait before retry
-            await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
-          }
-        }
+        // GitHub Pages cannot access backend API. Show a clear error message.
+        showError('Birth chart calculation is currently unavailable on GitHub Pages. Please use the main site or try again later.');
+        throw new Error('Backend API unavailable on GitHub Pages');
       }
 
       // Draw custom astrological wheel
