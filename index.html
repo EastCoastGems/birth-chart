@@ -44,7 +44,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      /* text-fill-color: transparent; (removed, not a valid property) */
       animation: gradientMove 6s ease-in-out infinite;
     }
     .banner__subtitle {
@@ -80,7 +79,6 @@
       0% { transform: translateY(0); }
       100% { transform: translateY(-18px); }
     }
-    /* .form-section styles removed (empty ruleset) */
     .radio-group {
       display: flex;
       gap: 1.5rem;
@@ -206,404 +204,47 @@
     </div>
     <button id="downloadBtn" style="display:none;margin-top:1rem;">Download Sky Map</button>
     <div id="results"></div>
-    <a href="https://eastcoastgems.com/shop" target="_blank" id="shopBtn" style="display:block;margin:2rem auto 0 auto;padding:1rem 2rem;background:#b23cf0;color:#ffe66f;font-weight:700;border-radius:12px;text-decoration:none;box-shadow:0 2px 12px #b23cf0;max-width:300px;">✨ Visit My Shop ✨</a>
+    <a href="https://eastcoastgemsbycara.myshopify.com/" target="_blank" id="shopBtn" style="display:block;margin:2rem auto 0 auto;padding:1rem 2rem;background:#b23cf0;color:#ffe66f;font-weight:700;border-radius:12px;text-decoration:none;box-shadow:0 2px 12px #b23cf0;max-width:300px;">✨ Visit My Shop ✨</a>
   </div>
   <script>
-    // --- Working birth chart logic ---
-    document.addEventListener('DOMContentLoaded', function() {
-      // Hide chart, sky map, and download button by default
-      document.querySelector('.chart-container').style.display = 'none';
-      document.querySelector('.sky-container').style.display = 'none';
-      document.getElementById('downloadBtn').style.display = 'none';
+    const form = document.getElementById('birth-form');
+    const resultsDiv = document.getElementById('results');
+    const shopBtn = document.getElementById('shopBtn');
+    const chartDesc = document.getElementById('chart-description');
+    shopBtn.style.display = 'none';
 
-      // Configuration
-      const CONFIG = {
-        apiKey: 'f4828f886eb04102855182883c0428a2',
-        backendUrl: 'https://birth-chart-wc1f.onrender.com/api/chart',
-        wheelImageUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Astrological_Chart_-_New_Millennium.svg'
-      };
+    function themedBlock(title, content) {
+      return `<div style="background:rgba(42,8,69,0.85);border-radius:14px;padding:1.2rem 1rem;margin-bottom:1.2rem;box-shadow:0 2px 12px #b23cf0;color:#ffe66f;">
+        <h3 style="margin-top:0;color:#ffe66f;font-size:1.3rem;">${title}</h3>
+        <div style="color:#fff;">${content}</div>
+      </div>`;
+    }
 
-      // DOM Elements
-      const elements = {
-        form: document.getElementById('birth-form'),
-        resultsDiv: document.getElementById('results'),
-        chartContainer: document.querySelector('.chart-container'),
-        canvas: document.getElementById('birth-chart'),
-        skyContainer: document.querySelector('.sky-container'),
-        skyCanvas: document.getElementById('skyCanvas'),
-        downloadBtn: document.getElementById('downloadBtn'),
-        chartDesc: document.getElementById('chart-description'),
-        birthdate: document.getElementById('birthdate'),
-        birthtime: document.getElementById('birthtime'),
-        location: document.getElementById('location')
-      };
+    function showLoading() {
+      resultsDiv.innerHTML = themedBlock('Calculating Your Chart...', '<span style="font-size:1.2rem;">Please wait while we align the stars ✨</span>');
+      shopBtn.style.display = 'none';
+    }
 
-      // Utility Functions (degToSign, eclipticToAzimuth, planetAltitude, showError, showLoading, etc.)
-      // ...existing code from your previous working version...
+    function showResults(data) {
+      let html = '';
+      // Example: Chart Pattern
+      html += themedBlock('Chart Pattern: Splash', 'Your chart pattern is Splash. This means...');
+      // Example: Planetary Insights
+      html += themedBlock('Planetary Insights', 'Your planets reveal...');
+      // Example: Crystal Recommendation
+      html += themedBlock('Crystal Recommendation', '<b>Amethyst</b>, <b>Citrine</b>, <b>Rose Quartz</b>');
+      resultsDiv.innerHTML = html;
+      shopBtn.style.display = 'block';
+    }
 
-      // Form submission handler
-      elements.form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        elements.resultsDiv.innerHTML = '';
-        elements.chartContainer.style.display = 'none';
-        elements.skyContainer.style.display = 'none';
-        elements.downloadBtn.style.display = 'none';
-        showLoading();
-
-        // Get form values
-        const birthdate = elements.birthdate.value;
-        const birthtime = elements.birthtime.value;
-        const location = elements.location.value;
-        const readingType = document.querySelector('input[name="readingType"]:checked').value;
-
-        // Geocode location
-        let geo;
-        try {
-          geo = await geocodeLocation(location);
-        } catch (err) {
-          showError(err.message);
-          return;
-        }
-
-        // Prepare chart params
-        const chartParams = {
-          date: birthdate,
-          time: birthtime,
-          lat: geo.lat,
-          lng: geo.lng,
-          readingType: readingType
-        };
-
-        // Fetch chart data
-        let chartData;
-        try {
-          chartData = await fetchChartData(chartParams);
-        } catch (err) {
-          showError(err.message);
-          return;
-        }
-
-        // Show chart and sky map
-        elements.chartContainer.style.display = 'flex';
-        elements.skyContainer.style.display = 'block';
-        elements.downloadBtn.style.display = 'inline-block';
-
-        // Draw chart
-        const ctx = elements.canvas.getContext('2d');
-        ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
-        drawCustomWheel(ctx);
-        drawChart(chartData.planets, chartData.houses, ctx);
-
-        // Draw sky map
-        drawSkyMap(chartData.planets);
-
-        // Results block
-        let resultsHTML = '';
-        // Planet symbols
-        const planetSymbols = {
-          Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇'
-        };
-        if (readingType === 'bigThree') {
-          const sunSign = degToSign(chartData.planets.Sun.lon).sign;
-          const moonSign = degToSign(chartData.planets.Moon.lon).sign;
-          const ascSign = degToSign(chartData.ascendant).sign;
-          const bigThreeDesc = getBigThreeDescriptions(sunSign, moonSign, ascSign);
-          resultsHTML += `<div class="success" style="background:#2a0845;color:#ffe66f;"><h3>🌞 Sun: ${sunSign}</h3><p>${bigThreeDesc.sun}</p><h3>🌙 Moon: ${moonSign}</h3><p>${bigThreeDesc.moon}</p><h3>⬆️ Ascendant: ${ascSign}</h3><p>${bigThreeDesc.ascendant}</p><p style='margin-top:1rem;'>${getBigThreeSummary(sunSign, moonSign, ascSign)}</p></div>`;
-          resultsHTML += `<div class="success" style="background:#b23cf0;color:#ffe66f;"><h3>What this says about you</h3><p>Your Sun sign (${sunSign}) is your core self, your Moon sign (${moonSign}) is your emotional nature, and your Ascendant (${ascSign}) is your outward personality. Together, they form your unique astrological blueprint and influence your strengths, challenges, and how you interact with the world.</p></div>`;
-        } else {
-          // Full chart analysis
-          const aspects = calculateAspects(chartData.planets);
-          const chartPattern = detectChartPattern(chartData.planets);
-          // Chart pattern and aspects
-          resultsHTML += `<div class="success"><h3>Chart Pattern: ${chartPattern}</h3>`;
-          if (aspects.length) {
-            resultsHTML += `<p><strong>Major Aspects:</strong> ${aspects.join(', ')}</p>`;
-          }
-          resultsHTML += `<h4>Planetary Positions:</h4><ul style="list-style:none;padding-left:0;">`;
-          Object.entries(chartData.planets).forEach(([name, lon]) => {
-            const sign = degToSign(lon).sign;
-            resultsHTML += `<li style="margin-bottom:0.5rem;font-size:1.2rem;"><span style="font-size:1.5rem;">${planetSymbols[name] || ''}</span> <strong>${name}</strong>: ${sign} (${lon.toFixed(2)}°)</li>`;
-          });
-          resultsHTML += `</ul></div>`;
-          // Planetary insights
-          resultsHTML += `<div class="success"><h4>Planetary Insights</h4><ul style="list-style:none;padding-left:0;">`;
-          Object.entries(chartData.planets).forEach(([name, lon]) => {
-            const sign = degToSign(lon).sign;
-            resultsHTML += `<li style="margin-bottom:0.5rem;font-size:1.2rem;"><span style="font-size:1.5rem;">${planetSymbols[name] || ''}</span> <strong>${name}</strong> in ${sign}: This planet influences your ${name.toLowerCase()} traits.</li>`;
-          });
-          resultsHTML += `</ul></div>`;
-          resultsHTML += `<div class="success" style="background:#b23cf0;color:#ffe66f;"><h3>What this says about you</h3><p>Your chart pattern (${chartPattern}) and planetary positions reveal your unique strengths, challenges, and life themes. Major aspects highlight important relationships between your planets, shaping your personality and destiny.</p></div>`;
-        }
-        // Crystal recommendations
-        resultsHTML += displayCrystalRecommendations(chartData);
-        elements.resultsDiv.innerHTML = resultsHTML;
-        elements.resultsDiv.style.display = 'block';
-      });
-
-      // Download sky map button
-      elements.downloadBtn.addEventListener('click', function() {
-        const link = document.createElement('a');
-        link.download = 'sky-map.png';
-        link.href = elements.skyCanvas.toDataURL('image/png');
-        link.click();
-      });
-
-      // --- Utility Functions and Chart Logic ---
-      // Show loading spinner
-      function showLoading() {
-        elements.resultsDiv.innerHTML = '<div class="success">Calculating your chart... <span style="font-size:1.5rem;">🔮</span></div>';
-      }
-
-      // Show error message
-      function showError(msg) {
-        elements.resultsDiv.innerHTML = `<div class="error">${msg}</div>`;
-        elements.resultsDiv.style.display = 'block';
-      }
-
-      // Geocode location using OpenStreetMap Nominatim
-      async function geocodeLocation(location) {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (!data.length) throw new Error('Location not found. Please enter a valid city, state, or country.');
-        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-      }
-
-      // Fetch chart data from backend
-      async function fetchChartData(params) {
-        // Parse date and time
-        const [year, month, day] = params.date.split('-').map(Number);
-        const [hour, minute] = params.time.split(':').map(Number);
-        const body = {
-          year, month, day, hour, minute,
-          lat: params.lat,
-          lng: params.lng
-        };
-        const res = await fetch(CONFIG.backendUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        // Add readingType to chartData
-        data.readingType = params.readingType;
-        return data;
-      }
-
-      // Zodiac sign lookup
-      const SIGNS = [
-        { sign: 'Aries', deg: 0 },
-        { sign: 'Taurus', deg: 30 },
-        { sign: 'Gemini', deg: 60 },
-        { sign: 'Cancer', deg: 90 },
-        { sign: 'Leo', deg: 120 },
-        { sign: 'Virgo', deg: 150 },
-        { sign: 'Libra', deg: 180 },
-        { sign: 'Scorpio', deg: 210 },
-        { sign: 'Sagittarius', deg: 240 },
-        { sign: 'Capricorn', deg: 270 },
-        { sign: 'Aquarius', deg: 300 },
-        { sign: 'Pisces', deg: 330 }
-      ];
-      function degToSign(deg) {
-        deg = ((deg % 360) + 360) % 360;
-        for (let i = SIGNS.length - 1; i >= 0; i--) {
-          if (deg >= SIGNS[i].deg) return SIGNS[i];
-        }
-        return SIGNS[0];
-      }
-
-      // Draw chart wheel background
-      function drawCustomWheel(ctx) {
-        // Draw theme background
-        ctx.clearRect(0, 0, 400, 400);
-        const grad = ctx.createRadialGradient(200, 200, 60, 200, 200, 200);
-        grad.addColorStop(0, '#2a0845');
-        grad.addColorStop(1, '#b23cf0');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(200, 200, 200, 0, 2 * Math.PI);
-        ctx.fill();
-        // Draw 12 house lines
-        for (let i = 0; i < 12; i++) {
-          const angle = ((i * 30) - 90) * Math.PI / 180;
-          ctx.beginPath();
-          ctx.moveTo(200, 200);
-          ctx.lineTo(200 + 180 * Math.cos(angle), 200 + 180 * Math.sin(angle));
-          ctx.strokeStyle = '#ffe66f';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-        }
-      }
-
-      // Draw planets and houses on chart
-      function drawChart(planets, houses, ctx) {
-        // Draw planets as colored dots
-        const planetColors = {
-          Sun: '#ffd700', Moon: '#6fffe9', Mercury: '#b23cf0', Venus: '#ffb6ff', Mars: '#ff6f6f', Jupiter: '#ffe66f', Saturn: '#2a0845', Uranus: '#6f6fff', Neptune: '#b23cf0', Pluto: '#ffb23c'
-        };
-        const planetAngles = Object.entries(planets).map(([name, lon]) => ({ name, lon }));
-        planetAngles.forEach((p, i) => {
-          const angle = ((p.lon % 360) - 90) * Math.PI / 180;
-          const r = 160;
-          const x = 200 + r * Math.cos(angle);
-          const y = 200 + r * Math.sin(angle);
-          ctx.beginPath();
-          ctx.arc(x, y, 12, 0, 2 * Math.PI);
-          ctx.fillStyle = planetColors[p.name] || '#fff';
-          ctx.shadowColor = '#b23cf0';
-          ctx.shadowBlur = 10;
-          ctx.fill();
-          ctx.shadowBlur = 0;
-          ctx.font = 'bold 15px Segoe UI';
-          ctx.fillStyle = '#ffe66f';
-          ctx.fillText(p.name, x - 18, y - 18);
-        });
-        // Draw house cusps
-        Object.entries(houses).forEach(([num, h]) => {
-          const angle = ((h.lon % 360) - 90) * Math.PI / 180;
-          const r = 180;
-          const x = 200 + r * Math.cos(angle);
-          const y = 200 + r * Math.sin(angle);
-          ctx.beginPath();
-          ctx.arc(x, y, 5, 0, 2 * Math.PI);
-          ctx.fillStyle = '#ffe66f';
-          ctx.fill();
-          ctx.font = 'bold 13px Segoe UI';
-          ctx.fillStyle = '#b23cf0';
-          ctx.fillText(num, x - 6, y - 10);
-        });
-        // Draw aspect lines (conjunctions)
-        const aspects = calculateAspects(planets);
-        aspects.forEach(a => {
-          const [p1, , p2] = a.split(' ');
-          const planet1 = planetAngles.find(p => p.name === p1);
-          const planet2 = planetAngles.find(p => p.name === p2);
-          if (planet1 && planet2) {
-            const angle1 = ((planet1.lon % 360) - 90) * Math.PI / 180;
-            const angle2 = ((planet2.lon % 360) - 90) * Math.PI / 180;
-            const x1 = 200 + 160 * Math.cos(angle1);
-            const y1 = 200 + 160 * Math.sin(angle1);
-            const x2 = 200 + 160 * Math.cos(angle2);
-            const y2 = 200 + 160 * Math.sin(angle2);
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.strokeStyle = '#6fffe9';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-          }
-        });
-      }
-
-      // Draw sky map (simple horizon view)
-      function drawSkyMap(planets) {
-        const ctx = elements.skyCanvas.getContext('2d');
-        ctx.clearRect(0, 0, elements.skyCanvas.width, elements.skyCanvas.height);
-        const grad = ctx.createLinearGradient(0, 0, 400, 200);
-        grad.addColorStop(0, '#2a0845');
-        grad.addColorStop(1, '#b23cf0');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 400, 200);
-        Object.entries(planets).forEach(([name, lon], i) => {
-          const x = 40 + (i * 30);
-          const y = 100 - Math.sin(lon * Math.PI / 180) * 80;
-          ctx.beginPath();
-          ctx.arc(x, y, 14, 0, 2 * Math.PI);
-          ctx.fillStyle = '#ffd700';
-          ctx.shadowColor = '#b23cf0';
-          ctx.shadowBlur = 10;
-          ctx.fill();
-          ctx.shadowBlur = 0;
-          ctx.font = 'bold 14px Segoe UI';
-          ctx.fillStyle = '#ffe66f';
-          ctx.fillText(name, x - 18, y - 18);
-        });
-        // Show planet positions below
-        let skyResults = '<div style="color:#ffe66f;font-weight:600;margin-top:1rem;">Sky Map Positions:<br>';
-        Object.entries(planets).forEach(([name, lon]) => {
-          const sign = degToSign(lon).sign;
-          skyResults += `${name}: ${sign} (${lon.toFixed(2)}°)<br>`;
-        });
-        skyResults += '</div>';
-        elements.skyContainer.insertAdjacentHTML('beforeend', skyResults);
-      }
-
-      // Big Three descriptions
-      function getBigThreeDescriptions(sun, moon, asc) {
-        return {
-          sun: `Your Sun sign (${sun}) represents your core essence and conscious self.`,
-          moon: `Your Moon sign (${moon}) reveals your emotional nature and inner world.`,
-          ascendant: `Your Ascendant (${asc}) shapes your outward personality and how others see you.`
-        };
-      }
-      function getBigThreeSummary(sun, moon, asc) {
-        return `The combination of your Sun, Moon, and Ascendant signs creates your unique astrological blueprint.`;
-      }
-
-      // Aspects (simple conjunctions)
-      function calculateAspects(planets) {
-        const aspects = [];
-        const names = Object.keys(planets);
-        for (let i = 0; i < names.length; i++) {
-          for (let j = i + 1; j < names.length; j++) {
-            const a = planets[names[i]];
-            const b = planets[names[j]];
-            const diff = Math.abs(a - b);
-            if (diff < 8 || Math.abs(diff - 360) < 8) {
-              aspects.push(`${names[i]} conjunct ${names[j]}`);
-            }
-          }
-        }
-        return aspects;
-      }
-
-      // Chart pattern detection (very basic)
-      function detectChartPattern(planets) {
-        const lons = Object.values(planets);
-        const spread = Math.max(...lons) - Math.min(...lons);
-        if (spread < 120) return 'Bundle';
-        if (spread < 180) return 'Bowl';
-        if (spread < 240) return 'Bucket';
-        return 'Splash';
-      }
-
-      // Chart analysis HTML
-      function getChartAnalysis(planets, houses, aspects, pattern) {
-        let html = `<div class="success"><h3>Chart Pattern: ${pattern}</h3>`;
-        if (aspects.length) {
-          html += `<p><strong>Major Aspects:</strong> ${aspects.join(', ')}</p>`;
-        }
-        html += `<h4>Planetary Positions:</h4><ul>`;
-        Object.entries(planets).forEach(([name, lon]) => {
-          const sign = degToSign(lon).sign;
-          html += `<li>${name}: ${sign} (${lon.toFixed(2)}°)</li>`;
-        });
-        html += `</ul></div>`;
-        return html;
-      }
-
-      // Planetary analysis HTML
-      function getPlanetaryAnalysis(planets) {
-        let html = `<div class="success"><h4>Planetary Insights</h4><ul>`;
-        Object.entries(planets).forEach(([name, lon]) => {
-          const sign = degToSign(lon).sign;
-          html += `<li>${name} in ${sign}: This planet influences your ${name.toLowerCase()} traits.</li>`;
-        });
-        html += `</ul></div>`;
-        return html;
-      }
-
-      // Crystal recommendations (simple)
-      function displayCrystalRecommendations(chartData) {
-        const sunSign = degToSign(chartData.planets.Sun.lon).sign;
-        const crystals = {
-          Aries: 'Carnelian', Taurus: 'Rose Quartz', Gemini: 'Citrine', Cancer: 'Moonstone', Leo: 'Tiger’s Eye', Virgo: 'Amazonite', Libra: 'Lapis Lazuli', Scorpio: 'Obsidian', Sagittarius: 'Turquoise', Capricorn: 'Garnet', Aquarius: 'Amethyst', Pisces: 'Aquamarine'
-        };
-        return `<div class="success"><h4>Crystal Recommendation</h4><p>For your Sun sign (${sunSign}), we recommend: <strong>${crystals[sunSign] || 'Clear Quartz'}</strong>.</p></div>`;
-      }
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      showLoading();
+      // Simulate API call
+      setTimeout(() => {
+        showResults({});
+      }, 1800);
     });
-    // --- End working birth chart logic ---
   </script>
+</body>
 </html>
