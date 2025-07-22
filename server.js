@@ -1,4 +1,3 @@
-
 const swisseph = require('swisseph');
 const { planetposition, julian } = require('astronomia');
 const express = require('express');
@@ -109,4 +108,3 @@ app.listen(PORT, () => {
   console.log(`🔍 Health check: http://localhost:${PORT}/health`);
 });
 
-module.exports = app;
