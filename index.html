@@ -227,22 +227,74 @@
 
     function showResults(data, readingType) {
       let html = '';
+      // Planet symbols and zodiac signs
+      const planetSymbols = {
+        Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇'
+      };
+      const zodiacSigns = [
+        { name: 'Aries', symbol: '♈', start: 0 },
+        { name: 'Taurus', symbol: '♉', start: 30 },
+        { name: 'Gemini', symbol: '♊', start: 60 },
+        { name: 'Cancer', symbol: '♋', start: 90 },
+        { name: 'Leo', symbol: '♌', start: 120 },
+        { name: 'Virgo', symbol: '♍', start: 150 },
+        { name: 'Libra', symbol: '♎', start: 180 },
+        { name: 'Scorpio', symbol: '♏', start: 210 },
+        { name: 'Sagittarius', symbol: '♐', start: 240 },
+        { name: 'Capricorn', symbol: '♑', start: 270 },
+        { name: 'Aquarius', symbol: '♒', start: 300 },
+        { name: 'Pisces', symbol: '♓', start: 330 }
+      ];
+      function getZodiac(degree) {
+        for (let i = zodiacSigns.length - 1; i >= 0; i--) {
+          if (degree >= zodiacSigns[i].start) return zodiacSigns[i];
+        }
+        return zodiacSigns[0];
+      }
+      function chartPatternAnalysis(data) {
+        // Example: Splash pattern logic
+        // Count planets in each quadrant
+        const positions = Object.values(data.planets || {});
+        if (!positions.length) return { pattern: 'Unknown', description: 'Not enough data.' };
+        // Simple logic: Splash if planets are spread out
+        let spread = positions.reduce((acc, v, i, arr) => {
+          if (i === 0) return acc;
+          return acc + Math.abs(v - arr[i - 1]);
+        }, 0);
+        let pattern = 'Splash';
+        let description = 'Your planets are distributed across the chart, indicating versatility, adaptability, and a wide range of interests.';
+        if (spread < 120) {
+          pattern = 'Bundle';
+          description = 'Your planets are clustered, showing focus, intensity, and specialization.';
+        } else if (spread > 300) {
+          pattern = 'Splash';
+          description = 'Your planets are distributed across the chart, indicating versatility, adaptability, and a wide range of interests.';
+        } else if (spread > 200) {
+          pattern = 'Bowl';
+          description = 'Your planets are grouped in half the chart, showing self-containment and strong inner drive.';
+        }
+        return { pattern, description };
+      }
       if (readingType === 'bigThree') {
         html += themedBlock('Your Big Three',
           `<ul style='list-style:none;padding:0;'>
-            <li><b>Sun:</b> ${data.planets?.Sun ? data.planets.Sun.toFixed(2) + '°' : 'N/A'}</li>
-            <li><b>Moon:</b> ${data.planets?.Moon ? data.planets.Moon.toFixed(2) + '°' : 'N/A'}</li>
-            <li><b>Ascendant:</b> ${data.ascendant ? data.ascendant.toFixed(2) + '°' : 'N/A'}</li>
+            <li><b>Sun:</b> ${planetSymbols.Sun} ${data.planets?.Sun ? data.planets.Sun.toFixed(2) + '° ' + getZodiac(data.planets.Sun).symbol + ' ' + getZodiac(data.planets.Sun).name : 'N/A'}</li>
+            <li><b>Moon:</b> ${planetSymbols.Moon} ${data.planets?.Moon ? data.planets.Moon.toFixed(2) + '° ' + getZodiac(data.planets.Moon).symbol + ' ' + getZodiac(data.planets.Moon).name : 'N/A'}</li>
+            <li><b>Ascendant:</b> ${data.ascendant ? data.ascendant.toFixed(2) + '° ' + getZodiac(data.ascendant).symbol + ' ' + getZodiac(data.ascendant).name : 'N/A'}</li>
           </ul>`);
       } else {
-        html += themedBlock('Chart Pattern', 'Splash (example, add real logic if needed)');
+        const patternInfo = chartPatternAnalysis(data);
+        html += themedBlock('Chart Pattern', `${patternInfo.pattern} <br><span style='font-size:1rem;color:#fff;'>${patternInfo.description}</span>`);
         html += themedBlock('Planetary Insights',
           `<ul style='list-style:none;padding:0;'>
-            ${Object.entries(data.planets || {}).map(([p, v]) => `<li><b>${p}:</b> ${v ? v.toFixed(2) + '°' : 'N/A'}</li>`).join('')}
+            ${Object.entries(data.planets || {}).map(([p, v]) => {
+              const zodiac = getZodiac(v);
+              return `<li><b>${planetSymbols[p] || p}:</b> ${v ? v.toFixed(2) + '° ' + zodiac.symbol + ' ' + zodiac.name : 'N/A'}</li>`;
+            }).join('')}
           </ul>`);
         html += themedBlock('Houses',
           `<ul style='list-style:none;padding:0;'>
-            ${Object.entries(data.houses || {}).map(([h, v]) => `<li><b>House ${h}:</b> ${v.lon ? v.lon.toFixed(2) + '°' : 'N/A'}</li>`).join('')}
+            ${Object.entries(data.houses || {}).map(([h, v]) => `<li><b>House ${h}:</b> ${v.lon ? v.lon.toFixed(2) + '° ' + getZodiac(v.lon).symbol + ' ' + getZodiac(v.lon).name : 'N/A'}</li>`).join('')}
           </ul>`);
       }
       html += themedBlock('Crystal Recommendation', '<b>Amethyst</b>, <b>Citrine</b>, <b>Rose Quartz</b>');
@@ -284,6 +336,9 @@
       }
       // Draw planets
       if (data.planets) {
+        const planetSymbols = {
+          Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇'
+        };
         Object.entries(data.planets).forEach(([p, v], idx) => {
           const angle = ((v % 360) / 360) * 2 * Math.PI;
           ctx.beginPath();
@@ -294,8 +349,8 @@
           ctx.lineWidth = 2;
           ctx.stroke();
           ctx.fillStyle = '#ffe66f';
-          ctx.font = 'bold 12px Segoe UI';
-          ctx.fillText(p[0], 160 * Math.cos(angle) - 6, 160 * Math.sin(angle) + 4);
+          ctx.font = 'bold 18px Segoe UI';
+          ctx.fillText(planetSymbols[p] || p, 160 * Math.cos(angle) - 8, 160 * Math.sin(angle) + 7);
         });
       }
       ctx.restore();
@@ -305,14 +360,29 @@
       const canvas = document.getElementById('skyCanvas');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Draw sky background
+      // Draw sky gradient background
       const grad = ctx.createLinearGradient(0, 0, 400, 200);
       grad.addColorStop(0, '#2a0845');
       grad.addColorStop(1, '#b23cf0');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 400, 200);
-      // Draw planet positions
+      // Draw realistic stars
+      for (let i = 0; i < 80; i++) {
+        const x = Math.random() * 400;
+        const y = Math.random() * 200;
+        const r = Math.random() * 1.5 + 0.5;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fillStyle = 'white';
+        ctx.globalAlpha = Math.random() * 0.7 + 0.3;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      // Draw planet positions with symbols
       if (data.planets) {
+        const planetSymbols = {
+          Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇'
+        };
         Object.entries(data.planets).forEach(([p, v], idx) => {
           const x = 40 + (idx * 32);
           const y = 100 + 60 * Math.sin((v % 360) * Math.PI / 180);
@@ -324,8 +394,8 @@
           ctx.lineWidth = 2;
           ctx.stroke();
           ctx.fillStyle = '#2a0845';
-          ctx.font = 'bold 13px Segoe UI';
-          ctx.fillText(p[0], x - 7, y + 5);
+          ctx.font = 'bold 18px Segoe UI';
+          ctx.fillText(planetSymbols[p] || p, x - 9, y + 7);
         });
       }
     }
