@@ -239,7 +239,7 @@
         { name: 'Leo', symbol: '♌', start: 120 },
         { name: 'Virgo', symbol: '♍', start: 150 },
         { name: 'Libra', symbol: '♎', start: 180 },
-        { name: 'Scorpio', symbol: '♏', start: 210 },
+        { name: 'Scorpio', symbol: '♏', starxat: 210 },
         { name: 'Sagittarius', symbol: '♐', start: 240 },
         { name: 'Capricorn', symbol: '♑', start: 270 },
         { name: 'Aquarius', symbol: '♒', start: 300 },
@@ -253,27 +253,33 @@
       }
       function chartPatternAnalysis(data) {
         // Example: Splash pattern logic
-        // Count planets in each quadrant
         const positions = Object.values(data.planets || {});
-        if (!positions.length) return { pattern: 'Unknown', description: 'Not enough data.' };
-        // Simple logic: Splash if planets are spread out
+        if (!positions.length) return { pattern: 'Unknown', description: 'Not enough data.', traits: '', advice: '' };
         let spread = positions.reduce((acc, v, i, arr) => {
           if (i === 0) return acc;
           return acc + Math.abs(v - arr[i - 1]);
         }, 0);
         let pattern = 'Splash';
         let description = 'Your planets are distributed across the chart, indicating versatility, adaptability, and a wide range of interests.';
+        let traits = 'You are open-minded, curious, and enjoy exploring many different areas of life. You thrive in diverse environments and are comfortable with change.';
+        let advice = 'Focus on developing depth in a few areas to balance your broad interests. Embrace your adaptability, but be mindful of scattering your energy.';
         if (spread < 120) {
           pattern = 'Bundle';
-          description = 'Your planets are clustered, showing focus, intensity, and specialization.';
+          description = 'Your planets are tightly clustered, showing focus, intensity, and specialization.';
+          traits = 'You are highly focused, determined, and excel at mastering specific skills. You prefer working within a defined area and can be very productive.';
+          advice = 'Allow yourself to explore outside your comfort zone occasionally. Collaboration with others can help broaden your perspective.';
         } else if (spread > 300) {
           pattern = 'Splash';
           description = 'Your planets are distributed across the chart, indicating versatility, adaptability, and a wide range of interests.';
+          traits = 'You are open-minded, curious, and enjoy exploring many different areas of life. You thrive in diverse environments and are comfortable with change.';
+          advice = 'Focus on developing depth in a few areas to balance your broad interests. Embrace your adaptability, but be mindful of scattering your energy.';
         } else if (spread > 200) {
           pattern = 'Bowl';
           description = 'Your planets are grouped in half the chart, showing self-containment and strong inner drive.';
+          traits = 'You are self-reliant, motivated, and have a strong sense of purpose. You often work independently and are driven by inner goals.';
+          advice = 'Seek out opportunities for collaboration and connection. Sharing your journey with others can bring new insights and growth.';
         }
-        return { pattern, description };
+        return { pattern, description, traits, advice };
       }
       if (readingType === 'bigThree') {
         html += themedBlock('Your Big Three',
@@ -285,11 +291,12 @@
       } else {
         const patternInfo = chartPatternAnalysis(data);
         html += themedBlock('Chart Pattern', `${patternInfo.pattern} <br><span style='font-size:1rem;color:#fff;'>${patternInfo.description}</span>`);
+        html += themedBlock('What This Says About You', `<b>Personality Traits:</b> <span style='color:#ffe66f;'>${patternInfo.traits}</span><br><br><b>Advice:</b> <span style='color:#ffe66f;'>${patternInfo.advice}</span>`);
         html += themedBlock('Planetary Insights',
           `<ul style='list-style:none;padding:0;'>
             ${Object.entries(data.planets || {}).map(([p, v]) => {
               const zodiac = getZodiac(v);
-              return `<li><b>${planetSymbols[p] || p}:</b> ${v ? v.toFixed(2) + '° ' + zodiac.symbol + ' ' + zodiac.name : 'N/A'}</li>`;
+              return `<li><b>${planetSymbols[p] || p} ${p}:</b> ${v ? v.toFixed(2) + '° ' + zodiac.symbol + ' ' + zodiac.name : 'N/A'}</li>`;
             }).join('')}
           </ul>`);
         html += themedBlock('Houses',
