@@ -226,6 +226,90 @@
     }
 
     function showResults(data, readingType) {
+      // Helper: Element & Modality breakdown
+      function getElementModalityBreakdown(planets) {
+        const elements = { Fire: 0, Earth: 0, Air: 0, Water: 0 };
+        const modalities = { Cardinal: 0, Fixed: 0, Mutable: 0 };
+        const signInfo = {
+          Aries: ['Fire', 'Cardinal'], Taurus: ['Earth', 'Fixed'], Gemini: ['Air', 'Mutable'], Cancer: ['Water', 'Cardinal'],
+          Leo: ['Fire', 'Fixed'], Virgo: ['Earth', 'Mutable'], Libra: ['Air', 'Cardinal'], Scorpio: ['Water', 'Fixed'],
+          Sagittarius: ['Fire', 'Mutable'], Capricorn: ['Earth', 'Cardinal'], Aquarius: ['Air', 'Fixed'], Pisces: ['Water', 'Mutable']
+        };
+        Object.entries(planets || {}).forEach(([p, v]) => {
+          const zodiac = getZodiac(v).name;
+          const [el, mod] = signInfo[zodiac] || [];
+          if (el) elements[el]++;
+          if (mod) modalities[mod]++;
+        });
+        return { elements, modalities };
+      }
+
+      // Helper: Strengths & Challenges
+      function getStrengthsChallenges(data) {
+        // Example logic: more planets in Fire = energetic, in Water = sensitive, etc.
+        const breakdown = getElementModalityBreakdown(data.planets);
+        let strengths = [], challenges = [];
+        if (breakdown.elements.Fire > 3) strengths.push('High energy, enthusiasm, and leadership');
+        if (breakdown.elements.Water > 3) strengths.push('Deep sensitivity, intuition, and empathy');
+        if (breakdown.elements.Earth > 3) strengths.push('Practicality, reliability, and stability');
+        if (breakdown.elements.Air > 3) strengths.push('Intellect, communication, and adaptability');
+        if (breakdown.elements.Fire < 2) challenges.push('May lack motivation or assertiveness');
+        if (breakdown.elements.Water < 2) challenges.push('May struggle with emotional expression');
+        if (breakdown.elements.Earth < 2) challenges.push('May feel ungrounded or scattered');
+        if (breakdown.elements.Air < 2) challenges.push('May struggle with social connection or ideas');
+        return { strengths, challenges };
+      }
+
+      // Helper: Career & Relationship Guidance
+      function getGuidance(data) {
+        // Example: Sun sign for career, Venus/Moon for relationships
+        const sunSign = getZodiac(data.planets?.Sun || 0).name;
+        const moonSign = getZodiac(data.planets?.Moon || 0).name;
+        const venusSign = getZodiac(data.planets?.Venus || 0).name;
+        return {
+          career: `Your Sun in ${sunSign} suggests you thrive in careers that value ${getPlanetMeaning('Sun', sunSign)}`,
+          relationship: `Your Moon in ${moonSign} and Venus in ${venusSign} indicate you seek ${getPlanetMeaning('Moon', moonSign)} and value ${getPlanetMeaning('Venus', venusSign)} in relationships.`
+        };
+      }
+
+      // Helper: Affirmations
+      function getAffirmations(data) {
+        const sunSign = getZodiac(data.planets?.Sun || 0).name;
+        return [`I embrace my ${sunSign} energy and shine my light authentically.`, `I honor my emotions and nurture my inner self.`, `I am open to growth and new experiences.`];
+      }
+
+      // Helper: Astrology Glossary
+      const glossary = {
+        Sun: 'Core identity, ego, life purpose', Moon: 'Emotions, instincts, inner self', Ascendant: 'Outward personality, first impressions',
+        Venus: 'Love, beauty, relationships', Mars: 'Drive, action, passion', Jupiter: 'Expansion, luck, wisdom', Saturn: 'Discipline, structure, responsibility',
+        Uranus: 'Innovation, change, rebellion', Neptune: 'Dreams, intuition, spirituality', Pluto: 'Transformation, power, rebirth'
+      };
+
+      // Helper: Daily Crystal Suggestion (random)
+      function getDailyCrystal() {
+        const crystals = [
+          { name: 'Amethyst', reason: 'Enhances intuition and spiritual growth.' },
+          { name: 'Citrine', reason: 'Boosts confidence, creativity, and abundance.' },
+          { name: 'Rose Quartz', reason: 'Promotes love, compassion, and emotional healing.' },
+          { name: 'Black Tourmaline', reason: 'Provides protection and grounding.' },
+          { name: 'Clear Quartz', reason: 'Amplifies energy and clarity.' }
+        ];
+        return crystals[Math.floor(Math.random() * crystals.length)];
+      }
+
+      // Helper: Transit Forecast (demo)
+      function getTransitForecast() {
+        return 'Mercury is currently in retrograde. Reflect before making big decisions and double-check communications.';
+      }
+
+      // Helper: Save/Share/Download
+      function addSaveShareDownload() {
+        return `<div style='margin:1.2rem 0;text-align:center;'>
+          <button onclick='window.print()' style='background:#b23cf0;color:#ffe66f;padding:0.7rem 1.5rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;'>Print/Save Chart</button>
+          <button onclick='navigator.clipboard.writeText(document.getElementById("results").innerText)' style='background:#ffe66f;color:#2a0845;padding:0.7rem 1.5rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;margin-left:1rem;'>Copy Insights</button>
+        </div>`;
+      }
+
       let html = '';
       // Planet symbols and zodiac signs
       const planetSymbols = {
@@ -282,21 +366,79 @@
         return { pattern, description, traits, advice };
       }
       if (readingType === 'bigThree') {
+        // Strengths & Challenges
+        const sc = getStrengthsChallenges(data);
+        html += themedBlock('Strengths & Challenges', `<b>Strengths:</b> <span style='color:#ffe66f;'>${sc.strengths.join(', ') || 'Balanced energies.'}</span><br><b>Challenges:</b> <span style='color:#ffe66f;'>${sc.challenges.join(', ') || 'No major challenges.'}</span>`);
+        // Career & Relationship Guidance
+        const guide = getGuidance(data);
+        html += themedBlock('Career & Relationship Guidance', `<b>Career:</b> <span style='color:#ffe66f;'>${guide.career}</span><br><b>Relationships:</b> <span style='color:#ffe66f;'>${guide.relationship}</span>`);
+        // Element & Modality Breakdown
+        const breakdown = getElementModalityBreakdown(data.planets);
+        html += themedBlock('Element & Modality Breakdown', `<b>Elements:</b> <span style='color:#ffe66f;'>Fire: ${breakdown.elements.Fire}, Earth: ${breakdown.elements.Earth}, Air: ${breakdown.elements.Air}, Water: ${breakdown.elements.Water}</span><br><b>Modalities:</b> <span style='color:#ffe66f;'>Cardinal: ${breakdown.modalities.Cardinal}, Fixed: ${breakdown.modalities.Fixed}, Mutable: ${breakdown.modalities.Mutable}</span>`);
+        // Affirmations
+        html += themedBlock('Affirmations', getAffirmations(data).map(a => `<span style='color:#ffe66f;'>${a}</span>`).join('<br>'));
+        // Transit Forecast
+        html += themedBlock('Transit Forecast', `<span style='color:#ffe66f;'>${getTransitForecast()}</span>`);
+        // Daily Crystal Suggestion
+        const dailyCrystal = getDailyCrystal();
+        html += themedBlock('Daily Crystal Suggestion', `<b>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span>`);
+        // Astrology Glossary
+        html += themedBlock('Astrology Glossary', Object.entries(glossary).map(([k,v]) => `<b>${k}:</b> <span style='color:#ffe66f;'>${v}</span>`).join('<br>'));
+        // Save/Share/Download
+        html += addSaveShareDownload();
         html += themedBlock('Your Big Three',
           `<ul style='list-style:none;padding:0;'>
-            <li><b>Sun:</b> ${planetSymbols.Sun} ${data.planets?.Sun ? data.planets.Sun.toFixed(2) + '° ' + getZodiac(data.planets.Sun).symbol + ' ' + getZodiac(data.planets.Sun).name : 'N/A'}</li>
-            <li><b>Moon:</b> ${planetSymbols.Moon} ${data.planets?.Moon ? data.planets.Moon.toFixed(2) + '° ' + getZodiac(data.planets.Moon).symbol + ' ' + getZodiac(data.planets.Moon).name : 'N/A'}</li>
-            <li><b>Ascendant:</b> ${data.ascendant ? data.ascendant.toFixed(2) + '° ' + getZodiac(data.ascendant).symbol + ' ' + getZodiac(data.ascendant).name : 'N/A'}</li>
+            <li><b>Sun:</b> ${planetSymbols.Sun} ${data.planets?.Sun ? data.planets.Sun.toFixed(2) + '° ' + getZodiac(data.planets.Sun).symbol + ' ' + getZodiac(data.planets.Sun).name : 'N/A'}<br><span style='color:#ffe66f;font-size:0.95em;'>Represents your core identity, ego, and life purpose. The sign and house show how you shine and express yourself.</span></li>
+            <li><b>Moon:</b> ${planetSymbols.Moon} ${data.planets?.Moon ? data.planets.Moon.toFixed(2) + '° ' + getZodiac(data.planets.Moon).symbol + ' ' + getZodiac(data.planets.Moon).name : 'N/A'}<br><span style='color:#ffe66f;font-size:0.95em;'>Represents your emotions, instincts, and inner self. The sign and house show how you nurture and respond emotionally.</span></li>
+            <li><b>Ascendant:</b> ${data.ascendant ? data.ascendant.toFixed(2) + '° ' + getZodiac(data.ascendant).symbol + ' ' + getZodiac(data.ascendant).name : 'N/A'}<br><span style='color:#ffe66f;font-size:0.95em;'>Represents your outward personality, appearance, and first impressions. The sign and house show how you approach life and new situations.</span></li>
           </ul>`);
+        html += themedBlock('What This Says About You',
+          `<span style='color:#ffe66f;'>Your Sun, Moon, and Ascendant together form your unique astrological signature. The Sun shows your conscious self, the Moon your emotional nature, and the Ascendant your social mask. Their combination reveals how you balance your inner needs, outer expression, and life path. For example, a fiery Sun with a watery Moon and earthy Ascendant may indicate a passionate core, sensitive feelings, and a practical approach to life.</span>`);
       } else {
+        // Strengths & Challenges
+        const sc = getStrengthsChallenges(data);
+        html += themedBlock('Strengths & Challenges', `<b>Strengths:</b> <span style='color:#ffe66f;'>${sc.strengths.join(', ') || 'Balanced energies.'}</span><br><b>Challenges:</b> <span style='color:#ffe66f;'>${sc.challenges.join(', ') || 'No major challenges.'}</span>`);
+        // Career & Relationship Guidance
+        const guide = getGuidance(data);
+        html += themedBlock('Career & Relationship Guidance', `<b>Career:</b> <span style='color:#ffe66f;'>${guide.career}</span><br><b>Relationships:</b> <span style='color:#ffe66f;'>${guide.relationship}</span>`);
+        // Element & Modality Breakdown
+        const breakdown = getElementModalityBreakdown(data.planets);
+        html += themedBlock('Element & Modality Breakdown', `<b>Elements:</b> <span style='color:#ffe66f;'>Fire: ${breakdown.elements.Fire}, Earth: ${breakdown.elements.Earth}, Air: ${breakdown.elements.Air}, Water: ${breakdown.elements.Water}</span><br><b>Modalities:</b> <span style='color:#ffe66f;'>Cardinal: ${breakdown.modalities.Cardinal}, Fixed: ${breakdown.modalities.Fixed}, Mutable: ${breakdown.modalities.Mutable}</span>`);
+        // Affirmations
+        html += themedBlock('Affirmations', getAffirmations(data).map(a => `<span style='color:#ffe66f;'>${a}</span>`).join('<br>'));
+        // Transit Forecast
+        html += themedBlock('Transit Forecast', `<span style='color:#ffe66f;'>${getTransitForecast()}</span>`);
+        // Daily Crystal Suggestion
+        const dailyCrystal = getDailyCrystal();
+        html += themedBlock('Daily Crystal Suggestion', `<b>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span>`);
+        // Astrology Glossary
+        html += themedBlock('Astrology Glossary', Object.entries(glossary).map(([k,v]) => `<b>${k}:</b> <span style='color:#ffe66f;'>${v}</span>`).join('<br>'));
+        // Save/Share/Download
+        html += addSaveShareDownload();
+      // Interactive pop-ups for planets (demo)
+      canvas.onclick = function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - 200;
+        const y = e.clientY - rect.top - 200;
+        if (data.planets) {
+          Object.entries(data.planets).forEach(([p, v]) => {
+            const angle = ((v % 360) / 360) * 2 * Math.PI;
+            const px = 160 * Math.cos(angle);
+            const py = 160 * Math.sin(angle);
+            if (Math.hypot(x-px, y-py) < 12) {
+              alert(`${p} (${planetSymbols[p] || p}): ${getZodiac(v).name} - ${getPlanetMeaning(p, getZodiac(v).name)}`);
+            }
+          });
+        }
+      };
         const patternInfo = chartPatternAnalysis(data);
         html += themedBlock('Chart Pattern', `${patternInfo.pattern} <br><span style='font-size:1rem;color:#fff;'>${patternInfo.description}</span>`);
-        html += themedBlock('What This Says About You', `<b>Personality Traits:</b> <span style='color:#ffe66f;'>${patternInfo.traits}</span><br><br><b>Advice:</b> <span style='color:#ffe66f;'>${patternInfo.advice}</span>`);
+        html += themedBlock('What This Says About You', `<b>Personality Traits:</b> <span style='color:#ffe66f;'>${patternInfo.traits}</span><br><br><b>Advice:</b> <span style='color:#ffe66f;'>${patternInfo.advice}</span><br><br><span style='color:#ffe66f;'>Your chart pattern, planetary placements, and house distribution together reveal your strengths, challenges, and life themes. For example, a Splash pattern with planets in many signs suggests adaptability and curiosity, while a Bowl pattern shows focus and self-containment. The houses and aspects add further detail to your personal story.</span>`);
         html += themedBlock('Planetary Insights',
           `<ul style='list-style:none;padding:0;'>
             ${Object.entries(data.planets || {}).map(([p, v]) => {
               const zodiac = getZodiac(v);
-              return `<li><b>${planetSymbols[p] || p} ${p}:</b> ${v ? v.toFixed(2) + '° ' + zodiac.symbol + ' ' + zodiac.name : 'N/A'}</li>`;
+              return `<li><b>${planetSymbols[p] || p} ${p}:</b> ${v ? v.toFixed(2) + '° ' + zodiac.symbol + ' ' + zodiac.name : 'N/A'}<br><span style='color:#ffe66f;font-size:0.95em;'>${p} in ${zodiac.name}: ${getPlanetMeaning(p, zodiac.name)}</span></li>`;
             }).join('')}
           </ul>`);
         html += themedBlock('Houses',
@@ -304,7 +446,7 @@
             ${Object.entries(data.houses || {}).map(([h, v]) => `<li><b>House ${h}:</b> ${v.lon ? v.lon.toFixed(2) + '° ' + getZodiac(v.lon).symbol + ' ' + getZodiac(v.lon).name : 'N/A'}</li>`).join('')}
           </ul>`);
       }
-      html += themedBlock('Crystal Recommendation', '<b>Amethyst</b>, <b>Citrine</b>, <b>Rose Quartz</b>');
+      html += themedBlock('Crystal Recommendation', `<b>Amethyst</b>: Enhances intuition and spiritual growth.<br><b>Citrine</b>: Boosts confidence, creativity, and abundance.<br><b>Rose Quartz</b>: Promotes love, compassion, and emotional healing.<br><span style='color:#ffe66f;'>These crystals are chosen to support your chart's unique energies and help you thrive.</span>`);
       resultsDiv.innerHTML = html;
       shopBtn.style.display = 'block';
 
@@ -331,7 +473,7 @@
       ctx.strokeStyle = '#b23cf0';
       ctx.lineWidth = 4;
       ctx.stroke();
-      // Draw houses
+      // Draw houses with labels
       for (let i = 0; i < 12; i++) {
         const angle = (i / 12) * 2 * Math.PI;
         ctx.beginPath();
@@ -340,7 +482,46 @@
         ctx.strokeStyle = '#ffe66f';
         ctx.lineWidth = 2;
         ctx.stroke();
+        // House number label
+        ctx.save();
+        ctx.translate(170 * Math.cos(angle), 170 * Math.sin(angle));
+        ctx.rotate(angle);
+        ctx.fillStyle = '#ffe66f';
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.fillText((i+1).toString(), -7, 5);
+        ctx.restore();
       }
+      // Draw simple aspects (oppositions)
+      if (data.planets) {
+        const planetAngles = Object.values(data.planets).map(v => ((v % 360) / 360) * 2 * Math.PI);
+        for (let i = 0; i < planetAngles.length; i++) {
+          for (let j = i+1; j < planetAngles.length; j++) {
+            const diff = Math.abs(planetAngles[i] - planetAngles[j]);
+            if (Math.abs(diff - Math.PI) < 0.1) { // opposition aspect
+              ctx.beginPath();
+              ctx.moveTo(160 * Math.cos(planetAngles[i]), 160 * Math.sin(planetAngles[i]));
+              ctx.lineTo(160 * Math.cos(planetAngles[j]), 160 * Math.sin(planetAngles[j]));
+              ctx.strokeStyle = '#b23cf0';
+              ctx.lineWidth = 1.5;
+              ctx.setLineDash([6, 4]);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+          }
+        }
+      }
+    function getPlanetMeaning(planet, sign) {
+      const meanings = {
+        Sun: {
+          Aries: 'Vitality, leadership, and boldness.', Taurus: 'Stability, patience, and sensuality.', Gemini: 'Curiosity, adaptability, and wit.', Cancer: 'Sensitivity, nurturing, and intuition.', Leo: 'Creativity, confidence, and generosity.', Virgo: 'Practicality, analysis, and service.', Libra: 'Harmony, diplomacy, and charm.', Scorpio: 'Intensity, transformation, and passion.', Sagittarius: 'Optimism, adventure, and wisdom.', Capricorn: 'Discipline, ambition, and responsibility.', Aquarius: 'Innovation, independence, and humanitarianism.', Pisces: 'Compassion, imagination, and empathy.'
+        },
+        Moon: {
+          Aries: 'Emotional drive, spontaneity, and courage.', Taurus: 'Emotional steadiness, comfort, and loyalty.', Gemini: 'Restlessness, curiosity, and sociability.', Cancer: 'Deep feelings, protectiveness, and empathy.', Leo: 'Warmth, pride, and playfulness.', Virgo: 'Nervousness, helpfulness, and discernment.', Libra: 'Need for balance, partnership, and peace.', Scorpio: 'Intensity, secrecy, and transformation.', Sagittarius: 'Optimism, freedom, and exploration.', Capricorn: 'Reserve, caution, and ambition.', Aquarius: 'Detachment, originality, and friendship.', Pisces: 'Sensitivity, intuition, and compassion.'
+        },
+        Mercury: {}, Venus: {}, Mars: {}, Jupiter: {}, Saturn: {}, Uranus: {}, Neptune: {}, Pluto: {}
+      };
+      return meanings[planet] && meanings[planet][sign] ? meanings[planet][sign] : '';
+    }
       // Draw planets
       if (data.planets) {
         const planetSymbols = {
