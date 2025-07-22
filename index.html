@@ -225,25 +225,154 @@
       shopBtn.style.display = 'none';
     }
 
-    function showResults(data) {
+    function showResults(data, readingType) {
       let html = '';
-      // Example: Chart Pattern
-      html += themedBlock('Chart Pattern: Splash', 'Your chart pattern is Splash. This means...');
-      // Example: Planetary Insights
-      html += themedBlock('Planetary Insights', 'Your planets reveal...');
-      // Example: Crystal Recommendation
+      if (readingType === 'bigThree') {
+        html += themedBlock('Your Big Three',
+          `<ul style='list-style:none;padding:0;'>
+            <li><b>Sun:</b> ${data.planets?.Sun ? data.planets.Sun.toFixed(2) + '°' : 'N/A'}</li>
+            <li><b>Moon:</b> ${data.planets?.Moon ? data.planets.Moon.toFixed(2) + '°' : 'N/A'}</li>
+            <li><b>Ascendant:</b> ${data.ascendant ? data.ascendant.toFixed(2) + '°' : 'N/A'}</li>
+          </ul>`);
+      } else {
+        html += themedBlock('Chart Pattern', 'Splash (example, add real logic if needed)');
+        html += themedBlock('Planetary Insights',
+          `<ul style='list-style:none;padding:0;'>
+            ${Object.entries(data.planets || {}).map(([p, v]) => `<li><b>${p}:</b> ${v ? v.toFixed(2) + '°' : 'N/A'}</li>`).join('')}
+          </ul>`);
+        html += themedBlock('Houses',
+          `<ul style='list-style:none;padding:0;'>
+            ${Object.entries(data.houses || {}).map(([h, v]) => `<li><b>House ${h}:</b> ${v.lon ? v.lon.toFixed(2) + '°' : 'N/A'}</li>`).join('')}
+          </ul>`);
+      }
       html += themedBlock('Crystal Recommendation', '<b>Amethyst</b>, <b>Citrine</b>, <b>Rose Quartz</b>');
       resultsDiv.innerHTML = html;
       shopBtn.style.display = 'block';
+
+      // Show chart wheel and skymap
+      document.querySelector('.chart-container').style.display = 'flex';
+      document.querySelector('.sky-container').style.display = 'block';
+      document.getElementById('downloadBtn').style.display = 'block';
+
+      // Draw chart wheel
+      drawChartWheel(data);
+      // Draw skymap
+      drawSkyMap(data);
     }
 
-    form.addEventListener('submit', function(e) {
+    function drawChartWheel(data) {
+      const canvas = document.getElementById('birth-chart');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Draw wheel
+      ctx.save();
+      ctx.translate(200, 200);
+      ctx.beginPath();
+      ctx.arc(0, 0, 180, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#b23cf0';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      // Draw houses
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(180 * Math.cos(angle), 180 * Math.sin(angle));
+        ctx.strokeStyle = '#ffe66f';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      // Draw planets
+      if (data.planets) {
+        Object.entries(data.planets).forEach(([p, v], idx) => {
+          const angle = ((v % 360) / 360) * 2 * Math.PI;
+          ctx.beginPath();
+          ctx.arc(160 * Math.cos(angle), 160 * Math.sin(angle), 10, 0, 2 * Math.PI);
+          ctx.fillStyle = '#b23cf0';
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.fillStyle = '#ffe66f';
+          ctx.font = 'bold 12px Segoe UI';
+          ctx.fillText(p[0], 160 * Math.cos(angle) - 6, 160 * Math.sin(angle) + 4);
+        });
+      }
+      ctx.restore();
+    }
+
+    function drawSkyMap(data) {
+      const canvas = document.getElementById('skyCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Draw sky background
+      const grad = ctx.createLinearGradient(0, 0, 400, 200);
+      grad.addColorStop(0, '#2a0845');
+      grad.addColorStop(1, '#b23cf0');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 400, 200);
+      // Draw planet positions
+      if (data.planets) {
+        Object.entries(data.planets).forEach(([p, v], idx) => {
+          const x = 40 + (idx * 32);
+          const y = 100 + 60 * Math.sin((v % 360) * Math.PI / 180);
+          ctx.beginPath();
+          ctx.arc(x, y, 12, 0, 2 * Math.PI);
+          ctx.fillStyle = '#ffe66f';
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.fillStyle = '#2a0845';
+          ctx.font = 'bold 13px Segoe UI';
+          ctx.fillText(p[0], x - 7, y + 5);
+        });
+      }
+    }
+
+    // Download button logic
+    document.getElementById('downloadBtn').onclick = function() {
+      const canvas = document.getElementById('skyCanvas');
+      const link = document.createElement('a');
+      link.download = 'skymap.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    };
+
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
       showLoading();
-      // Simulate API call
-      setTimeout(() => {
-        showResults({});
-      }, 1800);
+      const birthdate = document.getElementById('birthdate').value;
+      const birthtime = document.getElementById('birthtime').value;
+      const location = document.getElementById('location').value;
+      const readingType = document.querySelector('input[name="readingType"]:checked').value;
+
+      // For demo, use dummy lat/lng. Replace with geocoding if needed.
+      let lat = 40.7128, lng = -74.0060;
+      // Optionally, add geocoding here for real location
+      if (!birthdate || !birthtime || !location) {
+        resultsDiv.innerHTML = themedBlock('Error', 'Please fill out all fields.');
+        return;
+      }
+      const [year, month, day] = birthdate.split('-').map(Number);
+      const [hour, minute] = birthtime.split(':').map(Number);
+      try {
+        const res = await fetch('/api/chart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
+        });
+        const data = await res.json();
+        if (data.error) {
+          resultsDiv.innerHTML = themedBlock('Error', data.error);
+          shopBtn.style.display = 'none';
+        } else {
+          showResults(data, readingType);
+        }
+      } catch (err) {
+        resultsDiv.innerHTML = themedBlock('Error', 'Failed to fetch chart data.');
+        shopBtn.style.display = 'none';
+      }
     });
   </script>
 </body>
