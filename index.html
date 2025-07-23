@@ -658,7 +658,7 @@
         const [hour, minute] = birthtime.split(':').map(Number);
         console.log('Submitting chart request:', { year, month, day, hour, minute, lat, lng });
         try {
-          const res = await fetch('http://localhost:10000/api/chart', {
+        const res = await fetch('/api/chart', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
