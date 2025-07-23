@@ -384,20 +384,7 @@ const zodiacSigns = [
       const planetSymbols = {
         Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇'
       };
-      const zodiacSigns = [
-        { name: 'Aries', symbol: '♈', start: 0 },
-        { name: 'Taurus', symbol: '♉', start: 30 },
-        { name: 'Gemini', symbol: '♊', start: 60 },
-        { name: 'Cancer', symbol: '♋', start: 90 },
-        { name: 'Leo', symbol: '♌', start: 120 },
-        { name: 'Virgo', symbol: '♍', start: 150 },
-        { name: 'Libra', symbol: '♎', start: 180 },
-        { name: 'Scorpio', symbol: '♏', start: 210 },
-        { name: 'Sagittarius', symbol: '♐', start: 240 },
-        { name: 'Capricorn', symbol: '♑', start: 270 },
-        { name: 'Aquarius', symbol: '♒', start: 300 },
-        { name: 'Pisces', symbol: '♓', start: 330 }
-      ];
+     // ...existing code...
       function getZodiac(degree) {
         for (let i = zodiacSigns.length - 1; i >= 0; i--) {
           if (degree >= zodiacSigns[i].start) return zodiacSigns[i];
