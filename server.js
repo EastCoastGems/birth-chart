@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -19,20 +19,30 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Simple test endpoint to verify Express is running
+app.get('/test', (req, res) => {
+  res.send('Express is working!');
+});
+
 app.post('/api/chart', async (req, res) => {
   try {
+    console.log('Received chart request:', req.body);
     const { year, month, day, hour, minute, lat, lng } = req.body;
     if ([year, month, day, hour, minute, lat, lng].some(v => v === undefined || v === null)) {
+      console.error('Missing required parameters:', { year, month, day, hour, minute, lat, lng });
       return res.status(400).json({ error: 'Missing required parameters: year, month, day, hour, minute, lat, lng' });
     }
     const birthDate = new Date(year, month - 1, day, hour, minute);
     if (isNaN(birthDate.getTime())) {
+      console.error('Invalid date/time provided:', { year, month, day, hour, minute });
       return res.status(400).json({ error: 'Invalid date/time provided' });
     }
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      console.error('Invalid coordinates provided:', { lat, lng });
       return res.status(400).json({ error: 'Invalid coordinates provided' });
     }
     const jd = julian.CalendarGregorianToJD(year, month, day) + (hour + minute / 60) / 24;
+    console.log('Julian date calculated:', jd);
 
     // Calculate planetary positions
     const planets = {};
@@ -60,6 +70,7 @@ app.post('/api/chart', async (req, res) => {
           }
         });
       }
+      console.log('Planet positions calculated:', planets);
     } catch (planetErr) {
       console.error('Planet calculation error:', planetErr);
       return res.status(500).json({ error: 'Planet calculation failed', details: planetErr.message });
@@ -78,6 +89,7 @@ app.post('/api/chart', async (req, res) => {
         houses[String(i)] = { lon: typeof cusp === 'number' && !isNaN(cusp) ? cusp : null };
       }
       let ascendant = typeof housesResult.ascendant === 'number' && !isNaN(housesResult.ascendant) ? housesResult.ascendant : null;
+      console.log('Houses and ascendant calculated:', houses, ascendant);
       res.json({
         planets,
         houses,
