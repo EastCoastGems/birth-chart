@@ -615,7 +615,7 @@
       const [year, month, day] = birthdate.split('-').map(Number);
       const [hour, minute] = birthtime.split(':').map(Number);
       try {
-        const res = await fetch('/api/chart', {
+        const res = await fetch('http://localhost:10000/api/chart', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
