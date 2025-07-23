@@ -558,6 +558,38 @@
           }
         }
       }
+
+      // Draw zodiac signs around the wheel
+      const zodiacSigns = [
+        { name: 'Aries', symbol: '♈', start: 0 },
+        { name: 'Taurus', symbol: '♉', start: 30 },
+        { name: 'Gemini', symbol: '♊', start: 60 },
+        { name: 'Cancer', symbol: '♋', start: 90 },
+        { name: 'Leo', symbol: '♌', start: 120 },
+        { name: 'Virgo', symbol: '♍', start: 150 },
+        { name: 'Libra', symbol: '♎', start: 180 },
+        { name: 'Scorpio', symbol: '♏', start: 210 },
+        { name: 'Sagittarius', symbol: '♐', start: 240 },
+        { name: 'Capricorn', symbol: '♑', start: 270 },
+        { name: 'Aquarius', symbol: '♒', start: 300 },
+        { name: 'Pisces', symbol: '♓', start: 330 }
+      ];
+      zodiacSigns.forEach((sign, i) => {
+        const angle = ((sign.start + 15) / 360) * 2 * Math.PI;
+        const x = 180 * Math.cos(angle);
+        const y = 180 * Math.sin(angle);
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.font = 'bold 20px Segoe UI';
+        ctx.fillStyle = '#ffe66f';
+        ctx.textAlign = 'center';
+        ctx.fillText(sign.symbol, 0, 0);
+        ctx.font = '12px Segoe UI';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(sign.name, 0, 18);
+        ctx.restore();
+      });
     function getPlanetMeaning(planet, sign) {
       const meanings = {
         Sun: {
