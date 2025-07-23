@@ -225,6 +225,33 @@
       shopBtn.style.display = 'none';
     }
 
+    function getPlanetMeaning(planet, sign) {
+      const meanings = {
+        Sun: {
+          Aries: 'Vitality, leadership, and boldness.', Taurus: 'Stability, patience, and sensuality.', Gemini: 'Curiosity, adaptability, and wit.', Cancer: 'Sensitivity, nurturing, and intuition.', Leo: 'Creativity, confidence, and generosity.', Virgo: 'Practicality, analysis, and service.', Libra: 'Harmony, diplomacy, and charm.', Scorpio: 'Intensity, transformation, and passion.', Sagittarius: 'Optimism, adventure, and wisdom.', Capricorn: 'Discipline, ambition, and responsibility.', Aquarius: 'Innovation, independence, and humanitarianism.', Pisces: 'Compassion, imagination, and empathy.'
+        },
+        Moon: {
+          Aries: 'Emotional drive, spontaneity, and courage.', Taurus: 'Emotional steadiness, comfort, and loyalty.', Gemini: 'Restlessness, curiosity, and sociability.', Cancer: 'Deep feelings, protectiveness, and empathy.', Leo: 'Warmth, pride, and playfulness.', Virgo: 'Nervousness, helpfulness, and discernment.', Libra: 'Need for balance, partnership, and peace.', Scorpio: 'Intensity, secrecy, and transformation.', Sagittarius: 'Optimism, freedom, and exploration.', Capricorn: 'Reserve, caution, and ambition.', Aquarius: 'Detachment, originality, and friendship.', Pisces: 'Sensitivity, intuition, and compassion.'
+        },
+        Venus: {
+          Aries: 'passion and excitement',
+          Taurus: 'loyalty and sensual comfort',
+          Gemini: 'mental stimulation and variety',
+          Cancer: 'emotional security and nurturing',
+          Leo: 'romance and admiration',
+          Virgo: 'practical support and helpfulness',
+          Libra: 'harmony and partnership',
+          Scorpio: 'intensity and deep connection',
+          Sagittarius: 'freedom and adventure',
+          Capricorn: 'commitment and stability',
+          Aquarius: 'friendship and uniqueness',
+          Pisces: 'compassion and spiritual bonding'
+        },
+        Mercury: {}, Mars: {}, Jupiter: {}, Saturn: {}, Uranus: {}, Neptune: {}, Pluto: {}
+      };
+      return meanings[planet] && meanings[planet][sign] ? meanings[planet][sign] : '';
+    }
+
     function showResults(data, readingType) {
       // Helper: Element & Modality breakdown
       function getElementModalityBreakdown(planets) {
