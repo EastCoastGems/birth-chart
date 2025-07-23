@@ -207,6 +207,21 @@
     <a href="https://eastcoastgemsbycara.myshopify.com/" target="_blank" id="shopBtn" style="display:block;margin:2rem auto 0 auto;padding:1rem 2rem;background:#b23cf0;color:#ffe66f;font-weight:700;border-radius:12px;text-decoration:none;box-shadow:0 2px 12px #b23cf0;max-width:300px;">✨ Visit My Shop ✨</a>
   </div>
   <script>
+// Zodiac signs array (moved to top to avoid ReferenceError)
+const zodiacSigns = [
+  { name: "Aries", start: 0 },
+  { name: "Taurus", start: 30 },
+  { name: "Gemini", start: 60 },
+  { name: "Cancer", start: 90 },
+  { name: "Leo", start: 120 },
+  { name: "Virgo", start: 150 },
+  { name: "Libra", start: 180 },
+  { name: "Scorpio", start: 210 },
+  { name: "Sagittarius", start: 240 },
+  { name: "Capricorn", start: 270 },
+  { name: "Aquarius", start: 300 },
+  { name: "Pisces", start: 330 }
+];
     const form = document.getElementById('birth-form');
     const resultsDiv = document.getElementById('results');
     const shopBtn = document.getElementById('shopBtn');
