@@ -226,6 +226,20 @@
     }
 
     function getPlanetMeaning(planet, sign) {
+      const baseMeanings = {
+        Aries: 'initiative, courage, and directness',
+        Taurus: 'stability, patience, and sensuality',
+        Gemini: 'curiosity, adaptability, and wit',
+        Cancer: 'sensitivity, nurturing, and intuition',
+        Leo: 'creativity, confidence, and generosity',
+        Virgo: 'practicality, analysis, and service',
+        Libra: 'harmony, diplomacy, and charm',
+        Scorpio: 'intensity, transformation, and passion',
+        Sagittarius: 'optimism, adventure, and wisdom',
+        Capricorn: 'discipline, ambition, and responsibility',
+        Aquarius: 'innovation, independence, and humanitarianism',
+        Pisces: 'compassion, imagination, and empathy'
+      };
       const meanings = {
         Sun: {
           Aries: 'Vitality, leadership, and boldness.', Taurus: 'Stability, patience, and sensuality.', Gemini: 'Curiosity, adaptability, and wit.', Cancer: 'Sensitivity, nurturing, and intuition.', Leo: 'Creativity, confidence, and generosity.', Virgo: 'Practicality, analysis, and service.', Libra: 'Harmony, diplomacy, and charm.', Scorpio: 'Intensity, transformation, and passion.', Sagittarius: 'Optimism, adventure, and wisdom.', Capricorn: 'Discipline, ambition, and responsibility.', Aquarius: 'Innovation, independence, and humanitarianism.', Pisces: 'Compassion, imagination, and empathy.'
@@ -247,7 +261,13 @@
           Aquarius: 'friendship and uniqueness',
           Pisces: 'compassion and spiritual bonding'
         },
-        Mercury: {}, Mars: {}, Jupiter: {}, Saturn: {}, Uranus: {}, Neptune: {}, Pluto: {}
+        Mercury: baseMeanings,
+        Mars: baseMeanings,
+        Jupiter: baseMeanings,
+        Saturn: baseMeanings,
+        Uranus: baseMeanings,
+        Neptune: baseMeanings,
+        Pluto: baseMeanings
       };
       return meanings[planet] && meanings[planet][sign] ? meanings[planet][sign] : '';
     }
@@ -608,14 +628,47 @@
         ctx.fill();
         ctx.globalAlpha = 1;
       }
+      // Draw zodiac signs around the wheel
+      const zodiacSigns = [
+        { name: 'Aries', symbol: '♈', start: 0 },
+        { name: 'Taurus', symbol: '♉', start: 30 },
+        { name: 'Gemini', symbol: '♊', start: 60 },
+        { name: 'Cancer', symbol: '♋', start: 90 },
+        { name: 'Leo', symbol: '♌', start: 120 },
+        { name: 'Virgo', symbol: '♍', start: 150 },
+        { name: 'Libra', symbol: '♎', start: 180 },
+        { name: 'Scorpio', symbol: '♏', start: 210 },
+        { name: 'Sagittarius', symbol: '♐', start: 240 },
+        { name: 'Capricorn', symbol: '♑', start: 270 },
+        { name: 'Aquarius', symbol: '♒', start: 300 },
+        { name: 'Pisces', symbol: '♓', start: 330 }
+      ];
+      zodiacSigns.forEach((sign, i) => {
+        const angle = ((sign.start + 15) / 360) * 2 * Math.PI;
+        const x = 200 + 170 * Math.cos(angle);
+        const y = 200 + 170 * Math.sin(angle);
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.font = 'bold 20px Segoe UI';
+        ctx.fillStyle = '#ffe66f';
+        ctx.textAlign = 'center';
+        ctx.fillText(sign.symbol, 0, 0);
+        ctx.font = '12px Segoe UI';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(sign.name, 0, 18);
+        ctx.restore();
+      });
+
       // Draw planet positions with symbols
       if (data.planets) {
         const planetSymbols = {
           Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇'
         };
         Object.entries(data.planets).forEach(([p, v], idx) => {
-          const x = 40 + (idx * 32);
-          const y = 100 + 60 * Math.sin((v % 360) * Math.PI / 180);
+          const angle = ((v % 360) / 360) * 2 * Math.PI;
+          const x = 200 + 160 * Math.cos(angle);
+          const y = 200 + 160 * Math.sin(angle);
           ctx.beginPath();
           ctx.arc(x, y, 12, 0, 2 * Math.PI);
           ctx.fillStyle = '#ffe66f';
