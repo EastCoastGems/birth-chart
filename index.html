@@ -449,9 +449,9 @@ const zodiacSigns = [
         const guide = getGuidance(data);
         html += themedBlock('Career & Relationship Guidance', `<b>Career:</b> <span style='color:#ffe66f;'>${guide.career}</span><br><b>Relationships:</b> <span style='color:#ffe66f;'>${guide.relationship}</span>`);
         // 7. Affirmations
-        html += themedBlock('Affirmations', getAffirmations(data).map(a => `<span style='color:#ffe66f;'>${a}</span>`).join('<br>'));
+        html += themedBlock('Affirmations', getAffirmations(data).map(a => `<span style='color:#fff;'>${a}</span>`).join('<br>'));
         // 8. Transit Forecast
-        html += themedBlock('Transit Forecast', `<span style='color:#ffe66f;'>${getTransitForecast()}</span>`);
+        html += themedBlock('Transit Forecast', `<span style='color:#fff;'>${getTransitForecast()}</span>`);
         // 9. Crystal Recommendation (with explanation)
         html += themedBlock('Crystal Recommendation', `
           <span><b style='color:#fff;'>Amethyst</b>: <span style='color:#ffe66f;'>Enhances intuition and spiritual growth.</span></span><br>
@@ -483,7 +483,7 @@ const zodiacSigns = [
           </ul>`);
         // 3. Chart Pattern
         const patternInfo = chartPatternAnalysis(data);
-        html += themedBlock('Chart Pattern', `${patternInfo.pattern} <br><span style='font-size:1rem;color:#fff;'>${patternInfo.description}</span><br><span style='color:#ffe66f;'><i>${patternInfo.traits}</i></span><br><span style='color:#ffe66f;'><i>${patternInfo.advice}</i></span><br><span style='color:#ffe66f;'>Your chart pattern, planetary placements, and house distribution together reveal your strengths, challenges, and life themes. For example, a Splash pattern with planets in many signs suggests adaptability and curiosity, while a Bowl pattern shows focus and self-containment. The houses and aspects add further detail to your personal story.</span>`);
+        html += themedBlock('Chart Pattern', `${patternInfo.pattern} <br><span style='font-size:1rem;color:#fff;'>${patternInfo.description}</span><br><span style='color:#ffe66f;'><i>${patternInfo.traits}</i></span><br><span style='color:#ffe66f;'>Your chart pattern, planetary placements, and house distribution together reveal your strengths, challenges, and life themes. For example, a Splash pattern with planets in many signs suggests adaptability and curiosity, while a Bowl pattern shows focus and self-containment. The houses and aspects add further detail to your personal story.</span><br><br><span style='color:#ffe66f;'><i>${patternInfo.advice}</i></span>`);
         // 4. Element & Modality Breakdown
         const breakdown = getElementModalityBreakdown(data.planets);
         html += themedBlock('Element & Modality Breakdown', `<b>Elements:</b> <span style='color:#ffe66f;'>Fire: ${breakdown.elements.Fire}, Earth: ${breakdown.elements.Earth}, Air: ${breakdown.elements.Air}, Water: ${breakdown.elements.Water}</span><br><b>Modalities:</b> <span style='color:#ffe66f;'>Cardinal: ${breakdown.modalities.Cardinal}, Fixed: ${breakdown.modalities.Fixed}, Mutable: ${breakdown.modalities.Mutable}</span>`);
@@ -517,7 +517,7 @@ const zodiacSigns = [
         // Save/Share/Download
         html += addSaveShareDownload();
       }
-      html += themedBlock('Crystal Recommendation', `<b>Amethyst</b>: Enhances intuition and spiritual growth.<br><b>Citrine</b>: Boosts confidence, creativity, and abundance.<br><b>Rose Quartz</b>: Promotes love, compassion, and emotional healing.<br><span style='color:#ffe66f;'>These crystals are chosen to support your chart's unique energies and help you thrive.</span>`);
+      // ...existing code...
       resultsDiv.innerHTML = html;
       shopBtn.style.display = 'block';
 
