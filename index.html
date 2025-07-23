@@ -587,50 +587,56 @@
         });
       }
     }
+    document.addEventListener('DOMContentLoaded', function() {
+      // Download button logic
+      document.getElementById('downloadBtn').onclick = function() {
+        const canvas = document.getElementById('skyCanvas');
+        const link = document.createElement('a');
+        link.download = 'skymap.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      };
 
-    // Download button logic
-    document.getElementById('downloadBtn').onclick = function() {
-      const canvas = document.getElementById('skyCanvas');
-      const link = document.createElement('a');
-      link.download = 'skymap.png';
-      link.href = canvas.toDataURL();
-      link.click();
-    };
+      const form = document.getElementById('birth-form');
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        showLoading();
+        const birthdate = document.getElementById('birthdate').value;
+        const birthtime = document.getElementById('birthtime').value;
+        const location = document.getElementById('location').value;
+        const readingType = document.querySelector('input[name="readingType"]:checked').value;
 
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      showLoading();
-      const birthdate = document.getElementById('birthdate').value;
-      const birthtime = document.getElementById('birthtime').value;
-      const location = document.getElementById('location').value;
-      const readingType = document.querySelector('input[name="readingType"]:checked').value;
-
-      // For demo, use dummy lat/lng. Replace with geocoding if needed.
-      let lat = 40.7128, lng = -74.0060;
-      // Optionally, add geocoding here for real location
-      if (!birthdate || !birthtime || !location) {
-        resultsDiv.innerHTML = themedBlock('Error', 'Please fill out all fields.');
-        return;
-      }
-      const [year, month, day] = birthdate.split('-').map(Number);
-      const [hour, minute] = birthtime.split(':').map(Number);
-      try {
-        const res = await fetch('http://localhost:10000/api/chart', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
-        });
-        const data = await res.json();
-        if (data.error) {
-          resultsDiv.innerHTML = themedBlock('Error', data.error);
-          shopBtn.style.display = 'none';
-        } else {
-          showResults(data, readingType);
+        // For demo, use dummy lat/lng. Replace with geocoding if needed.
+        let lat = 40.7128, lng = -74.0060;
+        // Optionally, add geocoding here for real location
+        if (!birthdate || !birthtime || !location) {
+          resultsDiv.innerHTML = themedBlock('Error', 'Please fill out all fields.');
+          return;
         }
-      } catch (err) {
-        resultsDiv.innerHTML = themedBlock('Error', 'Failed to fetch chart data.');
-        shopBtn.style.display = 'none';
-      }
+        const [year, month, day] = birthdate.split('-').map(Number);
+        const [hour, minute] = birthtime.split(':').map(Number);
+        console.log('Submitting chart request:', { year, month, day, hour, minute, lat, lng });
+        try {
+          const res = await fetch('http://localhost:10000/api/chart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
+          });
+          console.log('Fetch response:', res);
+          const data = await res.json();
+          console.log('Chart data received:', data);
+          if (data.error) {
+            resultsDiv.innerHTML = themedBlock('Error', data.error);
+            shopBtn.style.display = 'none';
+          } else {
+            showResults(data, readingType);
+          }
+        } catch (err) {
+          console.error('Fetch error:', err);
+          resultsDiv.innerHTML = themedBlock('Error', 'Failed to fetch chart data.');
+          shopBtn.style.display = 'none';
+        }
+      });
     });
   </script>
 </body>
