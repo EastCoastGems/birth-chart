@@ -453,10 +453,18 @@ const zodiacSigns = [
         // 8. Transit Forecast
         html += themedBlock('Transit Forecast', `<span style='color:#ffe66f;'>${getTransitForecast()}</span>`);
         // 9. Crystal Recommendation (with explanation)
-        html += themedBlock('Crystal Recommendation', `<b>Amethyst</b>: Enhances intuition and spiritual growth.<br><b>Citrine</b>: Boosts confidence, creativity, and abundance.<br><b>Rose Quartz</b>: Promotes love, compassion, and emotional healing.<br><span style='color:#ffe66f;'>These crystals are chosen to support your chart's unique energies and help you thrive.</span><br><em>These crystals are chosen based on your chart's planetary placements and energies. Each supports your strengths and helps balance your challenges.</em>`);
+        html += themedBlock('Crystal Recommendation', `
+          <b style='color:#fff;'>Amethyst</b>: <span style='color:#ffe66f;'>Enhances intuition and spiritual growth.</span><br>
+          <b style='color:#fff;'>Citrine</b>: <span style='color:#ffe66f;'>Boosts confidence, creativity, and abundance.</span><br>
+          <b style='color:#fff;'>Rose Quartz</b>: <span style='color:#ffe66f;'>Promotes love, compassion, and emotional healing.</span><br>
+          <span style='color:#ffe66f;'>These crystals are chosen based on your chart's planetary placements and energies. Each supports your strengths and helps balance your challenges.</span>
+        `);
         // 10. Daily Crystal Suggestion (with explanation)
         const dailyCrystal = getDailyCrystal();
-        html += themedBlock('Daily Crystal Suggestion', `<b>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span><br><em>This crystal is selected for today's transits and your personal chart, offering support and guidance for the day.</em>`);
+        html += themedBlock('Daily Crystal Suggestion', `
+          <b style='color:#fff;'>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span><br>
+          <span style='color:#ffe66f;'>This crystal is selected for today's transits and your personal chart, offering support and guidance for the day.</span>
+        `);
         // Save/Share/Download
         html += addSaveShareDownload();
       } else {
