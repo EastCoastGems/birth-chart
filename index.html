@@ -513,47 +513,62 @@
       const canvas = document.getElementById('birth-chart');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Draw wheel with 3 concentric circles
+      // Draw wheel background
       ctx.save();
       ctx.translate(200, 200);
-      // Outer circle
+      ctx.beginPath();
+      ctx.arc(0, 0, 180, 0, 2 * Math.PI);
+      ctx.fillStyle = '#f8f8ff';
+      ctx.globalAlpha = 0.9;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Outer circle (purple)
       ctx.beginPath();
       ctx.arc(0, 0, 180, 0, 2 * Math.PI);
       ctx.strokeStyle = '#b23cf0';
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 5;
       ctx.stroke();
-      // Middle circle
+      // Middle circle (gold)
       ctx.beginPath();
       ctx.arc(0, 0, 140, 0, 2 * Math.PI);
       ctx.strokeStyle = '#ffe66f';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.5;
       ctx.stroke();
-      // Inner circle
+      // Inner circle (white)
       ctx.beginPath();
       ctx.arc(0, 0, 90, 0, 2 * Math.PI);
       ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw houses/signs with bold radial lines
+      // Draw houses/signs with bold gold radial lines
       for (let i = 0; i < 12; i++) {
         const angle = (i / 12) * 2 * Math.PI;
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.lineTo(180 * Math.cos(angle), 180 * Math.sin(angle));
         ctx.strokeStyle = '#ffe66f';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 4;
         ctx.setLineDash([]);
-        ctx.globalAlpha = 0.8;
+        ctx.globalAlpha = 0.9;
         ctx.stroke();
         ctx.globalAlpha = 1;
-        // House number label
+        // House number label (gold)
         ctx.save();
         ctx.translate(170 * Math.cos(angle), 170 * Math.sin(angle));
         ctx.rotate(angle);
         ctx.fillStyle = '#ffe66f';
-        ctx.font = 'bold 13px Segoe UI';
+        ctx.font = 'bold 15px Segoe UI';
         ctx.fillText((i+1).toString(), -7, 5);
+        ctx.restore();
+        // Draw sign tick/dot at edge
+        ctx.save();
+        ctx.translate(180 * Math.cos(angle), 180 * Math.sin(angle));
+        ctx.beginPath();
+        ctx.arc(0, 0, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffe66f';
+        ctx.fill();
         ctx.restore();
       }
       // Draw simple aspects (oppositions)
@@ -598,13 +613,13 @@
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
-        ctx.font = 'bold 20px Segoe UI';
-        ctx.fillStyle = '#ffe66f';
+        ctx.font = 'bold 22px Segoe UI';
+        ctx.fillStyle = '#b23cf0';
         ctx.textAlign = 'center';
         ctx.fillText(sign.symbol, 0, 0);
-        ctx.font = '12px Segoe UI';
-        ctx.fillStyle = '#fff';
-        ctx.fillText(sign.name, 0, 18);
+        ctx.font = '13px Segoe UI';
+        ctx.fillStyle = '#b23cf0';
+        ctx.fillText(sign.name, 0, 22);
         ctx.restore();
       });
     function getPlanetMeaning(planet, sign) {
