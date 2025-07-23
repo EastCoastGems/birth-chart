@@ -273,6 +273,13 @@
     }
 
     function showResults(data, readingType) {
+      // Debug: Log degrees and signs for Sun, Moon, Ascendant
+      const sunDeg = data.planets?.Sun;
+      const moonDeg = data.planets?.Moon;
+      const ascDeg = data.ascendant;
+      console.log('Sun degree:', sunDeg, 'Sign:', getZodiac(sunDeg)?.name);
+      console.log('Moon degree:', moonDeg, 'Sign:', getZodiac(moonDeg)?.name);
+      console.log('Ascendant degree:', ascDeg, 'Sign:', getZodiac(ascDeg)?.name);
       const canvas = document.getElementById('birth-chart');
       // Helper: Element & Modality breakdown
       function getElementModalityBreakdown(planets) {
@@ -370,7 +377,7 @@
         { name: 'Leo', symbol: '♌', start: 120 },
         { name: 'Virgo', symbol: '♍', start: 150 },
         { name: 'Libra', symbol: '♎', start: 180 },
-        { name: 'Scorpio', symbol: '♏', starxat: 210 },
+        { name: 'Scorpio', symbol: '♏', start: 210 },
         { name: 'Sagittarius', symbol: '♐', start: 240 },
         { name: 'Capricorn', symbol: '♑', start: 270 },
         { name: 'Aquarius', symbol: '♒', start: 300 },
@@ -440,7 +447,12 @@
             <li><b>Ascendant:</b> ${data.ascendant ? data.ascendant.toFixed(2) + '° ' + getZodiac(data.ascendant).symbol + ' ' + getZodiac(data.ascendant).name : 'N/A'}<br><span style='color:#ffe66f;font-size:0.95em;'>Represents your outward personality, appearance, and first impressions. The sign and house show how you approach life and new situations.</span></li>
           </ul>`);
         html += themedBlock('What This Says About You',
-          `<span style='color:#ffe66f;'>Your Sun, Moon, and Ascendant together form your unique astrological signature. The Sun shows your conscious self, the Moon your emotional nature, and the Ascendant your social mask. Their combination reveals how you balance your inner needs, outer expression, and life path. For example, a fiery Sun with a watery Moon and earthy Ascendant may indicate a passionate core, sensitive feelings, and a practical approach to life.</span>`);
+          `<span style='color:#ffe66f;'>${Object.entries(data.planets || {}).map(([p, v]) => {
+            const zodiac = getZodiac(v);
+            return `<b>${p}:</b> ${zodiac.name} (${zodiac.symbol}) — ${getPlanetMeaning(p, zodiac.name)}`;
+          }).join('<br>')}<br><br>
+          <b>Ascendant:</b> ${data.ascendant ? getZodiac(data.ascendant).name + ' (' + getZodiac(data.ascendant).symbol + ')' : 'N/A'}<br>
+          <span style='color:#ffe66f;'>Each planet's sign reveals a unique aspect of your personality and life path. Your Sun shows your core self, Moon your emotions, Mercury your mind, Venus your love style, Mars your drive, Jupiter your growth, Saturn your discipline, Uranus your innovation, Neptune your dreams, Pluto your transformation, and the Ascendant your outward persona.</span>`);
       } else {
         // Strengths & Challenges
         const sc = getStrengthsChallenges(data);
