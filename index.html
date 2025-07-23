@@ -434,12 +434,12 @@ const zodiacSigns = [
         html += themedBlock('Element & Modality Breakdown', `<b>Elements:</b> <span style='color:#ffe66f;'>Fire: ${breakdown.elements.Fire}, Earth: ${breakdown.elements.Earth}, Air: ${breakdown.elements.Air}, Water: ${breakdown.elements.Water}</span><br><b>Modalities:</b> <span style='color:#ffe66f;'>Cardinal: ${breakdown.modalities.Cardinal}, Fixed: ${breakdown.modalities.Fixed}, Mutable: ${breakdown.modalities.Mutable}</span>`);
         // 3. What This Says About You
         html += themedBlock('What This Says About You',
-          `<span style='color:#ffe66f;'>${Object.entries(data.planets || {}).map(([p, v]) => {
+          `${Object.entries(data.planets || {}).map(([p, v]) => {
             const zodiac = getZodiac(v);
-            return `<b>${p}:</b> ${zodiac.name} (${zodiac.symbol}) — ${getPlanetMeaning(p, zodiac.name)}`;
+            return `<b>${p}:</b> <span style='color:#fff;'>${zodiac.name}</span> (${zodiac.symbol}) — <span style='color:#ffe66f;'>${getPlanetMeaning(p, zodiac.name)}</span>`;
           }).join('<br>')}<br><br>
-          <b>Ascendant:</b> ${data.ascendant ? getZodiac(data.ascendant).name + ' (' + getZodiac(data.ascendant).symbol + ')' : 'N/A'}<br>
-          <span style='color:#ffe66f;'>Each planet's sign reveals a unique aspect of your personality and life path. Your Sun shows your core self, Moon your emotions, Mercury your mind, Venus your love style, Mars your drive, Jupiter your growth, Saturn your discipline, Uranus your innovation, Neptune your dreams, Pluto your transformation, and the Ascendant your outward persona.</span>`);
+          <b>Ascendant:</b> <span style='color:#fff;'>${data.ascendant ? getZodiac(data.ascendant).name : 'N/A'}</span> (${data.ascendant ? getZodiac(data.ascendant).symbol : ''})<br>
+          <span style='color:#ffe66f;'><i>Each planet's sign reveals a unique aspect of your personality and life path. Your Sun shows your core self, Moon your emotions, Mercury your mind, Venus your love style, Mars your drive, Jupiter your growth, Saturn your discipline, Uranus your innovation, Neptune your dreams, Pluto your transformation, and the Ascendant your outward persona.</i></span>`);
         // 4. Astrology Glossary
         html += themedBlock('Astrology Glossary', Object.entries(glossary).map(([k,v]) => `<b>${k}:</b> <span style='color:#ffe66f;'>${v}</span>`).join('<br>'));
         // 5. Strengths & Challenges
@@ -454,70 +454,68 @@ const zodiacSigns = [
         html += themedBlock('Transit Forecast', `<span style='color:#ffe66f;'>${getTransitForecast()}</span>`);
         // 9. Crystal Recommendation (with explanation)
         html += themedBlock('Crystal Recommendation', `
-          <b style='color:#fff;'>Amethyst</b>: <span style='color:#ffe66f;'>Enhances intuition and spiritual growth.</span><br>
-          <b style='color:#fff;'>Citrine</b>: <span style='color:#ffe66f;'>Boosts confidence, creativity, and abundance.</span><br>
-          <b style='color:#fff;'>Rose Quartz</b>: <span style='color:#ffe66f;'>Promotes love, compassion, and emotional healing.</span><br>
-          <span style='color:#ffe66f;'>These crystals are chosen based on your chart's planetary placements and energies. Each supports your strengths and helps balance your challenges.</span>
+          <span><b style='color:#fff;'>Amethyst</b>: <span style='color:#ffe66f;'>Enhances intuition and spiritual growth.</span></span><br>
+          <span><b style='color:#fff;'>Citrine</b>: <span style='color:#ffe66f;'>Boosts confidence, creativity, and abundance.</span></span><br>
+          <span><b style='color:#fff;'>Rose Quartz</b>: <span style='color:#ffe66f;'>Promotes love, compassion, and emotional healing.</span></span><br>
+          <span style='color:#ffe66f;'><i>These crystals are chosen based on your chart's planetary placements and energies. Each supports your strengths and helps balance your challenges.</i></span>
         `);
         // 10. Daily Crystal Suggestion (with explanation)
         const dailyCrystal = getDailyCrystal();
         html += themedBlock('Daily Crystal Suggestion', `
-          <b style='color:#fff;'>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span><br>
-          <span style='color:#ffe66f;'>This crystal is selected for today's transits and your personal chart, offering support and guidance for the day.</span>
+          <span><b style='color:#fff;'>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span></span><br>
+          <span style='color:#ffe66f;'><i>This crystal is selected for today's transits and your personal chart, offering support and guidance for the day.</i></span>
         `);
         // Save/Share/Download
         html += addSaveShareDownload();
       } else {
-        // Strengths & Challenges
-        const sc = getStrengthsChallenges(data);
-        html += themedBlock('Strengths & Challenges', `<b>Strengths:</b> <span style='color:#ffe66f;'>${sc.strengths.join(', ') || 'Balanced energies.'}</span><br><b>Challenges:</b> <span style='color:#ffe66f;'>${sc.challenges.join(', ') || 'No major challenges.'}</span>`);
-        // Career & Relationship Guidance
-        const guide = getGuidance(data);
-        html += themedBlock('Career & Relationship Guidance', `<b>Career:</b> <span style='color:#ffe66f;'>${guide.career}</span><br><b>Relationships:</b> <span style='color:#ffe66f;'>${guide.relationship}</span>`);
-        // Element & Modality Breakdown
-        const breakdown = getElementModalityBreakdown(data.planets);
-        html += themedBlock('Element & Modality Breakdown', `<b>Elements:</b> <span style='color:#ffe66f;'>Fire: ${breakdown.elements.Fire}, Earth: ${breakdown.elements.Earth}, Air: ${breakdown.elements.Air}, Water: ${breakdown.elements.Water}</span><br><b>Modalities:</b> <span style='color:#ffe66f;'>Cardinal: ${breakdown.modalities.Cardinal}, Fixed: ${breakdown.modalities.Fixed}, Mutable: ${breakdown.modalities.Mutable}</span>`);
-        // Affirmations
-        html += themedBlock('Affirmations', getAffirmations(data).map(a => `<span style='color:#ffe66f;'>${a}</span>`).join('<br>'));
-        // Transit Forecast
-        html += themedBlock('Transit Forecast', `<span style='color:#ffe66f;'>${getTransitForecast()}</span>`);
-        // Daily Crystal Suggestion
-        const dailyCrystal = getDailyCrystal();
-        html += themedBlock('Daily Crystal Suggestion', `<b>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span>`);
-        // Astrology Glossary
-        html += themedBlock('Astrology Glossary', Object.entries(glossary).map(([k,v]) => `<b>${k}:</b> <span style='color:#ffe66f;'>${v}</span>`).join('<br>'));
-        // Save/Share/Download
-        html += addSaveShareDownload();
-      // Interactive pop-ups for planets (demo)
-      canvas.onclick = function(e) {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left - 200;
-        const y = e.clientY - rect.top - 200;
-        if (data.planets) {
-          Object.entries(data.planets).forEach(([p, v]) => {
-            const angle = ((v % 360) / 360) * 2 * Math.PI;
-            const px = 160 * Math.cos(angle);
-            const py = 160 * Math.sin(angle);
-            if (Math.hypot(x-px, y-py) < 12) {
-              alert(`${p} (${planetSymbols[p] || p}): ${getZodiac(v).name} - ${getPlanetMeaning(p, getZodiac(v).name)}`);
-            }
-          });
-        }
-      };
-        const patternInfo = chartPatternAnalysis(data);
-        html += themedBlock('Chart Pattern', `${patternInfo.pattern} <br><span style='font-size:1rem;color:#fff;'>${patternInfo.description}</span>`);
-        html += themedBlock('What This Says About You', `<b>Personality Traits:</b> <span style='color:#ffe66f;'>${patternInfo.traits}</span><br><br><b>Advice:</b> <span style='color:#ffe66f;'>${patternInfo.advice}</span><br><br><span style='color:#ffe66f;'>Your chart pattern, planetary placements, and house distribution together reveal your strengths, challenges, and life themes. For example, a Splash pattern with planets in many signs suggests adaptability and curiosity, while a Bowl pattern shows focus and self-containment. The houses and aspects add further detail to your personal story.</span>`);
-        html += themedBlock('Planetary Insights',
+        // 1. Planetary Insight
+        html += themedBlock('Planetary Insight',
           `<ul style='list-style:none;padding:0;'>
             ${Object.entries(data.planets || {}).map(([p, v]) => {
               const zodiac = getZodiac(v);
-              return `<li><b>${planetSymbols[p] || p} ${p}:</b> ${v ? v.toFixed(2) + '° ' + zodiac.symbol + ' ' + zodiac.name : 'N/A'}<br><span style='color:#ffe66f;font-size:0.95em;'>${p} in ${zodiac.name}: ${getPlanetMeaning(p, zodiac.name)}</span></li>`;
+              return `<li><b>${planetSymbols[p] || p} ${p}:</b> <span style='color:#fff;'>${v ? v.toFixed(2) + '° ' + zodiac.symbol + ' ' + zodiac.name : 'N/A'}</span><br><span style='color:#ffe66f;font-size:0.95em;'><i>${p} in ${zodiac.name}: ${getPlanetMeaning(p, zodiac.name)}</i></span></li>`;
             }).join('')}
           </ul>`);
+        // 2. Houses
         html += themedBlock('Houses',
           `<ul style='list-style:none;padding:0;'>
-            ${Object.entries(data.houses || {}).map(([h, v]) => `<li><b>House ${h}:</b> ${v.lon ? v.lon.toFixed(2) + '° ' + getZodiac(v.lon).symbol + ' ' + getZodiac(v.lon).name : 'N/A'}</li>`).join('')}
+            ${Object.entries(data.houses || {}).map(([h, v]) => `<li><b>House ${h}:</b> <span style='color:#ffe66f;'>${v.lon ? v.lon.toFixed(2) + '° ' + getZodiac(v.lon).symbol + ' ' + getZodiac(v.lon).name : 'N/A'}</span></li>`).join('')}
           </ul>`);
+        // 3. Chart Pattern
+        const patternInfo = chartPatternAnalysis(data);
+        html += themedBlock('Chart Pattern', `${patternInfo.pattern} <br><span style='font-size:1rem;color:#fff;'>${patternInfo.description}</span><br><span style='color:#ffe66f;'><i>${patternInfo.traits}</i></span><br><span style='color:#ffe66f;'><i>${patternInfo.advice}</i></span><br><span style='color:#ffe66f;'>Your chart pattern, planetary placements, and house distribution together reveal your strengths, challenges, and life themes. For example, a Splash pattern with planets in many signs suggests adaptability and curiosity, while a Bowl pattern shows focus and self-containment. The houses and aspects add further detail to your personal story.</span>`);
+        // 4. Element & Modality Breakdown
+        const breakdown = getElementModalityBreakdown(data.planets);
+        html += themedBlock('Element & Modality Breakdown', `<b>Elements:</b> <span style='color:#ffe66f;'>Fire: ${breakdown.elements.Fire}, Earth: ${breakdown.elements.Earth}, Air: ${breakdown.elements.Air}, Water: ${breakdown.elements.Water}</span><br><b>Modalities:</b> <span style='color:#ffe66f;'>Cardinal: ${breakdown.modalities.Cardinal}, Fixed: ${breakdown.modalities.Fixed}, Mutable: ${breakdown.modalities.Mutable}</span>`);
+        // 5. What This Says About You
+        html += themedBlock('What This Says About You', `<b>Personality Traits:</b> <span style='color:#ffe66f;'>${patternInfo.traits}</span><br><br><b>Advice:</b> <span style='color:#ffe66f;'>${patternInfo.advice}</span><br><br><span style='color:#ffe66f;'>Your chart pattern, planetary placements, and house distribution together reveal your strengths, challenges, and life themes. For example, a Splash pattern with planets in many signs suggests adaptability and curiosity, while a Bowl pattern shows focus and self-containment. The houses and aspects add further detail to your personal story.</span>`);
+        // 6. Astrology Glossary
+        html += themedBlock('Astrology Glossary', Object.entries(glossary).map(([k,v]) => `<b>${k}:</b> <span style='color:#ffe66f;'>${v}</span>`).join('<br>'));
+        // 7. Strengths & Challenges
+        const sc = getStrengthsChallenges(data);
+        html += themedBlock('Strengths & Challenges', `<b>Strengths:</b> <span style='color:#ffe66f;'>${sc.strengths.join(', ') || 'Balanced energies.'}</span><br><b>Challenges:</b> <span style='color:#ffe66f;'>${sc.challenges.join(', ') || 'No major challenges.'}</span>`);
+        // 8. Career & Relationship Guidance
+        const guide = getGuidance(data);
+        html += themedBlock('Career & Relationship Guidance', `<b>Career:</b> <span style='color:#ffe66f;'>${guide.career}</span><br><b>Relationships:</b> <span style='color:#ffe66f;'>${guide.relationship}</span>`);
+        // 9. Affirmations (description white)
+        html += themedBlock('Affirmations', getAffirmations(data).map(a => `<span style='color:#fff;'>${a}</span>`).join('<br>'));
+        // 10. Transit Forecast (description white)
+        html += themedBlock('Transit Forecast', `<span style='color:#fff;'>${getTransitForecast()}</span>`);
+        // 11. Crystal Recommendation
+        html += themedBlock('Crystal Recommendation', `
+          <span><b style='color:#fff;'>Amethyst</b>: <span style='color:#ffe66f;'>Enhances intuition and spiritual growth.</span></span><br>
+          <span><b style='color:#fff;'>Citrine</b>: <span style='color:#ffe66f;'>Boosts confidence, creativity, and abundance.</span></span><br>
+          <span><b style='color:#fff;'>Rose Quartz</b>: <span style='color:#ffe66f;'>Promotes love, compassion, and emotional healing.</span></span><br>
+          <span style='color:#ffe66f;'><i>These crystals are chosen based on your chart's planetary placements and energies. Each supports your strengths and helps balance your challenges.</i></span>
+        `);
+        // 12. Daily Crystal
+        const dailyCrystal = getDailyCrystal();
+        html += themedBlock('Daily Crystal Suggestion', `
+          <span><b style='color:#fff;'>${dailyCrystal.name}</b>: <span style='color:#ffe66f;'>${dailyCrystal.reason}</span></span><br>
+          <span style='color:#ffe66f;'><i>This crystal is selected for today's transits and your personal chart, offering support and guidance for the day.</i></span>
+        `);
+        // Save/Share/Download
+        html += addSaveShareDownload();
       }
       html += themedBlock('Crystal Recommendation', `<b>Amethyst</b>: Enhances intuition and spiritual growth.<br><b>Citrine</b>: Boosts confidence, creativity, and abundance.<br><b>Rose Quartz</b>: Promotes love, compassion, and emotional healing.<br><span style='color:#ffe66f;'>These crystals are chosen to support your chart's unique energies and help you thrive.</span>`);
       resultsDiv.innerHTML = html;
