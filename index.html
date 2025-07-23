@@ -253,6 +253,7 @@
     }
 
     function showResults(data, readingType) {
+      const canvas = document.getElementById('birth-chart');
       // Helper: Element & Modality breakdown
       function getElementModalityBreakdown(planets) {
         const elements = { Fire: 0, Earth: 0, Air: 0, Water: 0 };
