@@ -513,23 +513,40 @@
       const canvas = document.getElementById('birth-chart');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Draw wheel
+      // Draw wheel with 3 concentric circles
       ctx.save();
       ctx.translate(200, 200);
+      // Outer circle
       ctx.beginPath();
       ctx.arc(0, 0, 180, 0, 2 * Math.PI);
       ctx.strokeStyle = '#b23cf0';
       ctx.lineWidth = 4;
       ctx.stroke();
-      // Draw houses with labels
+      // Middle circle
+      ctx.beginPath();
+      ctx.arc(0, 0, 140, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#ffe66f';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // Inner circle
+      ctx.beginPath();
+      ctx.arc(0, 0, 90, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Draw houses/signs with bold radial lines
       for (let i = 0; i < 12; i++) {
         const angle = (i / 12) * 2 * Math.PI;
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.lineTo(180 * Math.cos(angle), 180 * Math.sin(angle));
         ctx.strokeStyle = '#ffe66f';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 0.8;
         ctx.stroke();
+        ctx.globalAlpha = 1;
         // House number label
         ctx.save();
         ctx.translate(170 * Math.cos(angle), 170 * Math.sin(angle));
@@ -660,37 +677,6 @@
         ctx.fill();
         ctx.globalAlpha = 1;
       }
-      // Draw zodiac signs around the wheel
-      const zodiacSigns = [
-        { name: 'Aries', symbol: '♈', start: 0 },
-        { name: 'Taurus', symbol: '♉', start: 30 },
-        { name: 'Gemini', symbol: '♊', start: 60 },
-        { name: 'Cancer', symbol: '♋', start: 90 },
-        { name: 'Leo', symbol: '♌', start: 120 },
-        { name: 'Virgo', symbol: '♍', start: 150 },
-        { name: 'Libra', symbol: '♎', start: 180 },
-        { name: 'Scorpio', symbol: '♏', start: 210 },
-        { name: 'Sagittarius', symbol: '♐', start: 240 },
-        { name: 'Capricorn', symbol: '♑', start: 270 },
-        { name: 'Aquarius', symbol: '♒', start: 300 },
-        { name: 'Pisces', symbol: '♓', start: 330 }
-      ];
-      zodiacSigns.forEach((sign, i) => {
-        const angle = ((sign.start + 15) / 360) * 2 * Math.PI;
-        const x = 200 + 170 * Math.cos(angle);
-        const y = 200 + 170 * Math.sin(angle);
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(angle);
-        ctx.font = 'bold 20px Segoe UI';
-        ctx.fillStyle = '#ffe66f';
-        ctx.textAlign = 'center';
-        ctx.fillText(sign.symbol, 0, 0);
-        ctx.font = '12px Segoe UI';
-        ctx.fillStyle = '#fff';
-        ctx.fillText(sign.name, 0, 18);
-        ctx.restore();
-      });
 
       // Draw planet positions with symbols
       if (data.planets) {
