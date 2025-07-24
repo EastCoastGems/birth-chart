@@ -736,26 +736,27 @@ const zodiacSigns = [
         const [hour, minute] = birthtime.split(':').map(Number);
         console.log('Submitting chart request:', { year, month, day, hour, minute, lat, lng });
         try {
-        const res = await fetch('/api/chart', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
-          });
-          console.log('Fetch response:', res);
-          const data = await res.json();
-          console.log('Chart data received:', data);
-          if (data.error) {
-            resultsDiv.innerHTML = themedBlock('Error', data.error);
-            shopBtn.style.display = 'none';
-          } else {
-            showResults(data, readingType);
-          }
-        } catch (err) {
-          console.error('Fetch error:', err);
-          resultsDiv.innerHTML = themedBlock('Error', 'Failed to fetch chart data.');
+        const apiUrl = 'https://birth-chart-wc1f.onrender.com/api/chart';
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ year, month, day, hour, minute, lat, lng })
+        });
+        console.log('Fetch response:', res);
+        const data = await res.json();
+        console.log('Chart data received:', data);
+        if (data.error) {
+          resultsDiv.innerHTML = themedBlock('Error', data.error);
           shopBtn.style.display = 'none';
+        } else {
+          showResults(data, readingType);
         }
-      });
+      } catch (err) {
+        console.error('Fetch error:', err);
+        resultsDiv.innerHTML = themedBlock('Error', 'Failed to fetch chart data.');
+        shopBtn.style.display = 'none';
+      }
+    });
     });
   </script>
 </body>
