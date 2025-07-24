@@ -436,7 +436,7 @@ const zodiacSigns = [
         html += themedBlock('What This Says About You',
           `${Object.entries(data.planets || {}).map(([p, v]) => {
             const zodiac = getZodiac(v);
-            return `<b>${p}:</b> <span style='color:#ffe66f;'>${zodiac.name} (${zodiac.symbol}) — ${getPlanetMeaning(p, zodiac.name)}</span>`;
+            return `<b>${p}:</b> <span style='color:#fff;'>${zodiac.name}</span> (${zodiac.symbol}) — <span style='color:#ffe66f;'>${getPlanetMeaning(p, zodiac.name)}</span>`;
           }).join('<br>')}<br><br>
           <b>Ascendant:</b> <span style='color:#fff;'>${data.ascendant ? getZodiac(data.ascendant).name : 'N/A'}</span> (${data.ascendant ? getZodiac(data.ascendant).symbol : ''})<br>
           <span style='color:#ffe66f;'><i>Each planet's sign reveals a unique aspect of your personality and life path. Your Sun shows your core self, Moon your emotions, Mercury your mind, Venus your love style, Mars your drive, Jupiter your growth, Saturn your discipline, Uranus your innovation, Neptune your dreams, Pluto your transformation, and the Ascendant your outward persona.</i></span>`);
